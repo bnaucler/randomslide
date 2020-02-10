@@ -5,6 +5,7 @@ import (
     "log"
     "time"
     "flag"
+    "strconv"
     "net/http"
     "math/rand"
     "encoding/json"
@@ -18,7 +19,6 @@ const DBNAME = "./db/random.db"
 var tbuc = []byte("pbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
-
 
 type Resp struct {
     Data string
@@ -58,13 +58,22 @@ func rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
     return
 }
 
+// Handling requests for text objects
 func txtreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB, cid int) int {
 
     e := r.ParseForm()
     cherr(e)
 
+    key := []byte(strconv.Itoa(cid))
+
+    e = wrdb(db, key, []byte(r.FormValue("request")), tbuc)
+    cherr(e)
+
+    v, e := rdb(db, key, tbuc)
+    cherr(e)
+
     resp := Resp{
-        Data: r.FormValue("request"),
+        Data: string(v),
         Id: cid}
 
     enc := json.NewEncoder(w)
