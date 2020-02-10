@@ -3,6 +3,7 @@ Contributions are very welcome! At this early stage, this file will double as a 
 
 ## Best practices
 * Keep variable names short and in lower case
+* JSON format used for data exchange
 * Limit to 80 columns
 * Limit to three levels of indentation
 * Indent by four spaces
@@ -17,7 +18,10 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Binaries can be built with /bin/build.sh and will be placed in /bin
 
 ## TODO
-Everything
+* Decide on data type structures
+* API documentation
+* API feature request list
+* Image uploding functionality
 
 ## IRC
 The main developers can be found in the channel #ljusdal at EFNet.
