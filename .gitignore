@@ -1,1 +1,3 @@
 bin/rsserver
+db/*
+!db/.gitkeep

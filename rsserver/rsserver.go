@@ -13,7 +13,7 @@ import (
 )
 
 const DEFAULTPORT = 6291
-const DBNAME = "./random.db"
+const DBNAME = "./db/random.db"
 
 var tbuc = []byte("pbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
@@ -73,7 +73,7 @@ func main() {
     defer db.Close()
 
     // Static content
-    http.Handle("/", http.FileServer(http.Dir("../static")))
+    http.Handle("/", http.FileServer(http.Dir("./static")))
 
     http.HandleFunc("/gettext", func(w http.ResponseWriter, r *http.Request) {
         data := txtreqhandler(w, r, db)
