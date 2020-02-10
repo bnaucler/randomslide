@@ -27,6 +27,7 @@ type Resp struct {
 
 type Deck struct {
     N int                       // Total number of slides in deck
+    Lang string                 // Deck language, 'en', 'de', 'se', etc
     Slides []Slide              // Slice of Slide objects
 }
 
