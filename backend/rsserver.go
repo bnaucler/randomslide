@@ -72,6 +72,9 @@ func main() {
     cherr(e)
     defer db.Close()
 
+    // Static content
+    http.Handle("/", http.FileServer(http.Dir("../static")))
+
     http.HandleFunc("/gettext", func(w http.ResponseWriter, r *http.Request) {
         data := txtreqhandler(w, r, db)
         fmt.Printf("DEBUG: %+v\n", data)
