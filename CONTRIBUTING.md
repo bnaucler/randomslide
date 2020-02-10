@@ -11,6 +11,11 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Backend requests are sent as POST
 * Server listens at port 6291 by default
 
+# Folder structure
+* All static content such as html, css & js is located in /static
+* Source code for server can be found in /rsserver
+* Binaries can be built with /bin/build.sh and will be placed in /bin
+
 # TODO
 Everything
 

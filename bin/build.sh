@@ -1,2 +1,2 @@
 #!/bin/sh
-go build -o bin/rsserver backend/rsserver.go
+go build -o bin/rsserver rsserver/rsserver.go
