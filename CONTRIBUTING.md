@@ -7,6 +7,10 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Limit to three levels of indentation
 * Indent by four spaces
 
+# Defaults
+* Backend requests are sent as POST
+* Server listens at port 6291 by default
+
 # TODO
 Everything
 
