@@ -2,7 +2,7 @@
 Generate random slides for online presentation
 
 ## Created by
-Björn W Naucler (mail@bnaucler.se)
+Björn W Naucler (mail@bnaucler.se)  
 Morgan Andersson (info@ameste.se)
 
 # Project purpose
