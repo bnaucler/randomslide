@@ -5,9 +5,9 @@ import (
     "log"
     "time"
     "flag"
-    "strconv"
     "net/http"
     "math/rand"
+    "encoding/json"
 
     "github.com/boltdb/bolt"
 )
@@ -19,19 +19,25 @@ var tbuc = []byte("pbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
 
+
+type Resp struct {
+    Data string
+    Id int
+}
+
 // Log all errors to console
 func cherr(e error) {
     if e != nil { log.Fatal(e) }
 }
 
 // Write JSON encoded byte slice to DB
-func wrdb(db *bolt.DB, k int, v []byte, cbuc []byte) (e error) {
+func wrdb(db *bolt.DB, k []byte, v []byte, cbuc []byte) (e error) {
 
     e = db.Update(func(tx *bolt.Tx) error {
         b, e := tx.CreateBucketIfNotExists(cbuc)
         if e != nil { return e }
 
-        e = b.Put([]byte(strconv.Itoa(k)), v)
+        e = b.Put(k, v)
         if e != nil { return e }
 
         return nil
@@ -40,24 +46,33 @@ func wrdb(db *bolt.DB, k int, v []byte, cbuc []byte) (e error) {
 }
 
 // Return JSON encoded byte slice from DB
-func rdb(db *bolt.DB, k int, cbuc []byte) (v []byte, e error) {
+func rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
 
     e = db.View(func(tx *bolt.Tx) error {
         b := tx.Bucket(cbuc)
         if b == nil { return fmt.Errorf("No bucket!") }
 
-        v = b.Get([]byte(strconv.Itoa(k)))
+        v = b.Get(k)
         return nil
     })
     return
 }
 
-func txtreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) string {
+func txtreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB, cid int) int {
 
     e := r.ParseForm()
     cherr(e)
 
-    return r.FormValue("request")
+    resp := Resp{
+        Data: r.FormValue("request"),
+        Id: cid}
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
+
+    cid++
+
+    return cid
 }
 
 func main() {
@@ -72,12 +87,15 @@ func main() {
     cherr(e)
     defer db.Close()
 
+    cid := 0
+
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
+    // Text requests
     http.HandleFunc("/gettext", func(w http.ResponseWriter, r *http.Request) {
-        data := txtreqhandler(w, r, db)
-        fmt.Printf("DEBUG: %+v\n", data)
+        cid = txtreqhandler(w, r, db, cid)
+        fmt.Printf("DEBUG: %+v\n", cid)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
