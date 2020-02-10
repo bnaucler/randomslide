@@ -3,7 +3,7 @@ Generate random slides for online presentation
 
 ## Created by
 Björn W Naucler (mail@bnaucler.se)
-Morgan Andersson ()
+Morgan Andersson (info@ameste.se)
 
 # Project purpose
 Slideshow karaokae or other pranks. Actual real world usefullness can be questioned.
