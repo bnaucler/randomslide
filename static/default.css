@@ -1,4 +1,8 @@
-aside, article, section, header, footer, nav, html, body, p, h1, h2, h3, div, ul {
-    margin: 0;
-    padding: 0;
+wrapper{
+    margin: auto;
+}
+
+
+#slideTimer{
+    display: none;
 }
