@@ -25,6 +25,19 @@ type Resp struct {
     Id int
 }
 
+type Deck struct {
+    N int                       // Total number of slides in deck
+    Slides []Slide              // Slice of Slide objects
+}
+
+type Slide struct {
+    Title string                // Slide title
+    Imgur string                // URL to image
+    Btext string                // Body text
+    Tcolor string               // Text color in CSS-compatible hex code
+    Bgcolor string              // Body color in CSS-compatible hex code
+}
+
 // Log all errors to console
 func cherr(e error) {
     if e != nil { log.Fatal(e) }
