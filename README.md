@@ -5,10 +5,10 @@ Generate random slides for online presentation
 Björn W Naucler (mail@bnaucler.se)  
 Morgan Andersson (info@ameste.se)
 
-# Project purpose
+## Project purpose
 Slideshow karaokae or other pranks. Actual real world usefullness can be questioned.
 
-# Usage
+## Usage
 Build the server with `bin/build.sh`  
 Launch with `bin/rsserver`
 
