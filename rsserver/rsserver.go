@@ -16,7 +16,7 @@ import (
 const DEFAULTPORT = 6291
 const DBNAME = "./db/random.db"
 
-var tbuc = []byte("pbuc")       // text bucket
+var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
 
@@ -72,29 +72,34 @@ func rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
     return
 }
 
-// Handling requests for text objects
-func txtreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB, cid int) int {
+// Generate a deck based on request
+func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB, cid int) int {
 
     e := r.ParseForm()
     cherr(e)
 
-    key := []byte(strconv.Itoa(cid))
+    deck := Deck{
+            N: cid,
+            Lang: "en",
+            Slides: make([]Slide, cid) }
 
-    e = wrdb(db, key, []byte(r.FormValue("request")), tbuc)
+    key := []byte(strconv.Itoa(cid)) // TODO: make this make sense somehow
+
+    mdeck, e := json.Marshal(deck)
+
+    e = wrdb(db, key, mdeck, dbuc)
     cherr(e)
 
-    v, e := rdb(db, key, tbuc)
+    v, e := rdb(db, key, dbuc)
     cherr(e)
 
-    resp := Resp{
-        Data: string(v),
-        Id: cid}
+    rdeck := Deck{}
+    e = json.Unmarshal(v, &rdeck)
 
     enc := json.NewEncoder(w)
-    enc.Encode(resp)
+    enc.Encode(rdeck)
 
     cid++
-
     return cid
 }
 
@@ -115,9 +120,9 @@ func main() {
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
-    // Text requests
-    http.HandleFunc("/gettext", func(w http.ResponseWriter, r *http.Request) {
-        cid = txtreqhandler(w, r, db, cid)
+    // Slide requests
+    http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
+        cid = deckreqhandler(w, r, db, cid)
         fmt.Printf("DEBUG: %+v\n", cid)
     })
 
