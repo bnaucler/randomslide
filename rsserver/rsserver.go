@@ -20,8 +20,6 @@ const DEFAULTPORT = 6291
 const DBNAME = "./data/random.db"
 const PIDFILEPATH = "./data/"
 
-const DEBUG = 1                 // set to 1 for verbose output TODO: replace with flag
-
 var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
@@ -115,6 +113,7 @@ func main() {
 
 	pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
 	dbptr := flag.String("d", DBNAME, "specify database to open")
+	vptr := flag.Bool("v", false, "specify database to open")
 	flag.Parse()
 
     db, e := bolt.Open(*dbptr, 0640, nil)
@@ -126,7 +125,7 @@ func main() {
     pidfile := fmt.Sprintf("%s/%s.pid", PIDFILEPATH, prgname)
     e = ioutil.WriteFile(pidfile, []byte(strconv.Itoa(pid)), 0644)
 
-    if DEBUG != 0 {
+    if *vptr == true {
         fmt.Printf("DEBUG: %s started with PID: %d\n", prgname, pid)
     }
 
