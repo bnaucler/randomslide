@@ -20,13 +20,21 @@ const DEFAULTPORT = 6291
 const DBNAME = "./data/random.db"
 const PIDFILEPATH = "./data/"
 
+const VOLATILEMODE = true
+
 var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
 
-type Resp struct {
-    Data string
-    Id int
+type Settings struct {
+    Verb bool
+    Cid int
+}
+
+type Deckreq struct {
+    N int
+    Lang string
+    Cat string
 }
 
 type Deck struct {
@@ -77,17 +85,26 @@ func rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
 }
 
 // Generate a deck based on request
-func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB, cid int) int {
+func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings Settings) Settings {
 
     e := r.ParseForm()
     cherr(e)
 
-    deck := Deck{
-            N: cid,
-            Lang: "en",
-            Slides: make([]Slide, cid) }
+    n, e := strconv.Atoi(r.FormValue("amount"))
+    cherr(e)
 
-    key := []byte(strconv.Itoa(cid)) // TODO: make this make sense somehow
+    req := Deckreq{
+            N: n,
+            Lang: r.FormValue("lang"),
+            Cat: r.FormValue("category") }
+
+    deck := Deck{
+            N: req.N,
+            Lang: req.Lang,
+            Slides: make([]Slide, req.N) }
+
+    key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
 
     mdeck, e := json.Marshal(deck)
 
@@ -103,8 +120,8 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB, cid int
     enc := json.NewEncoder(w)
     enc.Encode(rdeck)
 
-    cid++
-    return cid
+    settings.Cid++
+    return settings
 }
 
 func main() {
@@ -120,24 +137,32 @@ func main() {
     cherr(e)
     defer db.Close()
 
+    settings := Settings{}
+    settings.Verb = *vptr
+    settings.Cid = 0
+
     pid := os.Getpid()
     prgname := filepath.Base(os.Args[0])
     pidfile := fmt.Sprintf("%s/%s.pid", PIDFILEPATH, prgname)
     e = ioutil.WriteFile(pidfile, []byte(strconv.Itoa(pid)), 0644)
 
-    if *vptr == true {
+    if settings.Verb == true {
         fmt.Printf("DEBUG: %s started with PID: %d\n", prgname, pid)
     }
-
-    cid := 0
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
+    if VOLATILEMODE == true {
+        http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
+            fmt.Printf("Restart request received. Shutting down.\n")
+            os.Exit(1)
+        })
+    }
+
     // Slide requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
-        cid = deckreqhandler(w, r, db, cid)
-        fmt.Printf("DEBUG: %+v\n", cid)
+        settings = deckreqhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
