@@ -1,7 +1,30 @@
-wrapper{
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.wrapper{
     margin: auto;
+    max-width: 900px;
+    background: linear-gradient(lightblue, blue);
 }
 
 #slideTimer{
     display: none;
+}
+
+form{
+    width: 100%;
+    margin: auto;
+}
+
+.formwrapper {
+    margin: auto;
+}
+
+select, input {
+    background: orange;
+    padding: 0.8em;
+    border: 2px solid orangered;
+    border-radius: 5px;
+    font-size: 1.2em;
 }

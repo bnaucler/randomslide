@@ -8,37 +8,50 @@
     <title>randomslide v0.1a</title>
 </head>
 <body>
+
     <div class="wrapper">
     <header>
         <h2>randomslide v0.1a</h2>
     </header>
 
+    <div class="formwrapper">
         <h3>Choose things:</h3>
-            <br />
-        <h4>Category:</h4>
-        <select name="category">
-            <option value="dancing">Dancing</option>
-            <option value="bible">Bible</option>
-            <option value="tech">Tech</option>
-            <option value="beer">Beer</option>
-        </select>  
-
-        <form>
-            <p>Amount of slides to be generated? (min5, max 25)</p>
-            <input type="number" name="amountOfSlides" min="5" max="25">
-        </form>
-
-
-        <h4>Change slide yourself or on a timer?</h4>
-        <select name="timerOrNot" id="timerOrNot">
-            <option value="change" selected="selected">Change myself</option>
-            <option value="timer">Timer!</option>
-        </select> 
-
-        <form id="slideTimer">
-            <p>Time between slide changes? (30-180 sec)</p>
-            <input type="number" name="time" min="30" max="180">
-        </form>
+        <br />
+            <form>
+                <label for="category">Category</label>
+                <br />
+                <select id="category" name="category">
+                    <option value="dancing">Dancing</option>
+                    <option value="bible">Bible</option>
+                    <option value="tech">Tech</option>
+                    <option value="beer">Beer</option>
+                </select>  
+                <br />
+                <br />
+                <label for="amountOfSlides">Amount of slides to be generated? (min5, max 25):</label>
+                <br />
+                <input type="number" name="amountOfSlides" min="5" max="25">
+                <br />
+                <br />
+                <label for="timerOrNot">Change slide yourself or on a timer?</label>
+                <br />
+                <select name="timerOrNot" id="timerOrNot">
+                    <option value="change" selected="selected">Change myself</option>
+                    <option value="timer">Timer!</option>
+                </select> 
+                <br />
+                <br />
+                <div id="slideTimer">
+                    <label for="time">Time between slide changes? (30-180 sec):</label>
+                    <br />
+                    <br />
+                    <input type="number" name="time" min="30" max="180">
+                </div>
+                <br />
+                <br />
+                <input type="submit" value="Generate!">
+            </form>
+        </div>
 
     </div>
     <script src="js/script.js"></script>
