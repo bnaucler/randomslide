@@ -1,6 +1,7 @@
 package main
 
 import (
+    "os"
     "fmt"
     "log"
     "time"
@@ -8,13 +9,18 @@ import (
     "strconv"
     "net/http"
     "math/rand"
+    "io/ioutil"
+    "path/filepath"
     "encoding/json"
 
     "github.com/boltdb/bolt"
 )
 
 const DEFAULTPORT = 6291
-const DBNAME = "./db/random.db"
+const DBNAME = "./data/random.db"
+const PIDFILEPATH = "./data/"
+
+const DEBUG = 1                 // set to 1 for verbose output TODO: replace with flag
 
 var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
@@ -114,6 +120,15 @@ func main() {
     db, e := bolt.Open(*dbptr, 0640, nil)
     cherr(e)
     defer db.Close()
+
+    pid := os.Getpid()
+    prgname := filepath.Base(os.Args[0])
+    pidfile := fmt.Sprintf("%s/%s.pid", PIDFILEPATH, prgname)
+    e = ioutil.WriteFile(pidfile, []byte(strconv.Itoa(pid)), 0644)
+
+    if DEBUG != 0 {
+        fmt.Printf("DEBUG: %s started with PID: %d\n", prgname, pid)
+    }
 
     cid := 0
 
