@@ -20,6 +20,8 @@ const DEFAULTPORT = 6291
 const DBNAME = "./data/random.db"
 const PIDFILEPATH = "./data/"
 
+const VOLATILEMODE = true
+
 var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
@@ -133,6 +135,13 @@ func main() {
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
+
+    if VOLATILEMODE == true {
+        http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
+            fmt.Printf("Restart request received. Shutting down.\n")
+            os.Exit(1)
+        })
+    }
 
     // Slide requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
