@@ -113,7 +113,7 @@ func main() {
 
 	pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
 	dbptr := flag.String("d", DBNAME, "specify database to open")
-	vptr := flag.Bool("v", false, "specify database to open")
+	vptr := flag.Bool("v", false, "verbose mode")
 	flag.Parse()
 
     db, e := bolt.Open(*dbptr, 0640, nil)
