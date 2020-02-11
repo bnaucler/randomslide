@@ -26,11 +26,6 @@ var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
 
-type Resp struct {
-    Data string
-    Id int
-}
-
 type Settings struct {
     Verb bool
     Cid int
