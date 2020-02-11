@@ -27,4 +27,11 @@ select, input {
     border: 2px solid orangered;
     border-radius: 5px;
     font-size: 1.2em;
+    font-weight: bold;
+    text-shadow: 1px 1px white;
+}
+
+
+#output div{
+    font-size: 2em;
 }

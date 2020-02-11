@@ -20,36 +20,43 @@
         <br />
             <form>
                 <label for="category">Category</label>
-                <br />
+                    <br />
                 <select id="category" name="category">
                     <option value="dancing">Dancing</option>
                     <option value="bible">Bible</option>
                     <option value="tech">Tech</option>
                     <option value="beer">Beer</option>
                 </select>  
-                <br />
-                <br />
+                    <br />
+                    <br />
                 <label for="amountOfSlides">Amount of slides to be generated? (min5, max 25):</label>
-                <br />
+                    <br />
                 <input type="number" name="amountOfSlides" min="5" max="25">
+                    <br />
+                    <br />
+                <label for="language">Language?</label>
                 <br />
-                <br />
+                <select id="lang" name="lang">
+                    <option value="en">English</option>
+                </select>
+                    <br />
+                    <br />
                 <label for="timerOrNot">Change slide yourself or on a timer?</label>
-                <br />
+                    <br />
                 <select name="timerOrNot" id="timerOrNot">
                     <option value="change" selected="selected">Change myself</option>
                     <option value="timer">Timer!</option>
                 </select> 
-                <br />
-                <br />
+                    <br />
+                    <br />
                 <div id="slideTimer">
                     <label for="time">Time between slide changes? (30-180 sec):</label>
                     <br />
                     <br />
                     <input type="number" name="time" min="30" max="180">
                 </div>
-                <br />
-                <br />
+                    <br />
+                    <br />
                 <input type="submit" value="Generate!">
             </form>
         </div>
