@@ -31,6 +31,12 @@ type Settings struct {
     Cid int
 }
 
+type Deckreq struct {
+    N int
+    Lang string
+    Cat string
+}
+
 type Deck struct {
     N int                       // Total number of slides in deck
     Lang string                 // Deck language, 'en', 'de', 'se', etc
@@ -85,10 +91,18 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     cherr(e)
 
+    n, e := strconv.Atoi(r.FormValue("amount"))
+    cherr(e)
+
+    req := Deckreq{
+            N: n,
+            Lang: r.FormValue("lang"),
+            Cat: r.FormValue("category") }
+
     deck := Deck{
-            N: settings.Cid,
-            Lang: "en",
-            Slides: make([]Slide, settings.Cid) }
+            N: req.N,
+            Lang: req.Lang,
+            Slides: make([]Slide, req.N) }
 
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
 
