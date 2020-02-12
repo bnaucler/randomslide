@@ -96,7 +96,42 @@ func rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
     return
 }
 
-// Generate a deck based on request
+// Create random string of length ln
+func randstr(ln int) string {
+
+    const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
+    var cslen = len(charset)
+
+    b := make([]byte, ln)
+    for i := range b { b[i] = charset[rand.Intn(cslen)] }
+
+    return string(b)
+}
+
+// Returns a slide according to request
+func mkslide(req Deckreq) Slide {
+
+    slide := Slide{Title: randstr(10) }
+
+    return slide
+}
+
+// Returns a full slide deck according to request
+func mkdeck(req Deckreq) Deck {
+
+    deck := Deck{
+            N: req.N,
+            Lang: req.Lang }
+
+    for i := 0; i < req.N; i++ {
+
+        deck.Slides = append(deck.Slides, mkslide(req))
+    }
+
+    return deck
+}
+
+// Handles incoming requests for decks
 func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings Settings) Settings {
 
@@ -111,10 +146,8 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Lang: r.FormValue("lang"),
             Cat: r.FormValue("category") }
 
-    deck := Deck{
-            N: req.N,
-            Lang: req.Lang,
-            Slides: make([]Slide, req.N) }
+    deck := mkdeck(req)
+
 
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
 
