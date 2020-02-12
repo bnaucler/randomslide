@@ -1,3 +1,5 @@
 bin/rsserver
 data/*
 !data/.gitkeep
+static/log/*
+!static/log/.gitkeep

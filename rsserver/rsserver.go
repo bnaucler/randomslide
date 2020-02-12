@@ -18,6 +18,7 @@ import (
 
 const DEFAULTPORT = 6291
 const DBNAME = "./data/random.db"
+const LOGPATH = "./static/log/"
 const PIDFILEPATH = "./data/"
 
 const VOLATILEMODE = true
@@ -54,6 +55,17 @@ type Slide struct {
 // Log all errors to console
 func cherr(e error) {
     if e != nil { log.Fatal(e) }
+}
+
+func initlog(prgname string) {
+
+    logfile := fmt.Sprintf("%s/%s.log", LOGPATH, prgname)
+
+    f, e := os.OpenFile(logfile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+    cherr(e)
+
+    log.SetOutput(f)
+    log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
 // Write JSON encoded byte slice to DB
@@ -146,8 +158,10 @@ func main() {
     pidfile := fmt.Sprintf("%s/%s.pid", PIDFILEPATH, prgname)
     e = ioutil.WriteFile(pidfile, []byte(strconv.Itoa(pid)), 0644)
 
+    initlog(prgname)
+
     if settings.Verb == true {
-        fmt.Printf("DEBUG: %s started with PID: %d\n", prgname, pid)
+        log.Printf("DEBUG: %s started with PID: %d\n", prgname, pid)
     }
 
     // Static content
@@ -155,7 +169,7 @@ func main() {
 
     if VOLATILEMODE == true {
         http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-            fmt.Printf("Restart request received. Shutting down.\n")
+            log.Printf("Restart request received. Shutting down.\n")
             os.Exit(1)
         })
     }
