@@ -31,13 +31,26 @@ serverajax.send();
 }
 
 function printMonLogs(log){
-    let monitorEl = document.getElementById("logfileMonitor");
-    let logtxt = document.createTextNode(log);
-    monitorEl.appendChild(logtxt);
+    let lines = log.split('\n');
+    for(let line = 0; line < lines.length; line++){
+        let monitorEl = document.getElementById("logfileMonitor");
+        let p = document.createElement("p");
+        let logtxt = document.createTextNode(lines[line]);
+        p.appendChild(logtxt);
+        monitorEl.appendChild(p);
+    }
+    
+
 }
 
 function printServLogs(log){
-    let serverEl = document.getElementById("logfileServer");
-    let logtxt = document.createTextNode(log);
-    serverEl.appendChild(logtxt);
+
+    let lines = log.split('\n');
+    for(let line = 0; line < lines.length; line++){
+        let serverEl = document.getElementById("logfileServer");
+        let p = document.createElement("p");
+        let logtxt = document.createTextNode(lines[line]);
+        p.appendChild(logtxt);
+        serverEl.appendChild(p);
+    }
 }
