@@ -35,3 +35,10 @@ select, input {
 #output div{
     font-size: 2em;
 }
+
+.bigredbutton{
+    background-color: red;
+    border: 10px solid red;
+    border-radius: 50%;
+    padding: 2em;
+}
