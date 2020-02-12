@@ -18,10 +18,10 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Binaries can be built with /bin/build.sh and will be placed in /bin
 
 ## TODO
-* Decide on data type structures
 * API documentation
 * API feature request list
 * Image uploding functionality
+* Refactor main() of rsserver.go
 
 ## IRC
 The main developers can be found in the channel #ljusdal at EFNet.
