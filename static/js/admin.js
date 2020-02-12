@@ -1,6 +1,7 @@
 function restartServer(){
     var xh = new XMLHttpRequest();
     xh.open('GET', "/request", true);
+    xh.send();
 }
 
 
