@@ -50,3 +50,8 @@ select, input {
     border: 2px dotted black;
     margin: 10px;
 }
+
+#logfileMonitor, #logfileServer{
+    width: 45%;
+    float: left;
+}
