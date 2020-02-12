@@ -5,9 +5,7 @@ PIDFILE="data/rsserver.pid"
 RSLOGFILE="static/log/rsserver.log"
 MONLOGFILE="static/log/rsmonitor.log"
 
-touch $PIDFILE
-touch $RSLOGFILE
-touch $MONLOGFILE
+touch $PIDFILE $RSLOGFILE $MONLOGFILE
 
 while true; do
     git pull
