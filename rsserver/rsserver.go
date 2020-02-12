@@ -57,6 +57,7 @@ func cherr(e error) {
     if e != nil { log.Fatal(e) }
 }
 
+// Initialize logger
 func initlog(prgname string) {
 
     logfile := fmt.Sprintf("%s/%s.log", LOGPATH, prgname)
@@ -124,7 +125,6 @@ func mkdeck(req Deckreq) Deck {
             Lang: req.Lang }
 
     for i := 0; i < req.N; i++ {
-
         deck.Slides = append(deck.Slides, mkslide(req))
     }
 
@@ -147,7 +147,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Cat: r.FormValue("category") }
 
     deck := mkdeck(req)
-
 
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
 
