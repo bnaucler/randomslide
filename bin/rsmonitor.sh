@@ -1,7 +1,6 @@
 #!/bin/sh
 
 INTERVAL=30
-LOGFILE="data/rsserver.log"
 
 while true; do
     git pull
@@ -11,7 +10,7 @@ while true; do
         bin/build.sh
         DATE=`date +'%a | %Y-%m-%d | %R:%S'`
         echo "$DATE: Restarting server"
-        nohup bin/rsserver -v > $LOGFILE&
+        nohup bin/rsserver -v &
     fi
     sleep $INTERVAL
 done
