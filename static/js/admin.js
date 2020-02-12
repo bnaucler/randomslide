@@ -39,12 +39,9 @@ function printMonLogs(log){
         p.appendChild(logtxt);
         monitorEl.appendChild(p);
     }
-    
-
 }
 
 function printServLogs(log){
-
     let lines = log.split('\n');
     for(let line = 0; line < lines.length; line++){
         let serverEl = document.getElementById("logfileServer");
