@@ -28,6 +28,7 @@ const L_REQ = 0
 const L_RESP = 1
 
 var dbuc = []byte("dbuc")       // deck bucket
+var tbuc = []byte("tbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
 
@@ -40,6 +41,11 @@ type Deckreq struct {
     N int
     Lang string
     Cat string
+}
+
+type Textreq struct {
+    Text string                 // The text object to add to db
+    Tags string                 // whitespace separated tags for indexing
 }
 
 type Deck struct {
@@ -55,6 +61,8 @@ type Slide struct {
     Tcolor string               // Text color in CSS-compatible hex code
     Bgcolor string              // Body color in CSS-compatible hex code
 }
+
+// TODO: Create a status response object - implement in addtext
 
 // Log all errors to console
 func cherr(e error) {
@@ -144,26 +152,22 @@ func randstr(ln int) string {
     return string(b)
 }
 
-// Returns a slide according to request
-func mkslide(req Deckreq) Slide {
-
-    slide := Slide{Title: randstr(10) }
-
-    return slide
-}
-
 // Returns a full slide deck according to request
-func mkdeck(req Deckreq) Deck {
+func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
 
     deck := Deck{
             N: req.N,
             Lang: req.Lang }
 
+    deck.Slides = make([]Slide, req.N)
+
     for i := 0; i < req.N; i++ {
-        deck.Slides = append(deck.Slides, mkslide(req))
+        title, e := rdb(db, []byte(strconv.Itoa(rand.Intn(settings.Cid))), tbuc)
+        deck.Slides[i].Title = string(title)
+        cherr(e)
     }
 
-    return deck
+    return deck, settings
 }
 
 // Handles incoming requests for decks
@@ -182,26 +186,41 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Cat: r.FormValue("category") }
 
     mreq, e := json.Marshal(req)
+    cherr(e)
     addlog(L_REQ, mreq, r)
 
-    deck := mkdeck(req)
-
-    key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
+    deck, settings := mkdeck(req, db, settings)
 
     mdeck, e := json.Marshal(deck)
-
-    e = wrdb(db, key, mdeck, dbuc)
-    cherr(e)
-
-    v, e := rdb(db, key, dbuc)
-    cherr(e)
-
-    rdeck := Deck{}
-    e = json.Unmarshal(v, &rdeck)
-    addlog(L_RESP, v, r)
+    addlog(L_RESP, mdeck, r)
 
     enc := json.NewEncoder(w)
-    enc.Encode(rdeck)
+    enc.Encode(deck)
+
+    return settings
+}
+
+// Handles incoming requests to add text
+func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings Settings) Settings {
+
+    e := r.ParseForm()
+    cherr(e)
+
+    t := Textreq{
+            Text: r.FormValue("text"),
+            Tags: r.FormValue("tags") }
+
+    // TODO: Create tag searchability
+    // sptags := strings.Split(t.Tags, ",")
+
+    key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
+    mtxt, e := json.Marshal(t)
+
+    e = wrdb(db, key, mtxt, tbuc)
+    cherr(e)
+
+    addlog(L_REQ, mtxt, r)
 
     settings.Cid++
     return settings
@@ -211,10 +230,10 @@ func main() {
 
     rand.Seed(time.Now().UnixNano())
 
-	pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
-	dbptr := flag.String("d", DBNAME, "specify database to open")
-	vptr := flag.Bool("v", false, "verbose mode")
-	flag.Parse()
+    pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
+    dbptr := flag.String("d", DBNAME, "specify database to open")
+    vptr := flag.Bool("v", false, "verbose mode")
+    flag.Parse()
 
     db, e := bolt.Open(*dbptr, 0640, nil)
     cherr(e)
@@ -248,6 +267,11 @@ func main() {
     // Slide requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
         settings = deckreqhandler(w, r, db, settings)
+    })
+
+    // Add text to db
+    http.HandleFunc("/addtext", func(w http.ResponseWriter, r *http.Request) {
+        settings = textreqhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
