@@ -32,6 +32,8 @@ var tbuc = []byte("tbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
 
+var SETTINGSKEY = []byte("skey")
+
 type Settings struct {
     Verb bool
     Cid int
@@ -152,6 +154,29 @@ func randstr(ln int) string {
     return string(b)
 }
 
+// Wrapper for writing settings to database
+func wrsettings(db *bolt.DB, settings Settings) {
+
+    mset, e := json.Marshal(settings)
+    cherr(e)
+
+    e = wrdb(db, SETTINGSKEY, mset, sbuc)
+    cherr(e)
+}
+
+// Wrapper for reading settings from database
+func rsettings(db *bolt.DB) Settings {
+
+    mset, e:= rdb(db, SETTINGSKEY, sbuc)
+    cherr(e)
+
+    settings := Settings{}
+    json.Unmarshal(mset, &settings)
+    cherr(e)
+
+    return settings
+}
+
 // Returns a full slide deck according to request
 func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
 
@@ -161,9 +186,12 @@ func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
 
     deck.Slides = make([]Slide, req.N)
 
+    txtreq := Textreq{}
+
     for i := 0; i < req.N; i++ {
-        title, e := rdb(db, []byte(strconv.Itoa(rand.Intn(settings.Cid))), tbuc)
-        deck.Slides[i].Title = string(title)
+        mtxtobj, e := rdb(db, []byte(strconv.Itoa(rand.Intn(settings.Cid))), tbuc)
+        json.Unmarshal(mtxtobj, &txtreq)
+        deck.Slides[i].Title = txtreq.Text
         cherr(e)
     }
 
