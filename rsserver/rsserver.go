@@ -167,11 +167,12 @@ func wrsettings(db *bolt.DB, settings Settings) {
 // Wrapper for reading settings from database
 func rsettings(db *bolt.DB) Settings {
 
-    mset, e:= rdb(db, SETTINGSKEY, sbuc)
-    cherr(e)
-
     settings := Settings{}
-    json.Unmarshal(mset, &settings)
+
+    mset, e := rdb(db, SETTINGSKEY, sbuc)
+    if e != nil { return Settings{} }
+
+    e = json.Unmarshal(mset, &settings)
     cherr(e)
 
     return settings
@@ -251,6 +252,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     addlog(L_REQ, mtxt, r)
 
     settings.Cid++
+    wrsettings(db, settings)
     return settings
 }
 
@@ -267,9 +269,8 @@ func main() {
     cherr(e)
     defer db.Close()
 
-    settings := Settings{}
+    settings := rsettings(db)
     settings.Verb = *vptr
-    settings.Cid = 0
 
     pid := os.Getpid()
     prgname := filepath.Base(os.Args[0])
