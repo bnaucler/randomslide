@@ -32,7 +32,7 @@ serverajax.send();
 
 function printMonLogs(log){
     let lines = log.split('\n');
-    for(let line = 0; line < lines.length; line++){
+    for(let line = lines.length - 1; line >= 0; line--){
         let monitorEl = document.getElementById("logfileMonitor");
         let p = document.createElement("p");
         let logtxt = document.createTextNode(lines[line]);
@@ -43,7 +43,7 @@ function printMonLogs(log){
 
 function printServLogs(log){
     let lines = log.split('\n');
-    for(let line = 0; line < lines.length; line++){
+    for(let line = lines.length - 1; line >= 0; line--){
         let serverEl = document.getElementById("logfileServer");
         let p = document.createElement("p");
         let logtxt = document.createTextNode(lines[line]);
