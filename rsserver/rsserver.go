@@ -3,6 +3,7 @@ package main
 import (
     "os"
     "fmt"
+    "net"
     "log"
     "time"
     "flag"
@@ -22,6 +23,9 @@ const LOGPATH = "./static/log/"
 const PIDFILEPATH = "./data/"
 
 const VOLATILEMODE = true
+
+const L_REQ = 0
+const L_RESP = 1
 
 var dbuc = []byte("dbuc")       // deck bucket
 var ibuc = []byte("ibuc")       // image bucket
@@ -55,6 +59,37 @@ type Slide struct {
 // Log all errors to console
 func cherr(e error) {
     if e != nil { log.Fatal(e) }
+}
+
+// Retrieves client IP address from http request
+func getclientip(r *http.Request) string {
+
+    ip, _, e := net.SplitHostPort(r.RemoteAddr)
+    cherr(e)
+
+    return ip
+}
+
+// Log file wrapper
+// TODO: Use interface() instead of []byte and ltype
+//       log levels
+func addlog(ltype int, msg []byte, r *http.Request) {
+
+    ip := getclientip(r)
+    var lentry string
+
+    switch ltype {
+        case L_REQ:
+            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+
+        case L_RESP:
+            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        default:
+            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
+    }
+
+    log.Println(lentry)
 }
 
 // Initialize logger
@@ -146,6 +181,9 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Lang: r.FormValue("lang"),
             Cat: r.FormValue("category") }
 
+    mreq, e := json.Marshal(req)
+    addlog(L_REQ, mreq, r)
+
     deck := mkdeck(req)
 
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
@@ -160,6 +198,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     rdeck := Deck{}
     e = json.Unmarshal(v, &rdeck)
+    addlog(L_RESP, v, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(rdeck)
