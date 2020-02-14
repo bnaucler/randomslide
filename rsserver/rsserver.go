@@ -3,6 +3,7 @@ package main
 import (
     "os"
     "fmt"
+    "net"
     "log"
     "time"
     "flag"
@@ -23,9 +24,15 @@ const PIDFILEPATH = "./data/"
 
 const VOLATILEMODE = true
 
+const L_REQ = 0
+const L_RESP = 1
+
 var dbuc = []byte("dbuc")       // deck bucket
+var tbuc = []byte("tbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
 var sbuc = []byte("sbuc")       // settings bucket
+
+var SETTINGSKEY = []byte("skey")
 
 type Settings struct {
     Verb bool
@@ -36,6 +43,11 @@ type Deckreq struct {
     N int
     Lang string
     Cat string
+}
+
+type Textreq struct {
+    Text string                 // The text object to add to db
+    Tags string                 // whitespace separated tags for indexing
 }
 
 type Deck struct {
@@ -52,9 +64,42 @@ type Slide struct {
     Bgcolor string              // Body color in CSS-compatible hex code
 }
 
+// TODO: Create a status response object - implement in addtext
+
 // Log all errors to console
 func cherr(e error) {
     if e != nil { log.Fatal(e) }
+}
+
+// Retrieves client IP address from http request
+func getclientip(r *http.Request) string {
+
+    ip, _, e := net.SplitHostPort(r.RemoteAddr)
+    cherr(e)
+
+    return ip
+}
+
+// Log file wrapper
+// TODO: Use interface() instead of []byte and ltype
+//       log levels
+func addlog(ltype int, msg []byte, r *http.Request) {
+
+    ip := getclientip(r)
+    var lentry string
+
+    switch ltype {
+        case L_REQ:
+            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+
+        case L_RESP:
+            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        default:
+            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
+    }
+
+    log.Println(lentry)
 }
 
 // Initialize logger
@@ -109,26 +154,49 @@ func randstr(ln int) string {
     return string(b)
 }
 
-// Returns a slide according to request
-func mkslide(req Deckreq) Slide {
+// Wrapper for writing settings to database
+func wrsettings(db *bolt.DB, settings Settings) {
 
-    slide := Slide{Title: randstr(10) }
+    mset, e := json.Marshal(settings)
+    cherr(e)
 
-    return slide
+    e = wrdb(db, SETTINGSKEY, mset, sbuc)
+    cherr(e)
+}
+
+// Wrapper for reading settings from database
+func rsettings(db *bolt.DB) Settings {
+
+    settings := Settings{}
+
+    mset, e := rdb(db, SETTINGSKEY, sbuc)
+    if e != nil { return Settings{} }
+
+    e = json.Unmarshal(mset, &settings)
+    cherr(e)
+
+    return settings
 }
 
 // Returns a full slide deck according to request
-func mkdeck(req Deckreq) Deck {
+func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
 
     deck := Deck{
             N: req.N,
             Lang: req.Lang }
 
+    deck.Slides = make([]Slide, req.N)
+
+    txtreq := Textreq{}
+
     for i := 0; i < req.N; i++ {
-        deck.Slides = append(deck.Slides, mkslide(req))
+        mtxtobj, e := rdb(db, []byte(strconv.Itoa(rand.Intn(settings.Cid))), tbuc)
+        json.Unmarshal(mtxtobj, &txtreq)
+        deck.Slides[i].Title = txtreq.Text
+        cherr(e)
     }
 
-    return deck
+    return deck, settings
 }
 
 // Handles incoming requests for decks
@@ -146,25 +214,45 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Lang: r.FormValue("lang"),
             Cat: r.FormValue("category") }
 
-    deck := mkdeck(req)
+    mreq, e := json.Marshal(req)
+    cherr(e)
+    addlog(L_REQ, mreq, r)
 
-    key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
+    deck, settings := mkdeck(req, db, settings)
 
     mdeck, e := json.Marshal(deck)
-
-    e = wrdb(db, key, mdeck, dbuc)
-    cherr(e)
-
-    v, e := rdb(db, key, dbuc)
-    cherr(e)
-
-    rdeck := Deck{}
-    e = json.Unmarshal(v, &rdeck)
+    addlog(L_RESP, mdeck, r)
 
     enc := json.NewEncoder(w)
-    enc.Encode(rdeck)
+    enc.Encode(deck)
+
+    return settings
+}
+
+// Handles incoming requests to add text
+func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings Settings) Settings {
+
+    e := r.ParseForm()
+    cherr(e)
+
+    t := Textreq{
+            Text: r.FormValue("text"),
+            Tags: r.FormValue("tags") }
+
+    // TODO: Create tag searchability
+    // sptags := strings.Split(t.Tags, ",")
+
+    key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
+    mtxt, e := json.Marshal(t)
+
+    e = wrdb(db, key, mtxt, tbuc)
+    cherr(e)
+
+    addlog(L_REQ, mtxt, r)
 
     settings.Cid++
+    wrsettings(db, settings)
     return settings
 }
 
@@ -172,18 +260,17 @@ func main() {
 
     rand.Seed(time.Now().UnixNano())
 
-	pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
-	dbptr := flag.String("d", DBNAME, "specify database to open")
-	vptr := flag.Bool("v", false, "verbose mode")
-	flag.Parse()
+    pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
+    dbptr := flag.String("d", DBNAME, "specify database to open")
+    vptr := flag.Bool("v", false, "verbose mode")
+    flag.Parse()
 
     db, e := bolt.Open(*dbptr, 0640, nil)
     cherr(e)
     defer db.Close()
 
-    settings := Settings{}
+    settings := rsettings(db)
     settings.Verb = *vptr
-    settings.Cid = 0
 
     pid := os.Getpid()
     prgname := filepath.Base(os.Args[0])
@@ -209,6 +296,11 @@ func main() {
     // Slide requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
         settings = deckreqhandler(w, r, db, settings)
+    })
+
+    // Add text to db
+    http.HandleFunc("/addtext", func(w http.ResponseWriter, r *http.Request) {
+        settings = textreqhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
