@@ -27,6 +27,8 @@ const VOLATILEMODE = true
 const L_REQ = 0
 const L_RESP = 1
 
+const C_OK = 0
+
 var dbuc = []byte("dbuc")       // deck bucket
 var tbuc = []byte("tbuc")       // text bucket
 var ibuc = []byte("ibuc")       // image bucket
@@ -56,12 +58,19 @@ type Deck struct {
     Slides []Slide              // Slice of Slide objects
 }
 
+// TODO: remove all color
 type Slide struct {
     Title string                // Slide title
     Imgur string                // URL to image
     Btext string                // Body text
     Tcolor string               // Text color in CSS-compatible hex code
     Bgcolor string              // Body color in CSS-compatible hex code
+}
+
+// Status response when no other data is returned
+type Statusresp struct {
+    Code int                    // Error code to be parsed in frontend
+    Text string                 // Additional related data
 }
 
 // TODO: Create a status response object - implement in addtext
@@ -250,6 +259,13 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     cherr(e)
 
     addlog(L_REQ, mtxt, r)
+
+    resp := Statusresp{
+            Code: C_OK,
+            Text: "" }
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
 
     settings.Cid++
     wrsettings(db, settings)
