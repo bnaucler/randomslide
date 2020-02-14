@@ -26,6 +26,7 @@ const VOLATILEMODE = true
 
 const L_REQ = 0
 const L_RESP = 1
+const L_SHUTDOWN = 2
 
 const C_OK = 0
 
@@ -103,6 +104,9 @@ func addlog(ltype int, msg []byte, r *http.Request) {
 
         case L_RESP:
             lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        case L_SHUTDOWN:
+            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
 
         default:
             lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
@@ -259,17 +263,37 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     cherr(e)
 
     addlog(L_REQ, mtxt, r)
-
-    resp := Statusresp{
-            Code: C_OK,
-            Text: "" }
-
-    enc := json.NewEncoder(w)
-    enc.Encode(resp)
+    sendstatus(C_OK, "", w)
 
     settings.Cid++
     wrsettings(db, settings)
+
     return settings
+}
+
+func sendstatus(code int, text string, w http.ResponseWriter) {
+
+    resp := Statusresp{
+            Code: code,
+            Text: text }
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
+}
+
+func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings Settings, pidfile string) {
+
+    addlog(L_SHUTDOWN, []byte(""), r)
+    sendstatus(C_OK, "", w)
+
+    wrsettings(db, settings)
+    os.Remove(pidfile)
+
+    go func() {
+        time.Sleep(1 * time.Second)
+        os.Exit(1)
+    }()
 }
 
 func main() {
@@ -304,8 +328,7 @@ func main() {
 
     if VOLATILEMODE == true {
         http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-            log.Printf("Restart request received. Shutting down.\n")
-            os.Exit(1)
+            shutdownhandler(w, r, db, settings, pidfile)
         })
     }
 
