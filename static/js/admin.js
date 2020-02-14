@@ -32,8 +32,10 @@ serverajax.send();
 
 function printMonLogs(log){
     let lines = log.split('\n');
+    var monitorEl = document.getElementById("logfileMonitor");
+    monitorEl.innerHTML = "";
     for(let line = lines.length - 1; line >= 0; line--){
-        let monitorEl = document.getElementById("logfileMonitor");
+
         let p = document.createElement("p");
         let logtxt = document.createTextNode(lines[line]);
         p.appendChild(logtxt);
@@ -43,8 +45,9 @@ function printMonLogs(log){
 
 function printServLogs(log){
     let lines = log.split('\n');
+    var serverEl = document.getElementById("logfileServer");
+    serverEl.innerHTML = "";
     for(let line = lines.length - 1; line >= 0; line--){
-        let serverEl = document.getElementById("logfileServer");
         let p = document.createElement("p");
         let logtxt = document.createTextNode(lines[line]);
         p.appendChild(logtxt);
@@ -57,7 +60,7 @@ function addTitle(){
     titleajax = new XMLHttpRequest();
     titleajax.open('POST', "addtext?text=" + title, true);
     titleajax.send();
-    fetchLogs();
+    setTimeout(fetchLogs(), 2000);
 }
 
 //addtext?text=peniskruka <. lägg titlar i DB
