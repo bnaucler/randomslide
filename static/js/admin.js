@@ -51,3 +51,12 @@ function printServLogs(log){
         serverEl.appendChild(p);
     }
 }
+
+function addTitle(){
+    let title = document.getElementById("titelinput").value;
+    titleajax = new XMLHttpRequest();
+    titleajax.open('POST', "addtext?text=" + title, true);
+    titleajax.send();
+}
+
+//addtext?text=peniskruka <. lägg titlar i DB
