@@ -59,13 +59,10 @@ type Deck struct {
     Slides []Slide              // Slice of Slide objects
 }
 
-// TODO: remove all color
 type Slide struct {
     Title string                // Slide title
     Imgur string                // URL to image
     Btext string                // Body text
-    Tcolor string               // Text color in CSS-compatible hex code
-    Bgcolor string              // Body color in CSS-compatible hex code
 }
 
 // Status response when no other data is returned
@@ -73,8 +70,6 @@ type Statusresp struct {
     Code int                    // Error code to be parsed in frontend
     Text string                 // Additional related data
 }
-
-// TODO: Create a status response object - implement in addtext
 
 // Log all errors to console
 func cherr(e error) {
@@ -191,6 +186,20 @@ func rsettings(db *bolt.DB) Settings {
     return settings
 }
 
+// Sends random text object from database
+func getrndtextobj(db *bolt.DB, kmax int) string {
+
+    txtreq := Textreq{}
+    k := []byte(strconv.Itoa(rand.Intn(kmax)))
+
+    mtxt, e := rdb(db, k, tbuc)
+    cherr(e)
+
+    json.Unmarshal(mtxt, &txtreq)
+
+    return txtreq.Text
+}
+
 // Returns a full slide deck according to request
 func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
 
@@ -198,15 +207,12 @@ func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
             N: req.N,
             Lang: req.Lang }
 
-    deck.Slides = make([]Slide, req.N)
-
-    txtreq := Textreq{}
-
     for i := 0; i < req.N; i++ {
-        mtxtobj, e := rdb(db, []byte(strconv.Itoa(rand.Intn(settings.Cid))), tbuc)
-        json.Unmarshal(mtxtobj, &txtreq)
-        deck.Slides[i].Title = txtreq.Text
-        cherr(e)
+        slide := Slide{
+            Title: getrndtextobj(db, settings.Cid),
+            Btext: getrndtextobj(db, settings.Cid) }
+
+        deck.Slides = append(deck.Slides, slide)
     }
 
     return deck, settings
@@ -232,6 +238,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     addlog(L_REQ, mreq, r)
 
     deck, settings := mkdeck(req, db, settings)
+
 
     mdeck, e := json.Marshal(deck)
     addlog(L_RESP, mdeck, r)
@@ -281,6 +288,7 @@ func sendstatus(code int, text string, w http.ResponseWriter) {
     enc.Encode(resp)
 }
 
+// Handles incoming requests for shutdowns
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings Settings, pidfile string) {
 
