@@ -1,5 +1,3 @@
-window.onload = fetchSlides();
-
 document.getElementById('timerOrNot').addEventListener('change', function() {
     if(this.value === "timer"){
         document.getElementById("slideTimer").style.display = "inline";
@@ -20,7 +18,7 @@ function fetchSlides(){
     }
     xhttp.open("GET", "js/testing.json", false);
     xhttp.send();
-    //"category=bible&lang=en&amount=10"
+    //"?category=bible&lang=en&amount=10"
     createSlides(resp);
 }
 
@@ -50,20 +48,38 @@ function createSlides(resp){
         div.appendChild(slideTxt);
     
     }
+    
     setTimeout(displaySlides, 5000);
-
 }
 
 function displaySlides(){
-    console.log("Hej")
+    document.getElementById("formwrapper").innerHTML = "";
+    let butt = document.createElement("button");
+    let buttxt = document.createTextNode("GO!");
+    butt.setAttribute("class", "bigredbutton");
+    butt.appendChild(buttxt);
+    document.getElementById("formwrapper").appendChild(butt);
+    let div = document.createElement("div");
+    let p = document.createElement("p");
+    
+    //amountofslides
 
-    //nollställ det som finns i wrapper och stoppa in en knapp med "kör" i.
+    //klicka själv eller byta automagi
+    //Om automagi: hur lång tid?
+
+    //ladda in CSS
+
+
+    //språk
+
+
+    //kategori
+
+
+
 
         //hämta om timer eller göra själv
         //om timer så byt av sig själv
         //om göra själv så lägg in knappar att byta slide med
         //slidenummer nere till höger i format 2/10.
 }
-
-
-//funktion att nå loggarna
