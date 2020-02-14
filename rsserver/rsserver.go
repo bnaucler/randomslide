@@ -171,18 +171,35 @@ func sendstatus(code int, text string, w http.ResponseWriter) {
 
 // Handles incoming requests for shutdowns
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings, pidfile string) {
+    settings rscore.Settings) {
 
     addlog(rscore.L_SHUTDOWN, []byte(""), r)
     sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, settings)
-    os.Remove(pidfile)
 
     go func() {
         time.Sleep(1 * time.Second)
-        os.Exit(1)
+        os.Remove(settings.Pidfile)
+        os.Exit(0)
     }()
+}
+
+// Creates pid file and starts logging
+func rsinit(settings rscore.Settings) rscore.Settings {
+
+    prgname := filepath.Base(os.Args[0])
+    pid := os.Getpid()
+
+    settings.Pidfile = fmt.Sprintf("%s/%s.pid", rscore.PIDFILEPATH, prgname)
+    e := ioutil.WriteFile(settings.Pidfile, []byte(strconv.Itoa(pid)), 0644)
+    rscore.Cherr(e)
+
+    initlog(prgname)
+
+    if settings.Verb { log.Printf("%s started with PID: %d\n", prgname, pid) }
+
+    return settings
 }
 
 func main() {
@@ -200,24 +217,14 @@ func main() {
 
     settings := rsdb.Rsettings(db)
     settings.Verb = *vptr
-
-    pid := os.Getpid()
-    prgname := filepath.Base(os.Args[0])
-    pidfile := fmt.Sprintf("%s/%s.pid", rscore.PIDFILEPATH, prgname)
-    e = ioutil.WriteFile(pidfile, []byte(strconv.Itoa(pid)), 0644)
-
-    initlog(prgname)
-
-    if settings.Verb == true {
-        log.Printf("%s started with PID: %d\n", prgname, pid)
-    }
+    settings = rsinit(settings)
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
     if rscore.VOLATILEMODE == true {
         http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-            shutdownhandler(w, r, db, settings, pidfile)
+            shutdownhandler(w, r, db, settings)
         })
     }
 

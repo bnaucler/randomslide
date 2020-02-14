@@ -34,6 +34,7 @@ var SETTINGSKEY = []byte("skey")
 type Settings struct {
     Verb bool
     Cid int
+    Pidfile string
 }
 
 type Deckreq struct {
