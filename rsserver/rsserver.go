@@ -66,18 +66,6 @@ func initlog(prgname string) {
     log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
-// Create random string of length ln
-func randstr(ln int) string {
-
-    const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
-    var cslen = len(charset)
-
-    b := make([]byte, ln)
-    for i := range b { b[i] = charset[rand.Intn(cslen)] }
-
-    return string(b)
-}
-
 // Sends random text object from database
 func getrndtextobj(db *bolt.DB, kmax int) string {
 
