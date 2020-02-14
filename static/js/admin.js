@@ -60,7 +60,7 @@ function addTitle(){
     titleajax = new XMLHttpRequest();
     titleajax.open('POST', "addtext?text=" + title, true);
     titleajax.send();
-    setTimeout(fetchLogs(), 2000);
+    setTimeout(fetchLogs(), 4000);
 }
 
 //addtext?text=peniskruka <. lägg titlar i DB
