@@ -24,10 +24,11 @@ const L_SHUTDOWN = 2
 
 const C_OK = 0
 
-var DBUC = []byte("dbuc")       // deck bucket
-var TBUC = []byte("tbuc")       // text bucket
-var IBUC = []byte("ibuc")       // image bucket
-var SBUC = []byte("sbuc")       // settings bucket
+var DBUC = []byte("dbuc")       // Deck bucket
+var TBUC = []byte("tbuc")       // Title text bucket
+var BBUC = []byte("bbuc")       // Body text bucket
+var IBUC = []byte("ibuc")       // Image bucket
+var SBUC = []byte("sbuc")       // Settings bucket
 
 var SETTINGSKEY = []byte("skey")
 
@@ -36,8 +37,8 @@ type Settings struct {
     Cid int                     // Max id TODO: remove
     Pidfile string              // Location of pidfile
     Taglist []string            // List of all existing tags
-    Btextmax map[string]int     // Maximal value for randomization
-    Ttextmax map[string]int     // Maximal value for randomization
+    Btmax map[string]int        // Maximal value for randomization
+    Ttmax map[string]int        // Maximal value for randomization
 }
 
 type Deckreq struct {
@@ -47,7 +48,8 @@ type Deckreq struct {
 }
 
 type Textreq struct {
-    Text string                 // The text object to add to db
+    Ttext string                // Title text object to add to db
+    Btext string                // Body text object to add to db
     Tags string                 // whitespace separated tags for indexing
 }
 

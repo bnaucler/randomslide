@@ -112,6 +112,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     n, e := strconv.Atoi(r.FormValue("amount"))
     rscore.Cherr(e)
 
+    // TODO: replace category with tags
     req := rscore.Deckreq{
             N: n,
             Lang: r.FormValue("lang"),
@@ -170,6 +171,28 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
     return settings, r
 }
 
+// Conditionally adds tagged text to database
+func addtextwtags(text string, tags []string, db *bolt.DB,
+    settings rscore.Settings, buc []byte) rscore.Settings {
+
+    to := rscore.Textobj{}
+
+    for _, s := range tags {
+        to.Tags = append(to.Tags, cleanstring(s))
+    }
+
+    for _, s := range to.Tags {
+
+        key := []byte(s)
+        mtxt, e := json.Marshal(to)
+        e = rsdb.Wrdb(db, key, mtxt, buc)
+
+        rscore.Cherr(e)
+    }
+
+    return settings
+}
+
 // Handles incoming requests to add text
 func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -178,7 +201,8 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     tr := rscore.Textreq{
-            Text: r.FormValue("text"),
+            Ttext: r.FormValue("ttext"),
+            Btext: r.FormValue("btext"),
             Tags: r.FormValue("tags") }
 
     ltxt, e := json.Marshal(tr)
@@ -186,22 +210,15 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     itags := strings.Split(tr.Tags, " ")
 
-    to := rscore.Textobj{
-            Id: settings.Cid,
-            Text: tr.Text }
-
-    for _, s := range itags {
-        to.Tags = append(to.Tags, cleanstring(s))
+    if len(tr.Ttext) < 1 {
+        settings = addtextwtags(tr.Ttext, itags, db, settings, rscore.TBUC)
     }
 
-    for _, s := range to.Tags {
-        key := []byte(s)
-        mtxt, e := json.Marshal(to)
-        e = rsdb.Wrdb(db, key, mtxt, rscore.TBUC)
-        rscore.Cherr(e)
+    if len(tr.Btext) < 1{
+        settings = addtextwtags(tr.Btext, itags, db, settings, rscore.BBUC)
     }
 
-    settings, cngs := addtagstoindex(to.Tags, settings)
+    settings, cngs := addtagstoindex(itags, settings)
     rsdb.Wrsettings(db, settings)
 
     var sstr string
