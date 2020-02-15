@@ -33,8 +33,10 @@ select, input {
 }
 
 
-#output div{
+#output{
     font-size: 2em;
+    width: 100%;
+    position: relative;
 }
 
 .bigredbutton{
@@ -57,4 +59,43 @@ select, input {
     height: 20em;
     overflow-y: scroll;
     font-size: 0.8em;
+}
+
+.smallgaybutton{
+    background: orange;
+    padding: 0.8em;
+    border: 2px solid orangered;
+    border-radius: 5px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-shadow: 1px 1px white;
+}
+
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    margin-top: -30px;
+    padding: 16px;
+    color: #888;
+    font-weight: bold;
+    font-size: 3em;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+
+.prev:hover, .next:hover{
+    background: black;
+}
+
+.next{
+    position: absolute;
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}  
+
+.slidechanger{
+    display: none;
 }
