@@ -2,6 +2,7 @@ var slideProg;
 var timer;
 var resp;
 var slideIndex = 1;
+var slideshow;
 
 document.getElementById('timerOrNot').addEventListener('change', function() {
     if(this.value === "timer"){
@@ -53,9 +54,6 @@ function createSlides(resp){
     setTimeout(loadingSlides, 1000);
 }
 
-
-
-
 function loadingSlides(){
     let amount = document.getElementById("amountOfSlides").value;
     let category = document.getElementById("category").value;
@@ -77,23 +75,27 @@ function loadingSlides(){
     let butt = document.createElement("button");
     let buttxt = document.createTextNode("GO!");
     butt.setAttribute("class", "bigredbutton");
-    butt.setAttribute("onclick", "slideShow()");
+    butt.setAttribute("onclick", "startSlide()");
     butt.appendChild(buttxt);
     document.getElementById("formwrapper").appendChild(butt);
-
 }
 
-
-
-function slideShow(n){
+function startSlide(){
+    if(slideProg === "change"){
+        slideshow = true;
+    }
+    slideShow();
     if(slideProg === "change"){
         document.getElementById("prev").style.display = "inline";
         document.getElementById("next").style.display = "inline";
     } else {
-        console.log(timer * 1000, changeSlide);
-        changeSlide()
+        document.getElementById("timeDisplay").style.display = "inline";
+        displayTimer(timer);
     }
+}
 
+function slideShow(n){
+    console.log(slideIndex);
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
         slideIndex = 1;
@@ -106,13 +108,36 @@ function slideShow(n){
         slides[i].style.display = "none"; 
     }
     slides[slideIndex-1].style.display = "block"; 
+}
 
+
+    document.onkeydown = function(e){
+        if(slideshow == true){
+        switch (e.keyCode){
+            case 37:
+                changeSlide(-1);
+                break;
+            case 39:
+                changeSlide(1);
+                break;
+        }
+    }
 }
 
 function changeSlide(n){
     slideShow(slideIndex += n);
 }
 
-function displayTimer(time){
-    setTimeout(1000, displayTimer());
+function displayTimer(){
+    var timing = timer;
+
+    setInterval(function(){
+        if(timing === 0){
+            changeSlide(1);
+            timing = timer;
+        }else {
+            timing -= 1;
+            document.getElementById("timeDisplay").innerHTML = timing;
+        }
+    }, 1000);
 }
