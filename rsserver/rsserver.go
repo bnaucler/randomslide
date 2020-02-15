@@ -153,25 +153,26 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Text: r.FormValue("text"),
             Tags: r.FormValue("tags") }
 
-    itags := strings.Split(tr.Tags, " ")
-    var ctags []string
+    ltxt, e := json.Marshal(tr)
+    addlog(rscore.L_REQ, ltxt, r)
 
-    for _, s := range itags {
-        ctags = append(ctags, cleanstring(s))
-    }
+    itags := strings.Split(tr.Tags, " ")
 
     to := rscore.Textobj{
             Id: settings.Cid,
-            Text: tr.Text,
-            Tags: ctags }
+            Text: tr.Text }
 
-    key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
-    mtxt, e := json.Marshal(to)
+    for _, s := range itags {
+        to.Tags = append(to.Tags, cleanstring(s))
+    }
 
-    e = rsdb.Wrdb(db, key, mtxt, rscore.TBUC)
-    rscore.Cherr(e)
+    for _, s := range to.Tags {
+        key := []byte(s)
+        mtxt, e := json.Marshal(to)
+        e = rsdb.Wrdb(db, key, mtxt, rscore.TBUC)
+        rscore.Cherr(e)
+    }
 
-    addlog(rscore.L_REQ, mtxt, r)
     sendstatus(rscore.C_OK, "", w)
 
     settings.Cid++
