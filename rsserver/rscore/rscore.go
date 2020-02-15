@@ -32,9 +32,12 @@ var SBUC = []byte("sbuc")       // settings bucket
 var SETTINGSKEY = []byte("skey")
 
 type Settings struct {
-    Verb bool
-    Cid int
-    Pidfile string
+    Verb bool                   // Verbosity level
+    Cid int                     // Max id TODO: remove
+    Pidfile string              // Location of pidfile
+    Taglist []string            // List of all existing tags
+    Btextmax map[string]int     // Maximal value for randomization
+    Ttextmax map[string]int     // Maximal value for randomization
 }
 
 type Deckreq struct {
@@ -46,6 +49,12 @@ type Deckreq struct {
 type Textreq struct {
     Text string                 // The text object to add to db
     Tags string                 // whitespace separated tags for indexing
+}
+
+type Textobj struct {
+    Id int                      // # for random selection
+    Text string                 // The text itself
+    Tags []string               // All tags where object exists (for associative decks)
 }
 
 type Deck struct {
