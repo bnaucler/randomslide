@@ -7,6 +7,7 @@ import (
     "log"
     "time"
     "flag"
+    "sort"
     "regexp"
     "strings"
     "strconv"
@@ -142,6 +143,33 @@ func cleanstring(src string) string {
     return dst
 }
 
+// Returns true if string is present in list
+func findstrinslice(v string, list []string) bool {
+
+    for _, t := range list {
+        if v == t { return true }
+    }
+
+    return false
+}
+
+// Updates index to include new tags
+func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, int) {
+
+    r := 0
+
+    for _, t := range tags {
+        if findstrinslice(t, settings.Taglist) == false {
+            settings.Taglist = append(settings.Taglist, t)
+            r++
+        }
+    }
+
+    if r != 0 { sort.Strings(settings.Taglist) }
+
+    return settings, r
+}
+
 // Handles incoming requests to add text
 func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -173,10 +201,12 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         rscore.Cherr(e)
     }
 
-    sendstatus(rscore.C_OK, "", w)
-
-    settings.Cid++
+    settings, cngs := addtagstoindex(to.Tags, settings)
     rsdb.Wrsettings(db, settings)
+
+    var sstr string
+    if cngs != 0 { sstr = fmt.Sprintf("%d new tags added", cngs) }
+    sendstatus(rscore.C_OK, sstr, w)
 
     return settings
 }
