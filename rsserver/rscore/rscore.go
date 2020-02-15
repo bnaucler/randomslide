@@ -37,8 +37,6 @@ type Settings struct {
     Cid int                     // Max id TODO: remove
     Pidfile string              // Location of pidfile
     Taglist []string            // List of all existing tags
-    Btmax map[string]int        // Maximal value for randomization
-    Ttmax map[string]int        // Maximal value for randomization
 }
 
 type Deckreq struct {
