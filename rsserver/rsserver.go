@@ -15,67 +15,16 @@ import (
     "encoding/json"
 
     "github.com/boltdb/bolt"
+
+    "github.com/bnaucler/randomslide/rsserver/rscore"
+    "github.com/bnaucler/randomslide/rsserver/rsdb"
 )
-
-const DEFAULTPORT = 6291
-const DBNAME = "./data/random.db"
-const LOGPATH = "./static/log/"
-const PIDFILEPATH = "./data/"
-
-const VOLATILEMODE = true
-
-const L_REQ = 0
-const L_RESP = 1
-
-var dbuc = []byte("dbuc")       // deck bucket
-var tbuc = []byte("tbuc")       // text bucket
-var ibuc = []byte("ibuc")       // image bucket
-var sbuc = []byte("sbuc")       // settings bucket
-
-var SETTINGSKEY = []byte("skey")
-
-type Settings struct {
-    Verb bool
-    Cid int
-}
-
-type Deckreq struct {
-    N int
-    Lang string
-    Cat string
-}
-
-type Textreq struct {
-    Text string                 // The text object to add to db
-    Tags string                 // whitespace separated tags for indexing
-}
-
-type Deck struct {
-    N int                       // Total number of slides in deck
-    Lang string                 // Deck language, 'en', 'de', 'se', etc
-    Slides []Slide              // Slice of Slide objects
-}
-
-type Slide struct {
-    Title string                // Slide title
-    Imgur string                // URL to image
-    Btext string                // Body text
-    Tcolor string               // Text color in CSS-compatible hex code
-    Bgcolor string              // Body color in CSS-compatible hex code
-}
-
-// TODO: Create a status response object - implement in addtext
-
-// Log all errors to console
-func cherr(e error) {
-    if e != nil { log.Fatal(e) }
-}
 
 // Retrieves client IP address from http request
 func getclientip(r *http.Request) string {
 
     ip, _, e := net.SplitHostPort(r.RemoteAddr)
-    cherr(e)
+    rscore.Cherr(e)
 
     return ip
 }
@@ -89,11 +38,14 @@ func addlog(ltype int, msg []byte, r *http.Request) {
     var lentry string
 
     switch ltype {
-        case L_REQ:
+        case rscore.L_REQ:
             lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
 
-        case L_RESP:
+        case rscore.L_RESP:
             lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        case rscore.L_SHUTDOWN:
+            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
 
         default:
             lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
@@ -105,95 +57,43 @@ func addlog(ltype int, msg []byte, r *http.Request) {
 // Initialize logger
 func initlog(prgname string) {
 
-    logfile := fmt.Sprintf("%s/%s.log", LOGPATH, prgname)
+    logfile := fmt.Sprintf("%s/%s.log", rscore.LOGPATH, prgname)
 
     f, e := os.OpenFile(logfile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
-    cherr(e)
+    rscore.Cherr(e)
 
     log.SetOutput(f)
     log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
-// Write JSON encoded byte slice to DB
-func wrdb(db *bolt.DB, k []byte, v []byte, cbuc []byte) (e error) {
+// Sends random text object from database
+func getrndtextobj(db *bolt.DB, kmax int) string {
 
-    e = db.Update(func(tx *bolt.Tx) error {
-        b, e := tx.CreateBucketIfNotExists(cbuc)
-        if e != nil { return e }
+    txtreq := rscore.Textreq{}
+    k := []byte(strconv.Itoa(rand.Intn(kmax)))
 
-        e = b.Put(k, v)
-        if e != nil { return e }
+    mtxt, e := rsdb.Rdb(db, k, rscore.TBUC)
+    rscore.Cherr(e)
 
-        return nil
-    })
-    return
-}
+    json.Unmarshal(mtxt, &txtreq)
 
-// Return JSON encoded byte slice from DB
-func rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
-
-    e = db.View(func(tx *bolt.Tx) error {
-        b := tx.Bucket(cbuc)
-        if b == nil { return fmt.Errorf("No bucket!") }
-
-        v = b.Get(k)
-        return nil
-    })
-    return
-}
-
-// Create random string of length ln
-func randstr(ln int) string {
-
-    const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
-    var cslen = len(charset)
-
-    b := make([]byte, ln)
-    for i := range b { b[i] = charset[rand.Intn(cslen)] }
-
-    return string(b)
-}
-
-// Wrapper for writing settings to database
-func wrsettings(db *bolt.DB, settings Settings) {
-
-    mset, e := json.Marshal(settings)
-    cherr(e)
-
-    e = wrdb(db, SETTINGSKEY, mset, sbuc)
-    cherr(e)
-}
-
-// Wrapper for reading settings from database
-func rsettings(db *bolt.DB) Settings {
-
-    settings := Settings{}
-
-    mset, e := rdb(db, SETTINGSKEY, sbuc)
-    if e != nil { return Settings{} }
-
-    e = json.Unmarshal(mset, &settings)
-    cherr(e)
-
-    return settings
+    return txtreq.Text
 }
 
 // Returns a full slide deck according to request
-func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
+func mkdeck(req rscore.Deckreq, db *bolt.DB,
+    settings rscore.Settings) (rscore.Deck, rscore.Settings) {
 
-    deck := Deck{
+    deck := rscore.Deck{
             N: req.N,
             Lang: req.Lang }
 
-    deck.Slides = make([]Slide, req.N)
-
-    txtreq := Textreq{}
-
     for i := 0; i < req.N; i++ {
-        mtxtobj, e := rdb(db, []byte(strconv.Itoa(rand.Intn(settings.Cid))), tbuc)
-        json.Unmarshal(mtxtobj, &txtreq)
-        deck.Slides[i].Title = txtreq.Text
-        cherr(e)
+        slide := rscore.Slide{
+            Title: getrndtextobj(db, settings.Cid),
+            Btext: getrndtextobj(db, settings.Cid) }
+
+        deck.Slides = append(deck.Slides, slide)
     }
 
     return deck, settings
@@ -201,27 +101,28 @@ func mkdeck(req Deckreq, db *bolt.DB, settings Settings) (Deck, Settings) {
 
 // Handles incoming requests for decks
 func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings Settings) Settings {
+    settings rscore.Settings) rscore.Settings {
 
     e := r.ParseForm()
-    cherr(e)
+    rscore.Cherr(e)
 
     n, e := strconv.Atoi(r.FormValue("amount"))
-    cherr(e)
+    rscore.Cherr(e)
 
-    req := Deckreq{
+    req := rscore.Deckreq{
             N: n,
             Lang: r.FormValue("lang"),
             Cat: r.FormValue("category") }
 
     mreq, e := json.Marshal(req)
-    cherr(e)
-    addlog(L_REQ, mreq, r)
+    rscore.Cherr(e)
+    addlog(rscore.L_REQ, mreq, r)
 
     deck, settings := mkdeck(req, db, settings)
 
+
     mdeck, e := json.Marshal(deck)
-    addlog(L_RESP, mdeck, r)
+    addlog(rscore.L_RESP, mdeck, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(deck)
@@ -231,12 +132,12 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
 // Handles incoming requests to add text
 func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings Settings) Settings {
+    settings rscore.Settings) rscore.Settings {
 
     e := r.ParseForm()
-    cherr(e)
+    rscore.Cherr(e)
 
-    t := Textreq{
+    t := rscore.Textreq{
             Text: r.FormValue("text"),
             Tags: r.FormValue("tags") }
 
@@ -246,13 +147,58 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
     mtxt, e := json.Marshal(t)
 
-    e = wrdb(db, key, mtxt, tbuc)
-    cherr(e)
+    e = rsdb.Wrdb(db, key, mtxt, rscore.TBUC)
+    rscore.Cherr(e)
 
-    addlog(L_REQ, mtxt, r)
+    addlog(rscore.L_REQ, mtxt, r)
+    sendstatus(rscore.C_OK, "", w)
 
     settings.Cid++
-    wrsettings(db, settings)
+    rsdb.Wrsettings(db, settings)
+
+    return settings
+}
+
+func sendstatus(code int, text string, w http.ResponseWriter) {
+
+    resp := rscore.Statusresp{
+            Code: code,
+            Text: text }
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
+}
+
+// Handles incoming requests for shutdowns
+func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    addlog(rscore.L_SHUTDOWN, []byte(""), r)
+    sendstatus(rscore.C_OK, "", w)
+
+    rsdb.Wrsettings(db, settings)
+
+    go func() {
+        time.Sleep(1 * time.Second)
+        os.Remove(settings.Pidfile)
+        os.Exit(0)
+    }()
+}
+
+// Creates pid file and starts logging
+func rsinit(settings rscore.Settings) rscore.Settings {
+
+    prgname := filepath.Base(os.Args[0])
+    pid := os.Getpid()
+
+    settings.Pidfile = fmt.Sprintf("%s/%s.pid", rscore.PIDFILEPATH, prgname)
+    e := ioutil.WriteFile(settings.Pidfile, []byte(strconv.Itoa(pid)), 0644)
+    rscore.Cherr(e)
+
+    initlog(prgname)
+
+    if settings.Verb { log.Printf("%s started with PID: %d\n", prgname, pid) }
+
     return settings
 }
 
@@ -260,36 +206,25 @@ func main() {
 
     rand.Seed(time.Now().UnixNano())
 
-    pptr := flag.Int("p", DEFAULTPORT, "port number to listen")
-    dbptr := flag.String("d", DBNAME, "specify database to open")
+    pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
+    dbptr := flag.String("d", rscore.DBNAME, "specify database to open")
     vptr := flag.Bool("v", false, "verbose mode")
     flag.Parse()
 
     db, e := bolt.Open(*dbptr, 0640, nil)
-    cherr(e)
+    rscore.Cherr(e)
     defer db.Close()
 
-    settings := rsettings(db)
+    settings := rsdb.Rsettings(db)
     settings.Verb = *vptr
-
-    pid := os.Getpid()
-    prgname := filepath.Base(os.Args[0])
-    pidfile := fmt.Sprintf("%s/%s.pid", PIDFILEPATH, prgname)
-    e = ioutil.WriteFile(pidfile, []byte(strconv.Itoa(pid)), 0644)
-
-    initlog(prgname)
-
-    if settings.Verb == true {
-        log.Printf("DEBUG: %s started with PID: %d\n", prgname, pid)
-    }
+    settings = rsinit(settings)
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
-    if VOLATILEMODE == true {
+    if rscore.VOLATILEMODE == true {
         http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-            log.Printf("Restart request received. Shutting down.\n")
-            os.Exit(1)
+            shutdownhandler(w, r, db, settings)
         })
     }
 
@@ -305,5 +240,5 @@ func main() {
 
     lport := fmt.Sprintf(":%d", *pptr)
     e = http.ListenAndServe(lport, nil)
-    cherr(e)
+    rscore.Cherr(e)
 }
