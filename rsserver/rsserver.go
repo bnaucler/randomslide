@@ -210,11 +210,11 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     itags := strings.Split(tr.Tags, " ")
 
-    if len(tr.Ttext) < 1 {
+    if len(tr.Ttext) > 1 {
         settings = addtextwtags(tr.Ttext, itags, db, settings, rscore.TBUC)
     }
 
-    if len(tr.Btext) < 1{
+    if len(tr.Btext) > 1{
         settings = addtextwtags(tr.Btext, itags, db, settings, rscore.BBUC)
     }
 
