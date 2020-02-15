@@ -18,7 +18,7 @@
     <div class="formwrapper" id="formwrapper">
         <h3>Choose things:</h3>
         <br />
-            <form> 
+            
                 <label for="category">Category</label>
                     <br />
                 <select id="category" name="category">
@@ -31,7 +31,7 @@
                     <br />
                 <label for="amountOfSlides">Amount of slides to be generated? (min5, max 25):</label>
                     <br />
-                <input type="number" name="amountOfSlides" min="5" max="25">
+                <input type="number" name="amountOfSlides" id="amountOfSlides" min="5" max="25">
                     <br />
                     <br />
                 <label for="language">Language?</label>
@@ -53,15 +53,18 @@
                     <label for="time">Time between slide changes? (30-180 sec):</label>
                     <br />
                     <br />
-                    <input type="number" name="time" min="30" max="180">
+                    <input type="number" name="time" id="time" min="30" max="180">
                 </div>
                     <br />
                     <br />
-                <input type="submit" value="Generate!">
-            </form>
+                <button class="smallgaybutton" onclick="fetchSlides()">Generate!</button>
+            
         </div>
 
-        <div id="output"></div>
+        <div id="output">
+            <a class="prev slidechanger" id="prev" onclick="changeSlide(-1)">&#10094;</a>
+            <a class="next slidechanger" id="next" onclick="changeSlide(1)">&#10095;</a>
+        </div>
         
     </div>
     <script src="js/script.js"></script>
