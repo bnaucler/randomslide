@@ -61,4 +61,8 @@ function addTitle(){
     titleajax.open('POST', "addtext?text=" + title, true);
     titleajax.send();
     setTimeout(fetchLogs, 1100);
+    //Nu får du en väldigt enkel JSON tillbaka efter addtext-request. Datatypenhar två fält: 
+    //en felkod (0 om allt är ok) och en textsträng med 
+    //eventuellt felmeddelande.
+
 }
