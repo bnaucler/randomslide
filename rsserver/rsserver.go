@@ -71,7 +71,7 @@ func initlog(prgname string) {
 // Sends random text object from database
 func getrndtextobj(db *bolt.DB, kmax int) string {
 
-    txtreq := rscore.Textreq{}
+    txtreq := rscore.Textobj{}
     k := []byte(strconv.Itoa(rand.Intn(kmax)))
 
     mtxt, e := rsdb.Rdb(db, k, rscore.TBUC)
@@ -114,7 +114,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     req := rscore.Deckreq{
             N: n,
             Lang: r.FormValue("lang"),
-            Cat: r.FormValue("category") }
+            Tags: r.FormValue("category") }
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
@@ -163,8 +163,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     to := rscore.Textobj{
             Id: settings.Cid,
             Text: tr.Text,
-            Tags: ctags}
-
+            Tags: ctags }
 
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
     mtxt, e := json.Marshal(to)
@@ -181,11 +180,27 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// Sends a status code response as JSON object
 func sendstatus(code int, text string, w http.ResponseWriter) {
 
     resp := rscore.Statusresp{
             Code: code,
             Text: text }
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
+}
+
+// Handles incoming requests for tag index
+func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    resp := rscore.Tagresp{
+            Tags: settings.Taglist }
+
+    mresp, e := json.Marshal(resp)
+    rscore.Cherr(e)
+    addlog(rscore.L_RESP, mresp, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
@@ -253,6 +268,11 @@ func main() {
     // Slide requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
         settings = deckreqhandler(w, r, db, settings)
+    })
+
+    // Tags requests
+    http.HandleFunc("/gettags", func(w http.ResponseWriter, r *http.Request) {
+        tagreqhandler(w, r, db, settings)
     })
 
     // Add text to db

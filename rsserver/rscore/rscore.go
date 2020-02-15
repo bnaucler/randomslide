@@ -41,14 +41,18 @@ type Settings struct {
 }
 
 type Deckreq struct {
-    N int
-    Lang string
-    Cat string
+    N int                       // Number of slides to generate
+    Lang string                 // Languge code, 'en', 'de', 'se', etc
+    Tags string                 // Tags on which to base the deck
 }
 
 type Textreq struct {
     Text string                 // The text object to add to db
     Tags string                 // whitespace separated tags for indexing
+}
+
+type Tagresp struct {
+    Tags []string               // Array of tags for indexing
 }
 
 type Textobj struct {
@@ -59,7 +63,7 @@ type Textobj struct {
 
 type Deck struct {
     N int                       // Total number of slides in deck
-    Lang string                 // Deck language, 'en', 'de', 'se', etc
+    Lang string                 // Languge code, 'en', 'de', 'se', etc
     Slides []Slide              // Slice of Slide objects
 }
 
