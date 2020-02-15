@@ -7,6 +7,8 @@ import (
     "log"
     "time"
     "flag"
+    "regexp"
+    "strings"
     "strconv"
     "net/http"
     "math/rand"
@@ -120,7 +122,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     deck, settings := mkdeck(req, db, settings)
 
-
     mdeck, e := json.Marshal(deck)
     addlog(rscore.L_RESP, mdeck, r)
 
@@ -130,6 +131,17 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// Removes whitespace and special characters from string
+func cleanstring(src string) string {
+
+    rx, e := regexp.Compile("[^a-z]+")
+    rscore.Cherr(e)
+
+    dst := rx.ReplaceAllString(src, "")
+
+    return dst
+}
+
 // Handles incoming requests to add text
 func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -137,15 +149,25 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     rscore.Cherr(e)
 
-    t := rscore.Textreq{
+    tr := rscore.Textreq{
             Text: r.FormValue("text"),
             Tags: r.FormValue("tags") }
 
-    // TODO: Create tag searchability
-    // sptags := strings.Split(t.Tags, ",")
+    itags := strings.Split(tr.Tags, " ")
+    var ctags []string
+
+    for _, s := range itags {
+        ctags = append(ctags, cleanstring(s))
+    }
+
+    to := rscore.Textobj{
+            Id: settings.Cid,
+            Text: tr.Text,
+            Tags: ctags}
+
 
     key := []byte(strconv.Itoa(settings.Cid)) // TODO: make this make sense somehow
-    mtxt, e := json.Marshal(t)
+    mtxt, e := json.Marshal(to)
 
     e = rsdb.Wrdb(db, key, mtxt, rscore.TBUC)
     rscore.Cherr(e)
