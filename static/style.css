@@ -61,6 +61,10 @@ select, input {
     font-size: 0.8em;
 }
 
+#timeDisplay{
+    display: none;
+}
+
 .smallgaybutton{
     background: orange;
     padding: 0.8em;
@@ -70,7 +74,6 @@ select, input {
     font-weight: bold;
     text-shadow: 1px 1px white;
 }
-
 
 .prev, .next {
     cursor: pointer;
@@ -90,12 +93,22 @@ select, input {
     background: black;
 }
 
+.prev{
+    left: 0;
+    width: 20px;
+}
+
 .next{
-    position: absolute;
+
     right: 0;
     border-radius: 3px 0 0 3px;
 }  
 
 .slidechanger{
     display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 1,2em;
+    font-weight: bold;
 }
