@@ -8,7 +8,6 @@ import (
     "time"
     "flag"
     "sort"
-    "regexp"
     "strings"
     "strconv"
     "net/http"
@@ -19,8 +18,8 @@ import (
 
     "github.com/boltdb/bolt"
 
-    "github.com/bnaucler/randomslide/rsserver/rscore"
-    "github.com/bnaucler/randomslide/rsserver/rsdb"
+    "github.com/bnaucler/randomslide/lib/rscore"
+    "github.com/bnaucler/randomslide/lib/rsdb"
 )
 
 // Retrieves client IP address from http request
@@ -140,7 +139,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     tagreq := r.FormValue("tags")
     sptags := strings.Split(tagreq, " ")
     for _, s := range sptags {
-        ctags = append(ctags, cleanstring(s))
+        ctags = append(ctags, rscore.Cleanstring(s))
     }
 
     req := rscore.Deckreq{
@@ -163,34 +162,13 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Removes whitespace and special characters from string
-func cleanstring(src string) string {
-
-    rx, e := regexp.Compile("[^a-z]+")
-    rscore.Cherr(e)
-
-    dst := rx.ReplaceAllString(src, "")
-
-    return dst
-}
-
-// Returns true if string is present in list
-func findstrinslice(v string, list []string) bool {
-
-    for _, t := range list {
-        if v == t { return true }
-    }
-
-    return false
-}
-
 // Updates index to include new tags
 func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, int) {
 
     r := 0
 
     for _, t := range tags {
-        if findstrinslice(t, settings.Taglist) == false {
+        if rscore.Findstrinslice(t, settings.Taglist) == false {
             settings.Taglist = append(settings.Taglist, t)
             r++
         }
@@ -208,13 +186,10 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     to := rscore.Textobj{Text: text}
 
     for _, s := range tags {
-        to.Tags = append(to.Tags, cleanstring(s))
+        to.Tags = append(to.Tags, rscore.Cleanstring(s))
     }
 
     mxindex++
-
-    // TODO: Implement id indexing per tag
-    // Write to db, tag as key and slice of ints as value
 
     // Storing the object in db
     key := []byte(strconv.Itoa(mxindex))

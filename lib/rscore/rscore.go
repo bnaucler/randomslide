@@ -9,6 +9,7 @@ package rscore
 
 import (
     "log"
+    "regexp"
 )
 
 const DEFAULTPORT = 6291
@@ -88,3 +89,23 @@ func Cherr(e error) {
     if e != nil { log.Fatal(e) }
 }
 
+// Removes whitespace and special characters from string
+func Cleanstring(src string) string {
+
+    rx, e := regexp.Compile("[^a-z]+")
+    Cherr(e)
+
+    dst := rx.ReplaceAllString(src, "")
+
+    return dst
+}
+
+// Returns true if string is present in list
+func Findstrinslice(v string, list []string) bool {
+
+    for _, t := range list {
+        if v == t { return true }
+    }
+
+    return false
+}

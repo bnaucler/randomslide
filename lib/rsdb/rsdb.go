@@ -11,7 +11,7 @@ import (
     "fmt"
     "encoding/json"
     "github.com/boltdb/bolt"
-    "github.com/bnaucler/randomslide/rsserver/rscore"
+    "github.com/bnaucler/randomslide/lib/rscore"
 )
 
 // Write JSON encoded byte slice to DB
