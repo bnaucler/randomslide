@@ -43,17 +43,17 @@ function createSlides(resp){
         outputEl.appendChild(div);
 
         let slideHeader = document.createElement("h2");
-        let headerText = document.createTextNode(resp.slides[i].title);
+        let headerText = document.createTextNode(resp.slides[i].Title);
         slideHeader.style.color = resp.slides[i].tcolor;
         slideHeader.appendChild(headerText);
         div.appendChild(slideHeader);
 
         let slideImg = document.createElement("img");
-        slideImg.setAttribute("src", resp.slides[i].img);
+        slideImg.setAttribute("src", "https://picsum.photos/200");
         div.appendChild(slideImg);
   
         let slideTxt = document.createElement("div");
-        let slideContent = document.createTextNode(resp.slides[i].text);
+        let slideContent = document.createTextNode(resp.slides[i].Btext);
         slideTxt.style.color = resp.slides[i].tcolor;
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
