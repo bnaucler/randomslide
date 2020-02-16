@@ -11,12 +11,12 @@ function getTags(){
     let tagJX = new XMLHttpRequest();
     tagJX.onreadystatechange = function () {
         if (this.readyState == 4) {
-            tags = JSON.parse(this.responseText.Tags);
-            for(i in tags){
+            tags = JSON.parse(this.responseText);
+            for(i in tags.Tags){
                 console.log(tags.Tags);
                 let tag = document.createElement("option");
-                tag.setAttribute("value", tags[i].Name);
-                let tagText = document.createTextNode(tags[i].Name);
+                tag.setAttribute("value", tags.Tags[i].Name);
+                let tagText = document.createTextNode(tags.Tags[i].Name);
                 tag.appendChild(tagText);
                 categ.appendChild(tag);
             }
