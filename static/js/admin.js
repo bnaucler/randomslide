@@ -65,8 +65,24 @@ function addTitle(){
     titleajax.send();
     setTimeout(fetchLogs, 1100);
 
+
+
     //Nu får du en väldigt enkel JSON tillbaka efter addtext-request. Datatypenhar två fält: 
     //en felkod (0 om allt är ok) och en textsträng med 
     //eventuellt felmeddelande.
-    
+    titleajax.onreadystatechange = function() {
+    if (this.readyState == 4){
+            let resp = JSON.parse(this.responseText);
+            console.log(resp);
+            if(resp.Code == 0){
+                var alertHTML = '<div class="alert">Success!</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+            }else {
+                var alertHTML = '<div class="alert">Something went wrong! </div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+            }
+    }
+    }
 }
