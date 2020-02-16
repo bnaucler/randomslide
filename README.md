@@ -22,6 +22,29 @@ Usage of bin/rsserver:
   -v	verbose mode
 ```
 
+### API reference
+
+```
+Endpoint:               Variables:              Comment:
+/restart                <null>                  Graceful server shutdown.
+                                                Requires VOLATILEMODE true
+
+/gettags                <null>                  Retrieves list of all tags
+                                                in database
+
+/getdeck                                        Request for slide deck
+                        amount                  # of slides requested
+                        lang                    language code 'en', 'sv' etc
+                        tags                    tags on which to base deck
+
+
+/addtext                                        Adds new text to database
+                        tags                    Which tags to associate text wit
+                        ttext                   Title text
+                        btext                   Body text
+
+```
+
 ## Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for best practices and information on how to get involved in the project.
 
