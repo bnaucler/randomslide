@@ -9,7 +9,7 @@ window.onload = getTags();
 function getTags(){
     var categ = document.getElementById("category");
     let tagJX = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
+    tagJX.onreadystatechange = function () {
         if (this.readyState == 4) {
             tags = JSON.parse(this.responseText);
             for(i in tags){
@@ -18,17 +18,12 @@ function getTags(){
                 tag.setAttribute("value", tags[i].Name);
                 let tagText = document.createTextNode(tags[i].Name);
                 tag.appendChild(tagText);
-                tags.appendChild(tag);
+                categ.appendChild(tag);
             }
         }
     }
-
-
     tagJX.open("GET", "/gettags", false);
     tagJX.send();
-
-    // skicka till /gettags för att få en lista
-
 }
 
 
