@@ -3,7 +3,6 @@ package main
 import (
     "os"
     "fmt"
-    "net"
     "log"
     "time"
     "flag"
@@ -21,40 +20,6 @@ import (
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
 )
-
-// Retrieves client IP address from http request
-func getclientip(r *http.Request) string {
-
-    ip, _, e := net.SplitHostPort(r.RemoteAddr)
-    rscore.Cherr(e)
-
-    return ip
-}
-
-// Log file wrapper
-// TODO: Use interface() instead of []byte and ltype
-//       log levels
-func addlog(ltype int, msg []byte, r *http.Request) {
-
-    ip := getclientip(r)
-    var lentry string
-
-    switch ltype {
-        case rscore.L_REQ:
-            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
-
-        case rscore.L_RESP:
-            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
-
-        case rscore.L_SHUTDOWN:
-            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
-
-        default:
-            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
-    }
-
-    log.Println(lentry)
-}
 
 // Initialize logger
 func initlog(prgname string) {
@@ -149,12 +114,12 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
-    addlog(rscore.L_REQ, mreq, r)
+    rscore.Addlog(rscore.L_REQ, mreq, r)
 
     deck, settings := mkdeck(req, db, settings)
 
     mdeck, e := json.Marshal(deck)
-    addlog(rscore.L_RESP, mdeck, r)
+    rscore.Addlog(rscore.L_RESP, mdeck, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(deck)
@@ -228,7 +193,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Tags: r.FormValue("tags") }
 
     ltxt, e := json.Marshal(tr)
-    addlog(rscore.L_REQ, ltxt, r)
+    rscore.Addlog(rscore.L_REQ, ltxt, r)
 
     itags := strings.Split(tr.Tags, " ")
 
@@ -273,7 +238,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    addlog(rscore.L_RESP, mresp, r)
+    rscore.Addlog(rscore.L_RESP, mresp, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
@@ -283,7 +248,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    addlog(rscore.L_SHUTDOWN, []byte(""), r)
+    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), r)
     sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, settings)

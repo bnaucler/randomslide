@@ -8,8 +8,11 @@ package rscore
 */
 
 import (
+    "fmt"
     "log"
+    "net"
     "regexp"
+    "net/http"
 )
 
 const DEFAULTPORT = 6291
@@ -109,3 +112,36 @@ func Findstrinslice(v string, list []string) bool {
 
     return false
 }
+
+// Retrieves client IP address from http request
+func getclientip(r *http.Request) string {
+
+    ip, _, e := net.SplitHostPort(r.RemoteAddr)
+    Cherr(e)
+
+    return ip
+}
+
+// Log file wrapper
+func Addlog(ltype int, msg []byte, r *http.Request) {
+
+    ip := getclientip(r)
+    var lentry string
+
+    switch ltype {
+        case L_REQ:
+            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+
+        case L_RESP:
+            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        case L_SHUTDOWN:
+            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
+
+        default:
+            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
+    }
+
+    log.Println(lentry)
+}
+
