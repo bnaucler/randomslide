@@ -93,14 +93,14 @@ function createSlides(resp){
 
 function loadingSlides(){
     let amount = document.getElementById("amountOfSlides").value;
-    let category = document.getElementById("category").value;
+    let category = document.getElementById("category").selectedOptions;
     let lang = document.getElementById("lang").value;
     let wrapper = document.getElementById("formwrapper");
     slideProg = document.getElementById("timerOrNot").value;
     timer = document.getElementById("time").value;
 
     wrapper.innerHTML = "";
-    wrapper.innerHTML += "Your categroy:  " + category + "<br />";
+    wrapper.innerHTML += "Your tags:  " + category + "<br />";
     wrapper.innerHTML += "Amount of slides: " + amount + "<br />";
     if(slideProg == "change"){
         wrapper.innerHTML += "Your choice is to change slides yourself. <br />"
