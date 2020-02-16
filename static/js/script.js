@@ -11,9 +11,9 @@ function getTags(){
     let tagJX = new XMLHttpRequest();
     tagJX.onreadystatechange = function () {
         if (this.readyState == 4) {
-            tags = JSON.parse(this.responseText);
+            tags = JSON.parse(this.responseText.Tags);
             for(i in tags){
-                console.log(tags);
+                console.log(tags.Tags);
                 let tag = document.createElement("option");
                 tag.setAttribute("value", tags[i].Name);
                 let tagText = document.createTextNode(tags[i].Name);
