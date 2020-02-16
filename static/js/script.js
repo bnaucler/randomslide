@@ -57,7 +57,8 @@ function fetchSlides(){
         }
     }
 
-    xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=10", false);
+    let amount = document.getElementById("amountOfSlides").value;
+    xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount, false);
     xhttp.send();
     createSlides(resp.Slides);
 }
@@ -101,17 +102,14 @@ function loadingSlides(){
 
     wrapper.innerHTML = "";
 
-
-
     let tagString = "";
     for (let i=0; i<category.length; i++) {
         tagString += category[i].label;
-
         if (i < (category.length - 1)){
             tagString +=  " ";
         }
     }
-
+//fixa så inte (5)(5)(5) följer med till den här sidan
     wrapper.innerHTML += "Your tags:  " + tagString + "<br />";
     wrapper.innerHTML += "Amount of slides: " + amount + "<br />";
     if(slideProg == "change"){
@@ -192,10 +190,6 @@ function displayTimer(){
 
 /* todo:
 slutbild på bildspelet
-läs in taggar från DB till startsidan
-/gettags
-{"Tags":[{"Name":"sjukdom","TN":2,"BN":4,"IN":0}]}
-
-läs in värden från startsidan att skicka med till DB
+läs in värden från startsidan att skicka med till DB (tags är klart)
 CSS-random-funktion
 3 olika halvbra CSS*/
