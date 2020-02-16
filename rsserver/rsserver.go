@@ -112,11 +112,10 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     n, e := strconv.Atoi(r.FormValue("amount"))
     rscore.Cherr(e)
 
-    // TODO: replace category with tags
     req := rscore.Deckreq{
             N: n,
             Lang: r.FormValue("lang"),
-            Tags: r.FormValue("category") }
+            Tags: r.FormValue("tags") }
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
@@ -176,6 +175,8 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     settings rscore.Settings, buc []byte) rscore.Settings {
 
     to := rscore.Textobj{}
+
+    // TODO: Implement id indexing per tag
 
     for _, s := range tags {
         to.Tags = append(to.Tags, cleanstring(s))

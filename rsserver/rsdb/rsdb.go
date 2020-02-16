@@ -48,7 +48,7 @@ func Wrsettings(db *bolt.DB, settings rscore.Settings) {
     mset, e := json.Marshal(settings)
     rscore.Cherr(e)
 
-    e = Wrdb(db, rscore.SETTINGSKEY, mset, rscore.SBUC)
+    e = Wrdb(db, rscore.INDEX, mset, rscore.SBUC)
     rscore.Cherr(e)
 }
 
@@ -57,7 +57,7 @@ func Rsettings(db *bolt.DB) rscore.Settings {
 
     settings := rscore.Settings{}
 
-    mset, e := Rdb(db, rscore.SETTINGSKEY, rscore.SBUC)
+    mset, e := Rdb(db, rscore.INDEX, rscore.SBUC)
     if e != nil { return rscore.Settings{} }
 
     e = json.Unmarshal(mset, &settings)

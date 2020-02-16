@@ -30,13 +30,14 @@ var BBUC = []byte("bbuc")       // Body text bucket
 var IBUC = []byte("ibuc")       // Image bucket
 var SBUC = []byte("sbuc")       // Settings bucket
 
-var SETTINGSKEY = []byte("skey")
+var INDEX = []byte(".index")
 
 type Settings struct {
     Verb bool                   // Verbosity level
-    Cid int                     // Max id TODO: remove
+    Tmaxid int                  // Max id of title objects
+    Bmaxid int                  // Max id of body objects
     Pidfile string              // Location of pidfile
-    Taglist []string            // List of all existing tags
+    Taglist []string            // List of all existing tags TODO: Make map w ID
 }
 
 type Deckreq struct {
