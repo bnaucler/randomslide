@@ -34,7 +34,7 @@ function fetchSlides(){
 
 // creating slides from the JSON 
 function createSlides(resp){
-    for(i in resp.slides){
+    for(i in resp.Slides){
         let outputEl = document.getElementById("output");
         let div = document.createElement("div");
         div.setAttribute("class", "theSlides");
@@ -102,7 +102,6 @@ function startSlide(){
 }
 
 function slideShow(n){
-    console.log(slideIndex);
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
         slideIndex = 1;
