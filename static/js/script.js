@@ -23,18 +23,14 @@ function fetchSlides(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
-            console.log(this.responseText);
             resp = JSON.parse(this.responseText);
             console.log(resp);
         }
     }
-
     xhttp.open("GET", "/getdeck?tags=svampar&lang=en&amount=10", false);
     xhttp.send();
-    createSlides(resp);
+    createSlides(resp.Slides);
 }
-
-
 
 // creating slides from the JSON 
 function createSlides(resp){
