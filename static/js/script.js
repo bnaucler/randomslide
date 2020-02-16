@@ -4,6 +4,13 @@ var resp;
 var slideIndex = 1;
 var slideshow;
 
+
+function getTags(){
+    // skicka till /gettags för att få en lista
+
+}
+
+
 document.getElementById('timerOrNot').addEventListener('change', function() {
     if(this.value === "timer"){
         document.getElementById("slideTimer").style.display = "inline";
@@ -16,6 +23,7 @@ function fetchSlides(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
+            console.log(this.responseText);
             resp = JSON.parse(this.responseText);
             console.log(resp);
         }
@@ -26,11 +34,6 @@ function fetchSlides(){
     createSlides(resp);
 }
 
-
-function getTags(){
-    // skicka till /gettags för att få en lista
-
-}
 
 
 // creating slides from the JSON 
