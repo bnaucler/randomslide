@@ -66,3 +66,17 @@ func Rsettings(db *bolt.DB) rscore.Settings {
     return settings
 }
 
+// Returns number of text objects per tag from db
+func Countobj(db *bolt.DB, tn string, buc []byte) int {
+
+    ttag := rscore.Tag{}
+    k := []byte(tn)
+
+    v, e := Rdb(db, k, buc)
+    rscore.Cherr(e)
+
+    json.Unmarshal(v, &ttag)
+
+    return len(ttag.Ids)
+}
+

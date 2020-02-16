@@ -236,21 +236,6 @@ func sendstatus(code int, text string, w http.ResponseWriter) {
     enc.Encode(resp)
 }
 
-// Returns number of text objects per tag from db
-func countdbobj(db *bolt.DB, tn string, buc []byte) int {
-
-    ttag := rscore.Tag{}
-    k := []byte(tn)
-
-    v, e := rsdb.Rdb(db, k, buc)
-    rscore.Cherr(e)
-
-    json.Unmarshal(v, &ttag)
-
-    return len(ttag.Ids)
-}
-
-
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -260,8 +245,8 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     for _, t := range settings.Taglist {
         ttag.Name = t
-        ttag.TN = countdbobj(db, t, rscore.TBUC)
-        ttag.BN = countdbobj(db, t, rscore.BBUC)
+        ttag.TN = rsdb.Countobj(db, t, rscore.TBUC)
+        ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
         resp.Tags = append(resp.Tags, ttag)
     }
 
