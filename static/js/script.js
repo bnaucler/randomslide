@@ -4,6 +4,7 @@ var resp;
 var slideIndex = 1;
 var slideshow;
 
+window.onload = getTags();
 
 function getTags(){
     var categ = document.getElementById("category");
@@ -12,6 +13,7 @@ function getTags(){
         if (this.readyState == 4) {
             tags = JSON.parse(this.responseText);
             for(i in tags){
+                console.log(tags);
                 let tag = document.createElement("option");
                 tag.setAttribute("value", tags[i].Name);
                 let tagText = document.createTextNode(tags[i].Name);
