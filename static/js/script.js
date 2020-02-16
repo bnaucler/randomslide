@@ -100,7 +100,19 @@ function loadingSlides(){
     timer = document.getElementById("time").value;
 
     wrapper.innerHTML = "";
-    wrapper.innerHTML += "Your tags:  " + category + "<br />";
+
+
+
+    let tagString = "";
+    for (let i=0; i<category.length; i++) {
+        tagString += category[i].label;
+
+        if (i < (category.length - 1)){
+            tagString +=  " ";
+        }
+    }
+
+    wrapper.innerHTML += "Your tags:  " + tagString + "<br />";
     wrapper.innerHTML += "Amount of slides: " + amount + "<br />";
     if(slideProg == "change"){
         wrapper.innerHTML += "Your choice is to change slides yourself. <br />"
