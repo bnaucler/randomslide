@@ -33,8 +33,8 @@ func initlog(prgname string) {
     log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
-// Sends random text object from database
-func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+// Creates valid selection list from tags
+func mksel(db *bolt.DB, tags []string, buc []byte) []int {
 
     var sel []int
     ctags := rscore.Tag{}
@@ -48,6 +48,13 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
         sel = append(sel, ctags.Ids...)
     }
 
+    return sel
+}
+
+// Sends random text object from database
+func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    sel := mksel(db, tags, buc)
     smax := len(sel)
 
     var k []byte
