@@ -39,11 +39,11 @@ function createSlides(resp){
         let div = document.createElement("div");
         div.setAttribute("class", "theSlides");
         div.style.display = "none";
-        div.style.background = resp.slides[i].bgcolor;
+        div.style.background = "black";
         outputEl.appendChild(div);
 
         let slideHeader = document.createElement("h2");
-        let headerText = document.createTextNode(resp.slides[i].Title);
+        let headerText = document.createTextNode(resp[i].Title);
         slideHeader.style.color = resp.slides[i].tcolor;
         slideHeader.appendChild(headerText);
         div.appendChild(slideHeader);
@@ -53,8 +53,8 @@ function createSlides(resp){
         div.appendChild(slideImg);
   
         let slideTxt = document.createElement("div");
-        let slideContent = document.createTextNode(resp.slides[i].Btext);
-        slideTxt.style.color = resp.slides[i].tcolor;
+        let slideContent = document.createTextNode(resp[i].Btext);
+        slideTxt.style.color = "white";
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
     }
