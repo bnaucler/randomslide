@@ -34,8 +34,8 @@ var INDEX = []byte(".index")
 
 type Settings struct {
     Verb bool                   // Verbosity level
-    Tmaxid int                  // Max id of title objects
-    Bmaxid int                  // Max id of body objects
+    Tmax int                    // Max id of title objects
+    Bmax int                    // Max id of body objects
     Pidfile string              // Location of pidfile
     Taglist []string            // List of all existing tags TODO: Make map w ID
 }
@@ -43,13 +43,17 @@ type Settings struct {
 type Deckreq struct {
     N int                       // Number of slides to generate
     Lang string                 // Languge code, 'en', 'de', 'se', etc
-    Tags string                 // Tags on which to base the deck
+    Tags []string               // Slice of tags on which to base search
 }
 
 type Textreq struct {
     Ttext string                // Title text object to add to db
     Btext string                // Body text object to add to db
     Tags string                 // whitespace separated tags for indexing
+}
+
+type Tag struct {
+    Ids    []int                // All IDs associated with tag
 }
 
 type Tagresp struct {

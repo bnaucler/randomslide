@@ -70,12 +70,12 @@ func initlog(prgname string) {
 }
 
 // Sends random text object from database
-func getrndtextobj(db *bolt.DB, kmax int) string {
+func getrndtextobj(db *bolt.DB, kmax int, buc []byte) string {
 
     txtreq := rscore.Textobj{}
     k := []byte(strconv.Itoa(rand.Intn(kmax)))
 
-    mtxt, e := rsdb.Rdb(db, k, rscore.TBUC)
+    mtxt, e := rsdb.Rdb(db, k, buc)
     rscore.Cherr(e)
 
     json.Unmarshal(mtxt, &txtreq)
@@ -93,8 +93,8 @@ func mkdeck(req rscore.Deckreq, db *bolt.DB,
 
     for i := 0; i < req.N; i++ {
         slide := rscore.Slide{
-            Title: getrndtextobj(db, settings.Cid),
-            Btext: getrndtextobj(db, settings.Cid) }
+            Title: getrndtextobj(db, settings.Tmax, rscore.TBUC),
+            Btext: getrndtextobj(db, settings.Bmax, rscore.BBUC) }
 
         deck.Slides = append(deck.Slides, slide)
     }
@@ -112,10 +112,18 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     n, e := strconv.Atoi(r.FormValue("amount"))
     rscore.Cherr(e)
 
+    // Clean up tag set before search
+    var ctags []string
+    tagreq := r.FormValue("tags")
+    sptags := strings.Split(tagreq, " ")
+    for _, s := range sptags {
+        ctags = append(ctags, cleanstring(s))
+    }
+
     req := rscore.Deckreq{
             N: n,
             Lang: r.FormValue("lang"),
-            Tags: r.FormValue("tags") }
+            Tags: ctags }
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
@@ -172,26 +180,41 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
 
 // Conditionally adds tagged text to database
 func addtextwtags(text string, tags []string, db *bolt.DB,
-    settings rscore.Settings, buc []byte) rscore.Settings {
+    mxindex int, buc []byte) {
 
-    to := rscore.Textobj{}
-
-    // TODO: Implement id indexing per tag
+    to := rscore.Textobj{Text: text}
 
     for _, s := range tags {
         to.Tags = append(to.Tags, cleanstring(s))
     }
 
+    mxindex++
+
+    // TODO: Implement id indexing per tag
+    // Write to db, tag as key and slice of ints as value
+
+    // Storing the object in db
+    key := []byte(strconv.Itoa(mxindex))
+    mtxt, e := json.Marshal(to)
+    e = rsdb.Wrdb(db, key, mtxt, buc)
+    rscore.Cherr(e)
+
+    // Update all relevant tag lists
+    ctag := rscore.Tag{}
+
     for _, s := range to.Tags {
-
         key := []byte(s)
-        mtxt, e := json.Marshal(to)
-        e = rsdb.Wrdb(db, key, mtxt, buc)
 
+        resp, e := rsdb.Rdb(db, key, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(resp, &ctag)
+        ctag.Ids = append(ctag.Ids, mxindex)
+
+        dbw, e := json.Marshal(ctag)
+        e = rsdb.Wrdb(db, key, dbw, buc)
         rscore.Cherr(e)
     }
-
-    return settings
 }
 
 // Handles incoming requests to add text
@@ -211,15 +234,18 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     itags := strings.Split(tr.Tags, " ")
 
-    if len(tr.Ttext) > 1 {
-        settings = addtextwtags(tr.Ttext, itags, db, settings, rscore.TBUC)
-    }
-
-    if len(tr.Btext) > 1{
-        settings = addtextwtags(tr.Btext, itags, db, settings, rscore.BBUC)
-    }
-
     settings, cngs := addtagstoindex(itags, settings)
+
+    if len(tr.Ttext) > 1 {
+        addtextwtags(tr.Ttext, itags, db, settings.Tmax, rscore.TBUC)
+        settings.Tmax++
+    }
+
+    if len(tr.Btext) > 1 {
+        addtextwtags(tr.Btext, itags, db, settings.Bmax, rscore.BBUC)
+        settings.Bmax++
+    }
+
     rsdb.Wrsettings(db, settings)
 
     var sstr string
