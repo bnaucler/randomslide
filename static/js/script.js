@@ -4,6 +4,13 @@ var resp;
 var slideIndex = 1;
 var slideshow;
 
+
+function getTags(){
+    // skicka till /gettags för att få en lista
+
+}
+
+
 document.getElementById('timerOrNot').addEventListener('change', function() {
     if(this.value === "timer"){
         document.getElementById("slideTimer").style.display = "inline";
@@ -16,14 +23,18 @@ function fetchSlides(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
+            console.log(this.responseText);
             resp = JSON.parse(this.responseText);
+            console.log(resp);
         }
     }
-    xhttp.open("GET", "js/testing.json", false);
+
+    xhttp.open("GET", "/request?tags=svampar&lang=en&amount=10", false);
     xhttp.send();
-    //"?category=bible&lang=en&amount=10"
     createSlides(resp);
 }
+
+
 
 // creating slides from the JSON 
 function createSlides(resp){
@@ -132,12 +143,12 @@ function displayTimer(){
     var timing = timer;
 
     setInterval(function(){
-        if(timing === 0){
+        if(timing != 0){
+            document.getElementById("timeDisplay").innerHTML = timing;
+            timing -= 1;
+        }else {
             changeSlide(1);
             timing = timer;
-        }else {
-            timing -= 1;
-            document.getElementById("timeDisplay").innerHTML = timing;
         }
     }, 1000);
 }

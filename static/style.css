@@ -1,16 +1,37 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
 * {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    background: rgb(71, 96, 104);
 }
 
 .wrapper{
     margin: auto;
     max-width: 900px;
-    background: linear-gradient(lightblue, blue);
+    background: rgb(71, 96, 104);
     padding: 10px;
 }
 
-#slideTimer{
-    display: none;
+#category{
+    width: 400px;
+    height: 200px;
+}
+
+h2{
+    font-weight: 700;
+    font-size: 2em;
+}
+
+a{
+    color: rgb(0, 42, 97);
+    font-size: 1.5em;
+    text-decoration: none;
+}
+a:hover{
+    text-shadow: 1px 1px white;
 }
 
 form{
@@ -23,13 +44,17 @@ form{
 }
 
 select, input {
-    background: orange;
-    padding: 0.8em;
-    border: 2px solid orangered;
+    background: white;
+    padding: 10px;
+    border: 5px 5px 0px 5px solid;
+    border-color: whitesmoke;
     border-radius: 5px;
     font-size: 1.2em;
     font-weight: bold;
-    text-shadow: 1px 1px white;
+}
+
+option:hover{
+    background-color: lightgrey;
 }
 
 #output{
@@ -38,45 +63,16 @@ select, input {
     position: relative;
 }
 
-#category{
-    width: 400px;
-    height: 200px;
-}
-
-.bigredbutton{
-    background-color: red;
-    border: 10px solid red;
-    border-radius: 50%;
-    padding: 1em;
-    font-weight: bold;
-    font-size: 2em;
-    cursor: pointer;
-}
-
-#logfileMonitor, #logfileServer{
-    border: 2px dotted black;
-    margin: 10px;
-}
-
-#logfileMonitor, #logfileServer{
-    background: white;
-    height: 20em;
-    overflow-y: scroll;
-    font-size: 0.8em;
-}
-
 #timeDisplay{
     display: none;
 }
 
 .smallgaybutton{
-    background: orange;
     padding: 0.8em;
-    border: 2px solid orangered;
+    border: 2px solid whitesmoke;
     border-radius: 5px;
     font-size: 1.2em;
     font-weight: bold;
-    text-shadow: 1px 1px white;
 }
 
 .prev, .next {
@@ -130,4 +126,45 @@ select, input {
 
 .hide {
     display: none;
+}
+
+
+#slideTimer{
+    display: none;
+}
+
+.bigredbutton{
+    background-color: red;
+    border: 10px solid red;
+    border-radius: 50%;
+    padding: 1em;
+    font-weight: bold;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+#logfileMonitor, #logfileServer{
+    border: 2px dotted black;
+    margin: 10px;
+}
+
+#logfileMonitor, #logfileServer{
+    background: white;
+    height: 20em;
+    overflow-y: scroll;
+    font-size: 0.8em;
+}
+
+textarea{
+    width: 40em;
+    height: 10em;
+    resize: none;
+}
+
+#taginput{
+    width: 30em;
+}
+
+#titelinput{
+    width: 30em;
 }

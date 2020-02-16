@@ -73,7 +73,6 @@ function addTitle(){
     titleajax.onreadystatechange = function() {
     if (this.readyState == 4){
             let resp = JSON.parse(this.responseText);
-            console.log(resp);
             if(resp.Code == 0){
                 var alertHTML = '<div class="alert">Success!</div>';
                 document.body.insertAdjacentHTML("beforeend", alertHTML);
@@ -83,6 +82,6 @@ function addTitle(){
                 document.body.insertAdjacentHTML("beforeend", alertHTML);
                 setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
             }
-    }
+        }
     }
 }
