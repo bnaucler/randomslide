@@ -46,7 +46,18 @@ function fetchSlides(){
             console.log(resp.Slides);
         }
     }
-    xhttp.open("GET", "/getdeck?tags=svampar&lang=en&amount=10", false);
+
+    let stringToSend = "";
+    let selectedTags = document.getElementById("category").selectedOptions;  
+    for (let i=0; i<selectedTags.length; i++) {
+        stringToSend += selectedTags[i].label;
+
+        if (i < (selectedTags.length - 1)){
+            stringToSend +=  " ";
+        }
+    }
+
+    xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=10", false);
     xhttp.send();
     createSlides(resp.Slides);
 }
