@@ -32,11 +32,15 @@ select, input {
     text-shadow: 1px 1px white;
 }
 
-
 #output{
     font-size: 2em;
     width: 100%;
     position: relative;
+}
+
+#category{
+    width: 400px;
+    height: 200px;
 }
 
 .bigredbutton{
