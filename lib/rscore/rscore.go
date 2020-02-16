@@ -60,8 +60,15 @@ type Tag struct {
     Ids    []int                // All IDs associated with tag
 }
 
+type Rtag struct {
+    Name string                  // Tag name
+    TN int                       // Number of title objects in db
+    BN int                       // Number of body objects in db
+    IN int                       // Number of image objects in db
+}
+
 type Tagresp struct {
-    Tags []string               // Array of tags for indexing
+    Tags []Rtag                 // Array of tags for indexing
 }
 
 type Textobj struct {

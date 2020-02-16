@@ -51,7 +51,7 @@ func mksel(db *bolt.DB, tags []string, buc []byte) []int {
     return sel
 }
 
-// Sends random text object from database
+// Sends random text object from database, based on requested tags
 func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 
     sel := mksel(db, tags, buc)
@@ -236,12 +236,34 @@ func sendstatus(code int, text string, w http.ResponseWriter) {
     enc.Encode(resp)
 }
 
+// Returns number of text objects per tag from db
+func countdbobj(db *bolt.DB, tn string, buc []byte) int {
+
+    ttag := rscore.Tag{}
+    k := []byte(tn)
+
+    v, e := rsdb.Rdb(db, k, buc)
+    rscore.Cherr(e)
+
+    json.Unmarshal(v, &ttag)
+
+    return len(ttag.Ids)
+}
+
+
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    resp := rscore.Tagresp{
-            Tags: settings.Taglist }
+    resp := rscore.Tagresp{}
+    var ttag rscore.Rtag
+
+    for _, t := range settings.Taglist {
+        ttag.Name = t
+        ttag.TN = countdbobj(db, t, rscore.TBUC)
+        ttag.BN = countdbobj(db, t, rscore.BBUC)
+        resp.Tags = append(resp.Tags, ttag)
+    }
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
