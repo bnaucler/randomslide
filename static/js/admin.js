@@ -75,7 +75,7 @@ function addTitle(){
             let resp = JSON.parse(this.responseText);
             console.log(resp);
             if(resp.Code == 0){
-                var alertHTML = '<div class="alert">Success!/div>';
+                var alertHTML = '<div class="alert">Success!</div>';
                 document.body.insertAdjacentHTML("beforeend", alertHTML);
                 setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
             }else {
