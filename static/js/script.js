@@ -24,7 +24,7 @@ function fetchSlides(){
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             resp = JSON.parse(this.responseText);
-            console.log(resp);
+            console.log(resp.Slides);
         }
     }
     xhttp.open("GET", "/getdeck?tags=svampar&lang=en&amount=10", false);
