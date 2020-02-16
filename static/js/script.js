@@ -29,7 +29,7 @@ function fetchSlides(){
         }
     }
 
-    xhttp.open("GET", "/request?tags=svampar&lang=en&amount=10", false);
+    xhttp.open("GET", "/getdeck?tags=svampar&lang=en&amount=10", false);
     xhttp.send();
     createSlides(resp);
 }
