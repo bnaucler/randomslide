@@ -86,8 +86,16 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 
     smax := len(sel)
 
-    ki := rand.Intn(smax)
-    k := []byte(strconv.Itoa(sel[ki]))
+    var k []byte
+
+    if smax > 0 {
+        ki := rand.Intn(smax)
+        k = []byte(strconv.Itoa(sel[ki]))
+
+    } else {
+        ki := rand.Intn(kmax)
+        k = []byte(strconv.Itoa(ki))
+    }
 
     txtreq := rscore.Textobj{}
     mtxt, e := rsdb.Rdb(db, k, buc)
