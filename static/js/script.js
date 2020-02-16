@@ -44,7 +44,7 @@ function createSlides(resp){
 
         let slideHeader = document.createElement("h2");
         let headerText = document.createTextNode(resp[i].Title);
-        slideHeader.style.color = resp.slides[i].tcolor;
+        slideHeader.style.color = "grey";
         slideHeader.appendChild(headerText);
         div.appendChild(slideHeader);
 
