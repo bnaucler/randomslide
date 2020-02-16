@@ -12,7 +12,7 @@ import (
 )
 
 const DEFAULTPORT = 6291
-const DBNAME = "./data/random.db"
+const DBNAME = "./data/rs.db"
 const LOGPATH = "./static/log/"
 const PIDFILEPATH = "./data/"
 
