@@ -13,11 +13,14 @@ function getTags(){
         if (this.readyState == 4) {
             tags = JSON.parse(this.responseText);
             for(i in tags.Tags){
-                console.log(tags.Tags);
                 let tag = document.createElement("option");
                 tag.setAttribute("value", tags.Tags[i].Name);
-                let tagText = document.createTextNode(tags.Tags[i].Name);
-                tag.appendChild(tagText);
+                let tagText = tags.Tags[i].Name;
+                let TNtxt = tags.Tags[i].TN;
+                let BNtxt = tags.Tags[i].BN;
+                let INtxt = tags.Tags[i].IN;
+                let tagInfo = document.createTextNode(tagText + " (" + TNtxt + ") (" + BNtxt + ") (" + INtxt +")");
+                tag.appendChild(tagInfo);
                 categ.appendChild(tag);
             }
         }
