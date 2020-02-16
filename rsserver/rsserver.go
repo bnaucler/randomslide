@@ -70,11 +70,26 @@ func initlog(prgname string) {
 }
 
 // Sends random text object from database
-func getrndtextobj(db *bolt.DB, kmax int, buc []byte) string {
+func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    var sel []int
+    ctags := rscore.Tag{}
+
+    for _, t := range tags {
+        bt := []byte(t)
+        mtags, e := rsdb.Rdb(db, bt, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(mtags, &ctags)
+        sel = append(sel, ctags.Ids...)
+    }
+
+    smax := len(sel)
+
+    ki := rand.Intn(smax)
+    k := []byte(strconv.Itoa(sel[ki]))
 
     txtreq := rscore.Textobj{}
-    k := []byte(strconv.Itoa(rand.Intn(kmax)))
-
     mtxt, e := rsdb.Rdb(db, k, buc)
     rscore.Cherr(e)
 
@@ -93,8 +108,8 @@ func mkdeck(req rscore.Deckreq, db *bolt.DB,
 
     for i := 0; i < req.N; i++ {
         slide := rscore.Slide{
-            Title: getrndtextobj(db, settings.Tmax, rscore.TBUC),
-            Btext: getrndtextobj(db, settings.Bmax, rscore.BBUC) }
+            Title: getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC),
+            Btext: getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
 
         deck.Slides = append(deck.Slides, slide)
     }
@@ -249,7 +264,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rsdb.Wrsettings(db, settings)
 
     var sstr string
-    if cngs != 0 { sstr = fmt.Sprintf("%d new tags added", cngs) }
+    if cngs != 0 { sstr = fmt.Sprintf("%d new tag(s) added", cngs) }
     sendstatus(rscore.C_OK, sstr, w)
 
     return settings
