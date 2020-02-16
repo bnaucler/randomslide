@@ -19,19 +19,21 @@
         <h3>Choose things:</h3>
         <br />
             
-                <label for="category">Category</label>
+                <label for="category">Category(CTRL + CLICK to select more than 1):</label>
                     <br />
-                <select id="category" name="category">
+                <select id="category" name="category" multiple>
                     <option value="dancing">Dancing</option>
                     <option value="bible">Bible</option>
                     <option value="tech">Tech</option>
                     <option value="beer">Beer</option>
+                    <option value="ernst">Ernst</option>
+                    <option value="kenneth">Kenneth</option>
                 </select>  
                     <br />
                     <br />
-                <label for="amountOfSlides">Amount of slides to be generated? (min5, max 25):</label>
+                <label for="amountOfSlides">Amount of slides to be generated? (min 5, max 25):</label>
                     <br />
-                <input type="number" name="amountOfSlides" id="amountOfSlides" min="5" max="25">
+                <input type="number" name="amountOfSlides" id="amountOfSlides" min="5" max="25" value="5">
                     <br />
                     <br />
                 <label for="language">Language?</label>
@@ -50,10 +52,10 @@
                     <br />
                     <br />
                 <div id="slideTimer">
-                    <label for="time">Time between slide changes? (30-180 sec):</label>
+                    <label for="time">Time between slide changes? (30-240 sec):</label>
                     <br />
                     <br />
-                    <input type="number" name="time" id="time" min="30" max="180">
+                    <input type="number" name="time" id="time" min="30" max="240" value="60">
                 </div>
                     <br />
                     <br />
