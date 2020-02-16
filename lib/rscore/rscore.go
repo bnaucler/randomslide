@@ -8,7 +8,11 @@ package rscore
 */
 
 import (
+    "fmt"
     "log"
+    "net"
+    "regexp"
+    "net/http"
 )
 
 const DEFAULTPORT = 6291
@@ -56,8 +60,15 @@ type Tag struct {
     Ids    []int                // All IDs associated with tag
 }
 
+type Rtag struct {
+    Name string                  // Tag name
+    TN int                       // Number of title objects in db
+    BN int                       // Number of body objects in db
+    IN int                       // Number of image objects in db
+}
+
 type Tagresp struct {
-    Tags []string               // Array of tags for indexing
+    Tags []Rtag                 // Array of tags for indexing
 }
 
 type Textobj struct {
@@ -86,5 +97,58 @@ type Statusresp struct {
 // Log all errors to file
 func Cherr(e error) {
     if e != nil { log.Fatal(e) }
+}
+
+// Removes whitespace and special characters from string
+func Cleanstring(src string) string {
+
+    rx, e := regexp.Compile("[^a-z]+")
+    Cherr(e)
+
+    dst := rx.ReplaceAllString(src, "")
+
+    return dst
+}
+
+// Returns true if string is present in list
+func Findstrinslice(v string, list []string) bool {
+
+    for _, t := range list {
+        if v == t { return true }
+    }
+
+    return false
+}
+
+// Retrieves client IP address from http request
+func getclientip(r *http.Request) string {
+
+    ip, _, e := net.SplitHostPort(r.RemoteAddr)
+    Cherr(e)
+
+    return ip
+}
+
+// Log file wrapper
+func Addlog(ltype int, msg []byte, r *http.Request) {
+
+    ip := getclientip(r)
+    var lentry string
+
+    switch ltype {
+        case L_REQ:
+            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+
+        case L_RESP:
+            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        case L_SHUTDOWN:
+            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
+
+        default:
+            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
+    }
+
+    log.Println(lentry)
 }
 

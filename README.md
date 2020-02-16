@@ -22,6 +22,8 @@ Usage of bin/rsserver:
   -v	verbose mode
 ```
 
+Server log files can be accessed at `static/logs` or in the admin interface.
+
 ### API reference
 
 ```

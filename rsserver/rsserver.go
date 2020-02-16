@@ -3,12 +3,10 @@ package main
 import (
     "os"
     "fmt"
-    "net"
     "log"
     "time"
     "flag"
     "sort"
-    "regexp"
     "strings"
     "strconv"
     "net/http"
@@ -19,43 +17,9 @@ import (
 
     "github.com/boltdb/bolt"
 
-    "github.com/bnaucler/randomslide/rsserver/rscore"
-    "github.com/bnaucler/randomslide/rsserver/rsdb"
+    "github.com/bnaucler/randomslide/lib/rscore"
+    "github.com/bnaucler/randomslide/lib/rsdb"
 )
-
-// Retrieves client IP address from http request
-func getclientip(r *http.Request) string {
-
-    ip, _, e := net.SplitHostPort(r.RemoteAddr)
-    rscore.Cherr(e)
-
-    return ip
-}
-
-// Log file wrapper
-// TODO: Use interface() instead of []byte and ltype
-//       log levels
-func addlog(ltype int, msg []byte, r *http.Request) {
-
-    ip := getclientip(r)
-    var lentry string
-
-    switch ltype {
-        case rscore.L_REQ:
-            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
-
-        case rscore.L_RESP:
-            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
-
-        case rscore.L_SHUTDOWN:
-            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
-
-        default:
-            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
-    }
-
-    log.Println(lentry)
-}
 
 // Initialize logger
 func initlog(prgname string) {
@@ -69,8 +33,8 @@ func initlog(prgname string) {
     log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
-// Sends random text object from database
-func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+// Creates valid selection list from tags
+func mksel(db *bolt.DB, tags []string, buc []byte) []int {
 
     var sel []int
     ctags := rscore.Tag{}
@@ -84,6 +48,13 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
         sel = append(sel, ctags.Ids...)
     }
 
+    return sel
+}
+
+// Sends random text object from database, based on requested tags
+func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    sel := mksel(db, tags, buc)
     smax := len(sel)
 
     var k []byte
@@ -140,7 +111,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     tagreq := r.FormValue("tags")
     sptags := strings.Split(tagreq, " ")
     for _, s := range sptags {
-        ctags = append(ctags, cleanstring(s))
+        ctags = append(ctags, rscore.Cleanstring(s))
     }
 
     req := rscore.Deckreq{
@@ -150,38 +121,17 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
-    addlog(rscore.L_REQ, mreq, r)
+    rscore.Addlog(rscore.L_REQ, mreq, r)
 
     deck, settings := mkdeck(req, db, settings)
 
     mdeck, e := json.Marshal(deck)
-    addlog(rscore.L_RESP, mdeck, r)
+    rscore.Addlog(rscore.L_RESP, mdeck, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(deck)
 
     return settings
-}
-
-// Removes whitespace and special characters from string
-func cleanstring(src string) string {
-
-    rx, e := regexp.Compile("[^a-z]+")
-    rscore.Cherr(e)
-
-    dst := rx.ReplaceAllString(src, "")
-
-    return dst
-}
-
-// Returns true if string is present in list
-func findstrinslice(v string, list []string) bool {
-
-    for _, t := range list {
-        if v == t { return true }
-    }
-
-    return false
 }
 
 // Updates index to include new tags
@@ -190,7 +140,7 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
     r := 0
 
     for _, t := range tags {
-        if findstrinslice(t, settings.Taglist) == false {
+        if rscore.Findstrinslice(t, settings.Taglist) == false {
             settings.Taglist = append(settings.Taglist, t)
             r++
         }
@@ -208,13 +158,10 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     to := rscore.Textobj{Text: text}
 
     for _, s := range tags {
-        to.Tags = append(to.Tags, cleanstring(s))
+        to.Tags = append(to.Tags, rscore.Cleanstring(s))
     }
 
     mxindex++
-
-    // TODO: Implement id indexing per tag
-    // Write to db, tag as key and slice of ints as value
 
     // Storing the object in db
     key := []byte(strconv.Itoa(mxindex))
@@ -253,7 +200,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Tags: r.FormValue("tags") }
 
     ltxt, e := json.Marshal(tr)
-    addlog(rscore.L_REQ, ltxt, r)
+    rscore.Addlog(rscore.L_REQ, ltxt, r)
 
     itags := strings.Split(tr.Tags, " ")
 
@@ -293,12 +240,19 @@ func sendstatus(code int, text string, w http.ResponseWriter) {
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    resp := rscore.Tagresp{
-            Tags: settings.Taglist }
+    resp := rscore.Tagresp{}
+    var ttag rscore.Rtag
+
+    for _, t := range settings.Taglist {
+        ttag.Name = t
+        ttag.TN = rsdb.Countobj(db, t, rscore.TBUC)
+        ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
+        resp.Tags = append(resp.Tags, ttag)
+    }
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    addlog(rscore.L_RESP, mresp, r)
+    rscore.Addlog(rscore.L_RESP, mresp, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
@@ -308,7 +262,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    addlog(rscore.L_SHUTDOWN, []byte(""), r)
+    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), r)
     sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, settings)
