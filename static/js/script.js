@@ -6,6 +6,25 @@ var slideshow;
 
 
 function getTags(){
+    var categ = document.getElementById("category");
+    let tagJX = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            tags = JSON.parse(this.responseText);
+            for(i in tags){
+                let tag = document.createElement("option");
+                tag.setAttribute("value", tags[i].Name);
+                let tagText = document.createTextNode(tags[i].Name);
+                tag.appendChild(tagText);
+                tags.appendChild(tag);
+            }
+        }
+    }
+
+
+    tagJX.open("GET", "/gettags", false);
+    tagJX.send();
+
     // skicka till /gettags för att få en lista
 
 }
@@ -147,3 +166,13 @@ function displayTimer(){
         }
     }, 1000);
 }
+
+/* todo:
+slutbild på bildspelet
+läs in taggar från DB till startsidan
+/gettags
+{"Tags":[{"Name":"sjukdom","TN":2,"BN":4,"IN":0}]}
+
+läs in värden från startsidan att skicka med till DB
+CSS-random-funktion
+3 olika halvbra CSS*/
