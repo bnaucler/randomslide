@@ -67,6 +67,10 @@ option:hover{
     display: none;
 }
 
+#cssPre{
+    display: none;
+}
+
 .smallgaybutton{
     padding: 0.8em;
     border: 2px solid whitesmoke;
