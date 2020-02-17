@@ -155,11 +155,12 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
 func addtextwtags(text string, tags []string, db *bolt.DB,
     mxindex int, buc []byte) {
 
+    mxindex++
+
     to := rscore.Textobj{
+            Id: mxindex,
             Text: text,
             Tags: tags }
-
-    mxindex++
 
     // Storing the object in db
     key := []byte(strconv.Itoa(mxindex))
@@ -249,8 +250,15 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     for _, t := range settings.Taglist {
         ttag.Name = t
-        ttag.TN = rsdb.Countobj(db, t, rscore.TBUC)
-        ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
+
+        if settings.Tmax > 0 {
+            ttag.TN = rsdb.Countobj(db, t, rscore.TBUC)
+        }
+
+        if settings.Bmax > 0 {
+            ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
+        }
+
         resp.Tags = append(resp.Tags, ttag)
     }
 
