@@ -6,7 +6,7 @@ RSLOGFILE="static/log/rsserver.log"
 MONLOGFILE="static/log/rsmonitor.log"
 
 startserver() {
-    bin/build.sh >> $MONLOGFILE
+    bin/build.sh all >> $MONLOGFILE
     DATE=`date +'%a | %Y-%m-%d | %R:%S'`
     echo "$DATE: Restarting server" >> $MONLOGFILE
     nohup bin/rsserver -v >> $MONLOGFILE &
