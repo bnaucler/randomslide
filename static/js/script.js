@@ -137,14 +137,15 @@ function startSlide(){
         document.getElementById("next").style.display = "inline";
     } else {
         document.getElementById("timeDisplay").style.display = "inline";
-        displayTimer(timer);
+        displayTimer(true);
     }
 }
 
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
-        slideIndex = 1;
+        endShow();
+        //slideIndex = 1;
         console.log("Slut på bilder, lägg in en end screen eller något");
     }
     if(n < 1){
@@ -156,9 +157,8 @@ function slideShow(n){
     slides[slideIndex-1].style.display = "block"; 
 }
 
-
-    document.onkeydown = function(e){
-        if(slideshow == true){
+document.onkeydown = function(e){
+    if(slideshow == true){
         switch (e.keyCode){
             case 37:
                 changeSlide(-1);
@@ -174,18 +174,25 @@ function changeSlide(n){
     slideShow(slideIndex += n);
 }
 
-function displayTimer(){
+function displayTimer(t){
     var timing = timer;
+    if(t){
+        setInterval(function(){
+            if(timing != 0){
+                document.getElementById("timeDisplay").innerHTML = timing;
+                timing -= 1;
+            }else {
+                changeSlide(1);
+                timing = timer;
+            }
+        }, 1000);
+    }
+}
 
-    setInterval(function(){
-        if(timing != 0){
-            document.getElementById("timeDisplay").innerHTML = timing;
-            timing -= 1;
-        }else {
-            changeSlide(1);
-            timing = timer;
-        }
-    }, 1000);
+
+function endShow(){
+displayTimer(false);
+console.log("SLUT");
 }
 
 /* todo:
