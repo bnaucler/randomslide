@@ -176,7 +176,7 @@ function changeSlide(n){
 
 function displayTimer(t){
     var timing = timer;
-    if(t){
+    if(t == true){
         setInterval(function(){
             if(timing != 0){
                 document.getElementById("timeDisplay").innerHTML = timing;
