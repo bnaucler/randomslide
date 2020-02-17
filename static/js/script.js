@@ -145,6 +145,7 @@ function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
         endShow();
+        slideshow = false;
         //slideIndex = 1;
         console.log("Slut på bilder, lägg in en end screen eller något");
     }
@@ -171,12 +172,14 @@ document.onkeydown = function(e){
 }
 
 function changeSlide(n){
-    slideShow(slideIndex += n);
+    if(slideshow == true){
+        slideShow(slideIndex += n);
+    }
 }
 
-function displayTimer(t){
+function displayTimer(){
     var timing = timer;
-    if(t == true){
+    if(slideshow == true){
         setInterval(function(){
             if(timing != 0){
                 document.getElementById("timeDisplay").innerHTML = timing;
@@ -191,8 +194,8 @@ function displayTimer(t){
 
 
 function endShow(){
-displayTimer(false);
-console.log("SLUT");
+
+    console.log("SLUT");
 }
 
 /* todo:
