@@ -102,7 +102,7 @@ func Cherr(e error) {
 // Removes whitespace and special characters from string
 func Cleanstring(src string) string {
 
-    rx, e := regexp.Compile("[^a-z]+")
+    rx, e := regexp.Compile("[^a-zåäöüæø]+")
     Cherr(e)
 
     dst := rx.ReplaceAllString(src, "")
