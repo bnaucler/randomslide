@@ -1,4 +1,5 @@
-bin/rsserver
+bin/*
+!bin/*.sh
 data/*
 !data/.gitkeep
 static/log/*
