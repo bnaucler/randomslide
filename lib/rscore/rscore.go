@@ -53,7 +53,7 @@ type Deckreq struct {
 type Textreq struct {
     Ttext string                // Title text object to add to db
     Btext string                // Body text object to add to db
-    Tags string                 // whitespace separated tags for indexing
+    Tags []string               // Tags for indexing
 }
 
 type Tag struct {

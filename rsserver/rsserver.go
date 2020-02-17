@@ -155,11 +155,9 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
 func addtextwtags(text string, tags []string, db *bolt.DB,
     mxindex int, buc []byte) {
 
-    to := rscore.Textobj{Text: text}
-
-    for _, s := range tags {
-        to.Tags = append(to.Tags, rscore.Cleanstring(s))
-    }
+    to := rscore.Textobj{
+            Text: text,
+            Tags: tags }
 
     mxindex++
 
@@ -194,17 +192,23 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     rscore.Cherr(e)
 
+    var ctags []string
+    rtags := r.FormValue("tags")
+    itags := strings.Split(rtags, " ")
+
+    for _, s := range itags {
+        ctags = append(ctags, rscore.Cleanstring(s))
+    }
+
     tr := rscore.Textreq{
             Ttext: r.FormValue("ttext"),
             Btext: r.FormValue("btext"),
-            Tags: r.FormValue("tags") }
+            Tags: ctags }
 
     ltxt, e := json.Marshal(tr)
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
-    itags := strings.Split(tr.Tags, " ")
-
-    settings, cngs := addtagstoindex(itags, settings)
+    settings, cngs := addtagstoindex(ctags, settings)
 
     if len(tr.Ttext) > 1 {
         addtextwtags(tr.Ttext, itags, db, settings.Tmax, rscore.TBUC)
