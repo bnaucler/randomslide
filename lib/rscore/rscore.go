@@ -26,7 +26,8 @@ const L_REQ = 0
 const L_RESP = 1
 const L_SHUTDOWN = 2
 
-const C_OK = 0
+const C_OK = 0                  // Status OK
+const C_WRFF = 1                // Error code 1 - incorrect file format
 
 var DBUC = []byte("dbuc")       // Deck bucket
 var TBUC = []byte("tbuc")       // Title text bucket
@@ -35,6 +36,11 @@ var IBUC = []byte("ibuc")       // Image bucket
 var SBUC = []byte("sbuc")       // Settings bucket
 
 var INDEX = []byte(".index")
+
+var IMGMIME = []string{
+    "image/jpeg",
+    "image/png",
+    "image/gif" }
 
 type Settings struct {
     Verb bool                   // Verbosity level
@@ -95,8 +101,9 @@ type Statusresp struct {
 }
 
 // Log all errors to file
-func Cherr(e error) {
+func Cherr(e error) error {
     if e != nil { log.Fatal(e) }
+    return e
 }
 
 // Removes whitespace and special characters from string

@@ -183,6 +183,43 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     }
 }
 
+// Handles incoming requests to add images
+func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) rscore.Settings {
+
+    r.ParseMultipartForm(10 << 20)
+    f, hlr, e := r.FormFile("file")
+    e = rscore.Cherr(e)
+    if e != nil { return settings }
+    defer f.Close()
+
+    mt := hlr.Header["Content-Type"]
+
+    if rscore.Findstrinslice(mt[0], rscore.IMGMIME) == false {
+        sendstatus(rscore.C_WRFF, "Unknown image format - file not uploaded", w)
+        return settings
+    }
+
+    // TODO: pretty file sizes for logging
+    lmsg := fmt.Sprintf("File: %+v(%+vB) - %+v",
+        hlr.Filename, hlr.Size, mt)
+    rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
+
+    ext := filepath.Ext(hlr.Filename)
+    fformat := fmt.Sprintf("img-*%s", ext)
+    tmpf, e := ioutil.TempFile("static/img", fformat)
+    rscore.Cherr(e)
+    defer tmpf.Close()
+
+    fc, e := ioutil.ReadAll(f)
+    rscore.Cherr(e)
+
+    tmpf.Write(fc)
+    sendstatus(rscore.C_OK, "", w)
+
+    return settings
+}
+
 // Handles incoming requests to add text
 func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -339,6 +376,11 @@ func main() {
     // Add text to db
     http.HandleFunc("/addtext", func(w http.ResponseWriter, r *http.Request) {
         settings = textreqhandler(w, r, db, settings)
+    })
+
+    // Upload images
+    http.HandleFunc("/addimg", func(w http.ResponseWriter, r *http.Request) {
+        settings = imgreqhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
