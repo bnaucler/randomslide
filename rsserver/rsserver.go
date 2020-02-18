@@ -155,8 +155,6 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
 func addtextwtags(text string, tags []string, db *bolt.DB,
     mxindex int, buc []byte) {
 
-    mxindex++
-
     to := rscore.Textobj{
             Id: mxindex,
             Text: text,
@@ -169,9 +167,8 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     rscore.Cherr(e)
 
     // Update all relevant tag lists
-    ctag := rscore.Tag{}
-
     for _, s := range to.Tags {
+        ctag := rscore.Tag{}
         key := []byte(s)
 
         resp, e := rsdb.Rdb(db, key, buc)
@@ -292,7 +289,7 @@ func rsinit(settings rscore.Settings) rscore.Settings {
     prgname := filepath.Base(os.Args[0])
     pid := os.Getpid()
 
-    settings.Pidfile = fmt.Sprintf("%s/%s.pid", rscore.PIDFILEPATH, prgname)
+    settings.Pidfile = fmt.Sprintf("%s%s.pid", rscore.PIDFILEPATH, prgname)
     e := ioutil.WriteFile(settings.Pidfile, []byte(strconv.Itoa(pid)), 0644)
     rscore.Cherr(e)
 
