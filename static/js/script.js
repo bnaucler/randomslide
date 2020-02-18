@@ -196,7 +196,7 @@ function displayTimer(){
 
 
 function endShow(){
-    document.querySelector(".slidechanger").style.display = "none";
+    document.querySelectorAll(".slidechanger").style.display = "none";
     console.log("SLUT");
 }
 
@@ -205,12 +205,15 @@ function endShow(){
 
 
 
-/* todo:
+/* 
+todo:
+
 slutbild på bildspelet
 
-CSS-random-funktion
+
+CSS-random-funktion <- vart är det bäst att lägga in det här?
+vid byte av slide? när slides genereras?
 
 
-
-
-3 olika halvbra CSS*/
+3 olika halvbra CSS
+*/
