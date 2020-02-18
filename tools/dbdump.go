@@ -30,18 +30,21 @@ func retrtxt(db *bolt.DB, mxind int, buc []byte) []rscore.Textobj {
     return ret
 }
 
-func gettaglist(db *bolt.DB, tl []string, buc []byte) []rscore.Tag {
+func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
 
-    var ret []rscore.Tag
+    var ret []string
     ctag := rscore.Tag{}
 
     for _, t := range tl {
+
         k := []byte(t)
         v, e := rsdb.Rdb(db, k, buc)
         rscore.Cherr(e)
 
         json.Unmarshal(v, &ctag)
-        ret = append(ret, ctag)
+
+        cstr := fmt.Sprintf("%s:%s - %+v", t, string(buc), ctag)
+        ret = append(ret, cstr)
     }
 
     return ret
