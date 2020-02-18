@@ -77,6 +77,24 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
     return txtreq.Text
 }
 
+// Sends random image url from database, based on requested tags
+func getrndimgobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    // TODO tag handling
+    // rnd := rand.Intn(kmax)
+    // k := []byte(strconv.Itoa(rnd))
+
+    mimg, e := rsdb.Rdb(db, []byte("0"), buc)
+    // mimg, e := rsdb.Rdb(db, k, buc)
+    rscore.Cherr(e)
+
+    img := rscore.Imgobj{}
+    e = json.Unmarshal(mimg, &img)
+    rscore.Cherr(e)
+
+    return img.Fname
+}
+
 // Returns a full slide deck according to request
 func mkdeck(req rscore.Deckreq, db *bolt.DB,
     settings rscore.Settings) (rscore.Deck, rscore.Settings) {
@@ -88,7 +106,8 @@ func mkdeck(req rscore.Deckreq, db *bolt.DB,
     for i := 0; i < req.N; i++ {
         slide := rscore.Slide{
             Title: getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC),
-            Btext: getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
+            Btext: getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC),
+            Imgur: getrndimgobj(db, settings.Imax, req.Tags, rscore.IBUC) }
 
         deck.Slides = append(deck.Slides, slide)
     }
@@ -213,8 +232,22 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     fc, e := ioutil.ReadAll(f)
     rscore.Cherr(e)
-
     tmpf.Write(fc)
+
+    var tags []string
+    ofn := filepath.Base(tmpf.Name())
+    // TODO: tag handling
+    iobj := rscore.Imgobj{
+        Id: settings.Imax,
+        Fname: ofn,
+        Tags: tags}
+
+    mobj, e := json.Marshal(iobj)
+    k := []byte(strconv.Itoa(settings.Imax))
+    e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
+    rscore.Cherr(e)
+
+    settings.Imax++
     sendstatus(rscore.C_OK, "", w)
 
     return settings

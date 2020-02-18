@@ -46,6 +46,7 @@ type Settings struct {
     Verb bool                   // Verbosity level
     Tmax int                    // Max id of title objects
     Bmax int                    // Max id of body objects
+    Imax int                    // Max id of image objects
     Pidfile string              // Location of pidfile
     Taglist []string            // List of all existing tags TODO: Make map w ID
 }
@@ -78,8 +79,14 @@ type Tagresp struct {
 }
 
 type Textobj struct {
-    Id int                      // # for random selection
+    Id int                      // Index number
     Text string                 // The text itself
+    Tags []string               // All tags where object exists (for associative decks)
+}
+
+type Imgobj struct {
+    Id int                      // Index number
+    Fname string                // File name
     Tags []string               // All tags where object exists (for associative decks)
 }
 
