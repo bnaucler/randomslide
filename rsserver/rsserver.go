@@ -336,6 +336,10 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
         }
 
+        if settings.Imax > 0 {
+            ttag.IN = rsdb.Countobj(db, t, rscore.IBUC)
+        }
+
         resp.Tags = append(resp.Tags, ttag)
     }
 
