@@ -213,22 +213,6 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     updatetaglists(db, tags, mxindex, buc)
 }
 
-// Convert file size to human readable format
-func prettyfsize(b int64) string {
-
-    k := b / 1024
-    m := k / 1024
-    var ret string
-
-    if m == 0 {
-        ret = fmt.Sprintf("%d.%dKB", k, b % 1024)
-    } else {
-        ret = fmt.Sprintf("%d.%dMB", m, k)
-    }
-
-    return ret
-}
-
 // Returns a slice of cleaned tags from http request
 func gettagsfromreq(r *http.Request) []string {
 
@@ -253,15 +237,15 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     if e != nil { return settings }
     defer f.Close()
 
-    mt := hlr.Header["Content-Type"]
+    mt := hlr.Header["Content-Type"][0]
 
-    if rscore.Findstrinslice(mt[0], rscore.IMGMIME) == false {
+    if rscore.Findstrinslice(mt, rscore.IMGMIME) == false {
         sendstatus(rscore.C_WRFF, "Unknown image format - file not uploaded", w)
         return settings
     }
 
     lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
-        hlr.Filename, prettyfsize(hlr.Size), mt)
+        hlr.Filename, rscore.Prettyfsize(hlr.Size), mt)
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
     ext := filepath.Ext(hlr.Filename)
@@ -288,7 +272,6 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     k := []byte(strconv.Itoa(settings.Imax))
     e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
     rscore.Cherr(e)
-
 
     settings.Imax++
     sendstatus(rscore.C_OK, "", w)

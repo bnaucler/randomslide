@@ -166,3 +166,18 @@ func Addlog(ltype int, msg []byte, r *http.Request) {
     log.Println(lentry)
 }
 
+// Convert file size to human readable format
+func Prettyfsize(b int64) string {
+
+    k := b / 1024
+    m := k / 1024
+    var ret string
+
+    if m == 0 {
+        ret = fmt.Sprintf("%d.%dKB", k, (b % 1024) / 100)
+    } else {
+        ret = fmt.Sprintf("%d.%dMB", m, k / 100)
+    }
+
+    return ret
+}
