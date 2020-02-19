@@ -51,8 +51,8 @@ func mksel(db *bolt.DB, tags []string, buc []byte) []int {
     return sel
 }
 
-// Sends random text object from database, based on requested tags
-func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+// Returns a random key based on tag list
+func getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
 
     sel := mksel(db, tags, buc)
     smax := len(sel)
@@ -68,27 +68,31 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
         k = []byte(strconv.Itoa(ki))
     }
 
-    txtreq := rscore.Textobj{}
+    return k
+}
+
+// Sends random text object from database, based on requested tags
+func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    k := getkeyfromsel(db, tags, buc, kmax)
+
+    txt := rscore.Textobj{}
     mtxt, e := rsdb.Rdb(db, k, buc)
     rscore.Cherr(e)
+    e = json.Unmarshal(mtxt, &txt)
+    rscore.Cherr(e)
 
-    json.Unmarshal(mtxt, &txtreq)
-
-    return txtreq.Text
+    return txt.Text
 }
 
 // Sends random image url from database, based on requested tags
 func getrndimgobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 
-    // TODO tag handling
-    // rnd := rand.Intn(kmax)
-    // k := []byte(strconv.Itoa(rnd))
-
-    mimg, e := rsdb.Rdb(db, []byte("0"), buc)
-    // mimg, e := rsdb.Rdb(db, k, buc)
-    rscore.Cherr(e)
+    k := getkeyfromsel(db, tags, buc, kmax)
 
     img := rscore.Imgobj{}
+    mimg, e := rsdb.Rdb(db, k, buc)
+    rscore.Cherr(e)
     e = json.Unmarshal(mimg, &img)
     rscore.Cherr(e)
 
