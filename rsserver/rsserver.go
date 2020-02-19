@@ -154,7 +154,8 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 }
 
 // Updates index to include new tags
-func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, int) {
+func addtagstoindex(tags []string, settings rscore.Settings,
+    w http.ResponseWriter) rscore.Settings {
 
     r := 0
 
@@ -167,7 +168,11 @@ func addtagstoindex(tags []string, settings rscore.Settings) (rscore.Settings, i
 
     if r != 0 { sort.Strings(settings.Taglist) }
 
-    return settings, r
+    var sstr string
+    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
+    sendstatus(rscore.C_OK, sstr, w)
+
+    return settings
 }
 
 // Conditionally adds tagged text to database
@@ -253,6 +258,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         hlr.Filename, prettyfsize(hlr.Size), mt)
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
+
     ext := filepath.Ext(hlr.Filename)
     fformat := fmt.Sprintf("img-*%s", ext)
     tmpf, e := ioutil.TempFile("static/img", fformat)
@@ -270,6 +276,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         Id: settings.Imax,
         Fname: ofn,
         Tags: tags}
+
+    settings = addtagstoindex(tags, settings, w)
 
     mobj, e := json.Marshal(iobj)
     k := []byte(strconv.Itoa(settings.Imax))
@@ -299,7 +307,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ltxt, e := json.Marshal(tr)
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
-    settings, cngs := addtagstoindex(tags, settings)
+    settings = addtagstoindex(tags, settings, w)
 
     if len(tr.Ttext) > 1 {
         addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)
@@ -312,10 +320,6 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     rsdb.Wrsettings(db, settings)
-
-    var sstr string
-    if cngs != 0 { sstr = fmt.Sprintf("%d new tag(s) added", cngs) }
-    sendstatus(rscore.C_OK, sstr, w)
 
     return settings
 }
