@@ -13,6 +13,7 @@ import (
     "net"
     "regexp"
     "net/http"
+    "encoding/json"
 )
 
 const DEFAULTPORT = 6291
@@ -180,4 +181,15 @@ func Prettyfsize(b int64) string {
     }
 
     return ret
+}
+
+// Sends a status code response as JSON object
+func Sendstatus(code int, text string, w http.ResponseWriter) {
+
+    resp := Statusresp{
+            Code: code,
+            Text: text }
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
 }

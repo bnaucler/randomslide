@@ -170,7 +170,7 @@ func addtagstoindex(tags []string, settings rscore.Settings,
 
     var sstr string
     if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
-    sendstatus(rscore.C_OK, sstr, w)
+    rscore.Sendstatus(rscore.C_OK, sstr, w)
 
     return settings
 }
@@ -240,7 +240,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     mt := hlr.Header["Content-Type"][0]
 
     if rscore.Findstrinslice(mt, rscore.IMGMIME) == false {
-        sendstatus(rscore.C_WRFF, "Unknown image format - file not uploaded", w)
+        rscore.Sendstatus(rscore.C_WRFF,
+            "Unknown image format - file not uploaded", w)
         return settings
     }
 
@@ -274,7 +275,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     settings.Imax++
-    sendstatus(rscore.C_OK, "", w)
+    rscore.Sendstatus(rscore.C_OK, "", w)
 
     return settings
 }
@@ -313,17 +314,6 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Sends a status code response as JSON object
-func sendstatus(code int, text string, w http.ResponseWriter) {
-
-    resp := rscore.Statusresp{
-            Code: code,
-            Text: text }
-
-    enc := json.NewEncoder(w)
-    enc.Encode(resp)
-}
-
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -358,7 +348,7 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
     rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), r)
-    sendstatus(rscore.C_OK, "", w)
+    rscore.Sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, settings)
 
