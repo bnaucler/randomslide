@@ -13,9 +13,14 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Server listens at port 6291 by default
 
 ## Folder structure
-* All static content such as html, css & js is located in /static
-* Source code for server can be found in /rsserver
-* Binaries can be built with /bin/build.sh and will be placed in /bin
+```
+data/           - Home of database & pidfile
+lib/            - Custom golang libraries
+rsserver/       - Source file(s) of server
+static/         - HTML, CSS, JS and images
+tests/          - Scripts for server tests
+tools/          - Tools for maintenence etc.
+```
 
 ## TODO
 * Generate slides w. numbers
