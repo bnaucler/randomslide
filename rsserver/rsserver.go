@@ -175,6 +175,25 @@ func addtagstoindex(tags []string, settings rscore.Settings,
     return settings
 }
 
+// Updates all relevant tag lists
+func updatetaglists(db *bolt.DB, tags []string, i int, buc []byte) {
+
+    for _, s := range tags {
+        ctag := rscore.Tag{}
+        key := []byte(s)
+
+        resp, e := rsdb.Rdb(db, key, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(resp, &ctag)
+        ctag.Ids = append(ctag.Ids, i)
+
+        dbw, e := json.Marshal(ctag)
+        e = rsdb.Wrdb(db, key, dbw, buc)
+        rscore.Cherr(e)
+    }
+}
+
 // Conditionally adds tagged text to database
 func addtextwtags(text string, tags []string, db *bolt.DB,
     mxindex int, buc []byte) {
@@ -191,20 +210,7 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     rscore.Cherr(e)
 
     // Update all relevant tag lists
-    for _, s := range to.Tags {
-        ctag := rscore.Tag{}
-        key := []byte(s)
-
-        resp, e := rsdb.Rdb(db, key, buc)
-        rscore.Cherr(e)
-
-        json.Unmarshal(resp, &ctag)
-        ctag.Ids = append(ctag.Ids, mxindex)
-
-        dbw, e := json.Marshal(ctag)
-        e = rsdb.Wrdb(db, key, dbw, buc)
-        rscore.Cherr(e)
-    }
+    updatetaglists(db, tags, mxindex, buc)
 }
 
 // Convert file size to human readable format
@@ -258,7 +264,6 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         hlr.Filename, prettyfsize(hlr.Size), mt)
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
-
     ext := filepath.Ext(hlr.Filename)
     fformat := fmt.Sprintf("img-*%s", ext)
     tmpf, e := ioutil.TempFile("static/img", fformat)
@@ -269,20 +274,21 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
     tmpf.Write(fc)
 
-    // TODO: tag handling
     tags := gettagsfromreq(r)
     ofn := filepath.Base(tmpf.Name())
     iobj := rscore.Imgobj{
         Id: settings.Imax,
         Fname: ofn,
-        Tags: tags}
+        Tags: tags }
 
     settings = addtagstoindex(tags, settings, w)
+    updatetaglists(db, tags, settings.Imax, rscore.IBUC)
 
     mobj, e := json.Marshal(iobj)
     k := []byte(strconv.Itoa(settings.Imax))
     e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
     rscore.Cherr(e)
+
 
     settings.Imax++
     sendstatus(rscore.C_OK, "", w)
