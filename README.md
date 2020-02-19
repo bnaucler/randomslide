@@ -1,5 +1,5 @@
 # randomslide v0.1A
-Generate random slides for online presentation
+Generate random slides for online presentation.
 
 ## Created by
 Björn W Naucler (mail@bnaucler.se)  
@@ -9,14 +9,15 @@ Morgan Andersson (info@ameste.se)
 Slideshow karaokae or other pranks. Actual real world usefullness can be questioned.
 
 ## Usage
-Build the server with `bin/build.sh`  
-Launch with `bin/rsserver`
+Build the server with `bin/build.sh all` to build server and tools.  
+Launch with `bin/rsserver`  
+You can also use `bin/rsmonitor.sh` to automatically restart the server.
 
 Output of `bin/rsserver -h`:  
 ```
 Usage of bin/rsserver:
   -d string
-    	specify database to open (default "./data/random.db")
+    	specify database to open (default "./data/rs.db")
   -p int
     	port number to listen (default 6291)
   -v	verbose mode
