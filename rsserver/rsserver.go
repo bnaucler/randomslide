@@ -202,6 +202,22 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
     }
 }
 
+// Convert file size to human readable format
+func cnvfsize(b int64) string {
+
+    k := b / 1024
+    m := k / 1024
+    var ret string
+
+    if m == 0 {
+        ret = fmt.Sprintf("%d.%dKB", k, b % 1024)
+    } else {
+        ret = fmt.Sprintf("%d.%dMB", m, k)
+    }
+
+    return ret
+}
+
 // Handles incoming requests to add images
 func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -220,8 +236,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     // TODO: pretty file sizes for logging
-    lmsg := fmt.Sprintf("File: %+v(%+vB) - %+v",
-        hlr.Filename, hlr.Size, mt)
+    lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
+        hlr.Filename, cnvfsize(hlr.Size), mt)
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
     ext := filepath.Ext(hlr.Filename)
