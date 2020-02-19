@@ -129,18 +129,11 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     n, e := strconv.Atoi(r.FormValue("amount"))
     rscore.Cherr(e)
 
-    // Clean up tag set before search
-    var ctags []string
-    tagreq := r.FormValue("tags")
-    sptags := strings.Split(tagreq, " ")
-    for _, s := range sptags {
-        ctags = append(ctags, rscore.Cleanstring(s))
-    }
-
+    tags := gettagsfromreq(r)
     req := rscore.Deckreq{
             N: n,
             Lang: r.FormValue("lang"),
-            Tags: ctags }
+            Tags: tags }
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
@@ -279,6 +272,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     settings.Imax++
+    rsdb.Wrsettings(db, settings)
+
     rscore.Sendstatus(rscore.C_OK, "", w)
 
     return settings
