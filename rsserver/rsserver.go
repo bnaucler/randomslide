@@ -203,7 +203,7 @@ func addtextwtags(text string, tags []string, db *bolt.DB,
 }
 
 // Convert file size to human readable format
-func cnvfsize(b int64) string {
+func prettyfsize(b int64) string {
 
     k := b / 1024
     m := k / 1024
@@ -213,6 +213,20 @@ func cnvfsize(b int64) string {
         ret = fmt.Sprintf("%d.%dKB", k, b % 1024)
     } else {
         ret = fmt.Sprintf("%d.%dMB", m, k)
+    }
+
+    return ret
+}
+
+// Returns a slice of cleaned tags from http request
+func gettagsfromreq(r *http.Request) []string {
+
+    var ret []string
+    rtags := r.FormValue("tags")
+    itags := strings.Split(rtags, " ")
+
+    for _, s := range itags {
+        ret = append(ret, rscore.Cleanstring(s))
     }
 
     return ret
@@ -235,9 +249,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         return settings
     }
 
-    // TODO: pretty file sizes for logging
     lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
-        hlr.Filename, cnvfsize(hlr.Size), mt)
+        hlr.Filename, prettyfsize(hlr.Size), mt)
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
     ext := filepath.Ext(hlr.Filename)
@@ -250,9 +263,9 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
     tmpf.Write(fc)
 
-    var tags []string
-    ofn := filepath.Base(tmpf.Name())
     // TODO: tag handling
+    tags := gettagsfromreq(r)
+    ofn := filepath.Base(tmpf.Name())
     iobj := rscore.Imgobj{
         Id: settings.Imax,
         Fname: ofn,
@@ -276,31 +289,25 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     rscore.Cherr(e)
 
-    var ctags []string
-    rtags := r.FormValue("tags")
-    itags := strings.Split(rtags, " ")
-
-    for _, s := range itags {
-        ctags = append(ctags, rscore.Cleanstring(s))
-    }
+    tags := gettagsfromreq(r)
 
     tr := rscore.Textreq{
             Ttext: r.FormValue("ttext"),
             Btext: r.FormValue("btext"),
-            Tags: ctags }
+            Tags: tags }
 
     ltxt, e := json.Marshal(tr)
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
-    settings, cngs := addtagstoindex(ctags, settings)
+    settings, cngs := addtagstoindex(tags, settings)
 
     if len(tr.Ttext) > 1 {
-        addtextwtags(tr.Ttext, itags, db, settings.Tmax, rscore.TBUC)
+        addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)
         settings.Tmax++
     }
 
     if len(tr.Btext) > 1 {
-        addtextwtags(tr.Btext, itags, db, settings.Bmax, rscore.BBUC)
+        addtextwtags(tr.Btext, tags, db, settings.Bmax, rscore.BBUC)
         settings.Bmax++
     }
 
@@ -412,7 +419,7 @@ func main() {
         })
     }
 
-    // Slide requests
+    // Slide deck requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
         settings = deckreqhandler(w, r, db, settings)
     })
