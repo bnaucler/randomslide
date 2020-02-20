@@ -24,7 +24,6 @@ function addTitle(){
     }
 }
 
-
 function addImg(){
     let imgtags = document.getElementById("imgTagInput").value;
     let url = "/addimg?tags=" + imgtags;
@@ -45,5 +44,4 @@ function addImg(){
             console.log(response);
           })
     });
-
 }
