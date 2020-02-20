@@ -27,16 +27,14 @@ function addTitle(){
 function addImg(){
     let imgtags = document.getElementById("imgTagInput").value;
     let url = "/addimg?tags=" + imgtags;
-    let form = document.getElementById("imgForm");
-
-    form.onsubmit = function(){
-        let formdata = new FormData();
-        let fileToSend = document.getElementById("file");
-        formdata.append('file', fileToSend);
-        var imgJX = new XMLHttpRequest();
-        imgJX.open('POST', url, true);
-        imgJX.send(formdata);
-    }
+    
+    let formdata = new FormData();
+    let fileToSend = document.getElementById("file");
+    formdata.append('file', fileToSend);
+    var imgJX = new XMLHttpRequest();
+    imgJX.open('POST', url, true);
+    imgJX.send(formdata);
+    
 
     imgJX.onreadystatechange = function(){
         if (this.readyState == 4){
