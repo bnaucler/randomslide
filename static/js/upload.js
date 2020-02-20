@@ -38,6 +38,7 @@ function addImg(){
 
     imgJX.onreadystatechange = function(){
         if (this.readyState == 4){
+            console.log(this.responseText);
             let resp = JSON.parse(this.responseText);
             if(resp.Code == 0){
                 var alertHTML = '<div class="alert">Success!</div>';
