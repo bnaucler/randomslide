@@ -38,9 +38,8 @@ function addImg(){
 
     imgJX.onreadystatechange = function(){
         if (this.readyState == 4){
-            console.log(this.responseText);
-            let resp = JSON.parse(this.responseText);
-            if(resp.Code == 0){
+            console.log(this.Code);
+            if(this.Code == 0){
                 var alertHTML = '<div class="alert">Success!</div>';
                 document.body.insertAdjacentHTML("beforeend", alertHTML);
                 setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
