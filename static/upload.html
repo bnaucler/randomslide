@@ -14,31 +14,41 @@
             <a href="admin.html">adminpage</a><br />
             <a href="index.html">startpage</a>
         </header>
-
 <br />
-
     <div>
+        <fieldset>
+            <h2>Add text to db</h2>
+                <h3>Add title:</h3>
+                    <input type="text" id="titelinput" name="titelinput"> 
+                    
+                <h3>Add text:</h3>
+                    <textarea id="textinput" name="textinput"> 
+                    </textarea>
 
-        <h3>Add title:</h3>
-            <input type="text" id="titelinput" name="titelinput"> 
-            
-        <h3>Add text:</h3>
-            <textarea id="textinput" name="textinput"> 
-            </textarea>
+                <h3>Add tags (separated by space):</h3>
+                    <input type="text" id="taginput" name="taginput"> 
+        <br />
+        <br />
+                <button onclick="addTitle()">Send data</button>
+            </fieldset>
 
-        <h3>Add tags (separated by space):</h3>
-            <input type="text" id="taginput" name="taginput"> 
-<br />
-<br />
-        <button onclick="addTitle()">Send data</button>
-    <form
-      enctype="multipart/form-data"
-      action="http://localhost:6291/addimg"
-      method="post">
-      <input type="file" name="file" />
-      <input type="submit" value="upload" />
-    </form>
-</div>
-    <script src="upload.js"></script>
+        <fieldset>
+            <h2>Add img to gb</h2>
+            <form
+            enctype="multipart/form-data"
+            action="http://localhost:6291/addimg"
+            method="post"
+            id="imgForm">
+            <input type="file" name="file" id="file"/>
+            <br />
+            <br />
+            <label for="imgTagInput"><h3>Add tags to image (separated by space):</h3></label>
+            <br />
+            <input type="text" name="imgTagInput" id="imgTagInput">
+            <input type="submit" value="upload" />
+            </form>
+        </fieldset>
+    </div>
+    <script src="js/upload.js"></script>
   </body>
 </html>

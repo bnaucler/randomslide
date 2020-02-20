@@ -23,3 +23,27 @@ function addTitle(){
         }
     }
 }
+
+
+function addImg(){
+    let imgtags = document.getElementById("imgTagInput").value;
+    let url = "/addimg?tags=" + imgtags;
+    let form = document.getElementById("imgForm");
+
+
+    form.addEventListener('submit', e =>{
+        e.preventDefault();
+        let file = document.getElementById("file").file;
+
+        let formData = new FormData();
+        formData.append(file);
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+          }).then(response => {
+            console.log(response);
+          })
+    });
+
+}

@@ -172,3 +172,11 @@ textarea{
 #titelinput{
     width: 30em;
 }
+
+
+
+fieldset{
+    margin: 20px;
+    border: 5px solid grey;
+    border-radius: 10px;
+}
