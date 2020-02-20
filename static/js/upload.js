@@ -33,12 +33,15 @@ function addImg(){
     form.addEventListener('submit', e =>{
         e.preventDefault();
         let file = document.getElementById("file").file;
-
         let formData = new FormData();
+        let myHeaders = new Headers();
+        myHeaders.append('enctype', 'multipart/form-data');
+
         formData.append(file);
 
         fetch(url, {
             method: 'POST',
+            headers: myHeaders,
             body: formData,
           }).then(response => {
             console.log(response);
