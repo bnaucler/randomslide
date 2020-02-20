@@ -74,7 +74,6 @@ func getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
 // Sends random text object from database, based on requested tags
 func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 
-
     if kmax < 2 { return "" }
 
     k := getkeyfromsel(db, tags, buc, kmax)
@@ -229,6 +228,31 @@ func gettagsfromreq(r *http.Request) []string {
     return ret
 }
 
+// Stores image object in database
+func addimgwtags(db *bolt.DB, fn string, tags []string,
+    w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
+
+    ofn := filepath.Base(fn)
+
+    iobj := rscore.Imgobj{
+        Id: settings.Imax,
+        Fname: ofn,
+        Tags: tags }
+
+    // Add object to db
+    mobj, e := json.Marshal(iobj)
+    k := []byte(strconv.Itoa(settings.Imax))
+    e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
+    rscore.Cherr(e)
+
+    // Update relevant tags
+    settings = addtagstoindex(tags, settings, w)
+    updatetaglists(db, tags, settings.Imax, rscore.IBUC)
+    settings.Imax++
+
+    return settings
+}
+
 // Handles incoming requests to add images
 func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -262,24 +286,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     tmpf.Write(fc)
 
     tags := gettagsfromreq(r)
-    ofn := filepath.Base(tmpf.Name())
-    iobj := rscore.Imgobj{
-        Id: settings.Imax,
-        Fname: ofn,
-        Tags: tags }
-
-    mobj, e := json.Marshal(iobj)
-    k := []byte(strconv.Itoa(settings.Imax))
-    e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
-    rscore.Cherr(e)
-
-    settings = addtagstoindex(tags, settings, w)
-    updatetaglists(db, tags, settings.Imax, rscore.IBUC)
-
-    settings.Imax++
+    settings = addimgwtags(db, tmpf.Name(), tags, w, settings)
     rsdb.Wrsettings(db, settings)
-
-    rscore.Sendstatus(rscore.C_OK, "", w)
 
     return settings
 }
