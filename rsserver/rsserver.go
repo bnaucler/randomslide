@@ -74,6 +74,9 @@ func getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
 // Sends random text object from database, based on requested tags
 func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 
+
+    if kmax < 2 { return "" }
+
     k := getkeyfromsel(db, tags, buc, kmax)
 
     txt := rscore.Textobj{}
@@ -87,6 +90,8 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 
 // Sends random image url from database, based on requested tags
 func getrndimgobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    if kmax < 2 { return "" }
 
     k := getkeyfromsel(db, tags, buc, kmax)
 
