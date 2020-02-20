@@ -36,8 +36,8 @@ function addImg(){
         var imgJX = new XMLHttpRequest();
         imgJX.open('POST', url, true);
         imgJX.send(formdata);
-
     }
+
     imgJX.onreadystatechange = function(){
         if (this.readyState == 4){
             let resp = JSON.parse(this.responseText);
