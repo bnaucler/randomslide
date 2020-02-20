@@ -263,13 +263,13 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         Fname: ofn,
         Tags: tags }
 
-    settings = addtagstoindex(tags, settings, w)
-    updatetaglists(db, tags, settings.Imax, rscore.IBUC)
-
     mobj, e := json.Marshal(iobj)
     k := []byte(strconv.Itoa(settings.Imax))
     e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
     rscore.Cherr(e)
+
+    settings = addtagstoindex(tags, settings, w)
+    updatetaglists(db, tags, settings.Imax, rscore.IBUC)
 
     settings.Imax++
     rsdb.Wrsettings(db, settings)
