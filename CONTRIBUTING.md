@@ -1,8 +1,8 @@
 # Contributing to randomslide
 Contributions are very welcome! At this early stage, this file will double as a TODO list.
 
-## Best practices
-* Keep variable names short and in lower case
+## Code style
+* Keep variable & function names short and in lower case (whenever possible)
 * JSON format used for data exchange
 * Limit to 80 columns
 * Limit to three levels of indentation
@@ -14,10 +14,12 @@ Contributions are very welcome! At this early stage, this file will double as a 
 
 ## Folder structure
 ```
-data/           - Home of database & pidfile
+bin/            - Script and compiled binaries
+data/           - Home of database & pidfiles
 lib/            - Custom golang libraries
 rsserver/       - Source file(s) of server
 static/         - HTML, CSS, JS and images
+static/log      - Server and monitor log files
 tests/          - Scripts for server tests
 tools/          - Tools for maintenence etc.
 ```
