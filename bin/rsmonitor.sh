@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 INTERVAL=30
-PIDFILE="data/rsserver.pid"
+SPIDFILE="data/rsserver.pid"
+MPIDFILE="data/rsmonitor.pid"
 RSLOGFILE="static/log/rsserver.log"
 MONLOGFILE="static/log/rsmonitor.log"
 PORT=6291
@@ -18,6 +19,10 @@ usage() {
     exit 0
 }
 
+cleanup() {
+    rm $MPIDFILE
+}
+
 while getopts 'hp:' flag; do
     case "${flag}" in
         h) usage ;;
@@ -25,12 +30,15 @@ while getopts 'hp:' flag; do
     esac
 done
 
+trap cleanup EXIT
+echo $$ > $MPIDFILE
+
 while true; do
     git pull
 
-    if [ ! -f $PIDFILE ]; then startserver $PORT; fi
+    if [ ! -f $SPIDFILE ]; then startserver $PORT; fi
 
-    PID=`cat $PIDFILE`
+    PID=`cat $SPIDFILE`
     kill -0 $PID > /dev/null
 
     if [ $? -eq 1 ]; then startserver; fi
