@@ -29,7 +29,7 @@ function addImg(){
     let url = "/addimg?tags=" + imgtags;
     
     let formdata = new FormData();
-    let fileToSend = document.getElementById("file");
+    let fileToSend = document.getElementById("file").files[0];
     formdata.append('file', fileToSend);
     var imgJX = new XMLHttpRequest();
     imgJX.open('POST', url, true);
