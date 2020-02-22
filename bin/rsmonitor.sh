@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 INTERVAL=30
 PIDFILE="data/rsserver.pid"
