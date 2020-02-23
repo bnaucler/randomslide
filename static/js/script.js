@@ -74,7 +74,7 @@ function fetchSlides(){
 function createSlides(resp){
     for(i in resp){
         let outputEl = document.getElementById("output");
-        let div = document.createElement("div");
+        var div = document.createElement("div");
         div.setAttribute("class", "theSlides");
         div.style.display = "none";
         outputEl.appendChild(div);
@@ -94,11 +94,15 @@ function createSlides(resp){
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
     }
-    let outputEl = document.getElementById("output");
-    let endText = document.createTextNode("End of slideshow. Thanks for using randomslide!");
+
+    let endText = document.createTextNode("End of slideshow.");
+    let end2 = document.createTextNode("Thanks for using randomslide!")
     let endP = document.createElement("h1");
+    let endP2 = document.createElement("h2");
     endP.appendChild(endText);
-    outputEl.appendChild(endP);
+    endP2.appendChild(end2)
+    div.appendChild(endP);
+    div.appendChild(endP2);
 
     setTimeout(loadingSlides, 1000);
 }
@@ -158,7 +162,6 @@ function startSlide(){
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
-        endScreen();
         //slideIndex = 1;
         console.log("Slut på bilder, lägg in en end screen eller något");
     }
