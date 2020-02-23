@@ -151,7 +151,7 @@ function startSlide(){
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
-        //slideIndex = 1;
+        endScreen();
         console.log("Slut på bilder, lägg in en end screen eller något");
     }
     if(n < 1){
@@ -163,15 +163,15 @@ function slideShow(n){
     slides[slideIndex-1].style.display = "block"; 
 }
 
-document.onkeydown = function(e){
-    switch (e.keyCode){
-        case 37:
-            changeSlide(-1);
-            break;
-        case 39:
-            changeSlide(1);
-            break;
-    }
+    document.onkeydown = function(e){
+        switch (e.keyCode){
+            case 37:
+                changeSlide(-1);
+                break;
+            case 39:
+                changeSlide(1);
+                break;
+        }
 }
 
 function changeSlide(n){
@@ -208,10 +208,12 @@ function changeCSS() {
 
 function endScreen(){
     let putEnd = document.getElementById("output");
+    let slidechangeprev = document.getElementById("prev");
+    let slidechangenext = document.getElementById("next");
+    slidechangeprev.style.display = "none";
+    slidechangenext.style.display = "none";
     output.innerHTML = "";
     output.innerHTML += "<h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2>";
-    
-    
 }
 /* 
 todo:
