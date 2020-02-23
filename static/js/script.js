@@ -183,6 +183,7 @@ function changeSlide(n){
 }
 
 function displayTimer(){
+    document.getElementsByClassName("slidechanger").style.display = "none";
     var timing = timer;
         setInterval(function(){
             if(timing != 0){
