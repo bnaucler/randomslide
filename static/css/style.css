@@ -30,6 +30,7 @@ a{
     font-size: 1.5em;
     text-decoration: none;
 }
+
 a:hover{
     text-shadow: 1px 1px white;
 }
@@ -87,7 +88,7 @@ option:hover{
     display: none;
 }
 
-.slideChanger{
+.slidechanger{
     display: none;
 }
 
