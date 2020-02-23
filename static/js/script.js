@@ -2,7 +2,7 @@ var slideProg;
 var timer;
 var resp;
 var slideIndex = 1;
-var slideshow;
+var slideshow = true;
 
 window.onload = getTags();
 
@@ -135,9 +135,6 @@ function startSlide(){
     let wrapper = document.getElementById("formwrapper");
     wrapper.innerHTML = "";
     changeCSS();
-    if(slideProg === "change"){
-        slideshow = true;
-    }
     slideShow();
     if(slideProg === "change"){
         document.getElementById("prev").style.display = "inline";
@@ -150,10 +147,8 @@ function startSlide(){
 
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
-    let slidshow = true;
     if(n > slides.length){
         endScreen();
-        console.log("Slut på bilder, lägg in en end screen eller något");
         slideshow = false;
     }
     if(n < 1){
@@ -162,7 +157,7 @@ function slideShow(n){
     for(let i = 0; i < slides.length; i++){
         slides[i].style.display = "none"; 
     }
-    if(slideshow){
+    if(slideshow === true){
         slides[slideIndex-1].style.display = "block"; 
     }
 
@@ -190,20 +185,17 @@ function displayTimer(){
     slidechangenext.style.display = "none";
 
     var timing = timer;
-    let slides = document.getElementsByClassName("theSlides");
-    var ti = setInterval(function(){
-        if(timing != 0){
-            document.getElementById("timeDisplay").innerHTML = timing;
-            timing -= 1;
-        }else {
-            if(n > slides.length){
-                clearInterval(ti);
-            }else{
-                changeSlide(1);
-                timing = timer;
+    if(slideshow === true){
+        setInterval(function(){
+            if(timing != 0){
+                document.getElementById("timeDisplay").innerHTML = timing;
+                timing -= 1;
+            }else {
+                    changeSlide(1);
+                    timing = timer;
             }
-        }
-    }, 1000);
+        }, 1000);
+    }
 }
 
 
