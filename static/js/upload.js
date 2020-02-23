@@ -6,7 +6,6 @@ function addTitle(){
     titleajax.open('POST', "addtext?ttext=" + title + "&btext=" + body + "&tags=" + tags, true);
     //addtext?= + title=kenneth&tags=kenneth apansson beer
     titleajax.send();
-    setTimeout(fetchLogs, 1100);
 
     titleajax.onreadystatechange = function() {
     if (this.readyState == 4){
