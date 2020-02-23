@@ -137,6 +137,7 @@ function loadingSlides(){
 }
 
 function startSlide(){
+    let wrapper = document.getElementById("formwrapper");
     wrapper.innerHTML = "";
     if(slideProg === "change"){
         slideshow = true;
