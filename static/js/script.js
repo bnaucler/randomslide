@@ -217,8 +217,8 @@ function endScreen(){
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    output.innerHTML = "<div id='theSlides'><h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
-    document.getElementById("theSlides").style.display = "block;"
+    output.innerHTML = "<div id='theSlides' style='display: inline;'><h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
+
 }
 /* 
 todo:
