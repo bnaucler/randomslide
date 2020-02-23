@@ -9,6 +9,10 @@ body{
     background: rgb(71, 96, 104);
 }
 
+header{
+    display: none;
+}
+
 #output{
     font-size: 2em;
     width: 100%;
