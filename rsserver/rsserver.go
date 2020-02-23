@@ -113,13 +113,35 @@ func getrndimgobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
     return img.Fname
 }
 
-// Returns a full slide deck according to request
-func mkdeck(req rscore.Deckreq, db *bolt.DB,
-    settings rscore.Settings) (rscore.Deck, rscore.Settings) {
+// Returns deck from database
+func getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
+    settings rscore.Settings) rscore.Deck {
 
-    deck := rscore.Deck{
-            N: req.N,
-            Lang: req.Lang }
+    var k int
+
+    if req.Id >= settings.Dmax {
+        return rscore.Deck{}
+
+    } else if settings.Dmax < 1 {
+        return rscore.Deck{}
+
+    } else {
+        k = req.Id
+    }
+
+    bk := []byte(strconv.Itoa(k))
+    mdeck, e := rsdb.Rdb(db, bk, rscore.DBUC)
+    rscore.Cherr(e)
+
+    e = json.Unmarshal(mdeck, &deck)
+    rscore.Cherr(e)
+
+    return deck
+}
+
+// Returns a new slide deck according to request
+func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
+    settings rscore.Settings) (rscore.Deck, rscore.Settings) {
 
     for i := 0; i < req.N; i++ {
         slide := rscore.Slide{
@@ -130,7 +152,51 @@ func mkdeck(req rscore.Deckreq, db *bolt.DB,
         deck.Slides = append(deck.Slides, slide)
     }
 
+    deck.Id = settings.Dmax
+
+    k := []byte(strconv.Itoa(deck.Id))
+    mdeck, e := json.Marshal(deck)
+    rscore.Cherr(e)
+    e = rsdb.Wrdb(db, k, mdeck, rscore.DBUC)
+
+    settings.Dmax++
+    rsdb.Wrsettings(db, settings)
+
     return deck, settings
+}
+
+// Sets basic params & determines if new deck should be built
+func getdeck(req rscore.Deckreq, db *bolt.DB,
+    settings rscore.Settings) (rscore.Deck, rscore.Settings) {
+
+    deck := rscore.Deck{
+            Id: req.Id,
+            N: req.N,
+            Lang: req.Lang }
+
+    if req.Isidreq {
+        deck = getdeckfdb(db, deck, req, settings)
+
+    } else {
+        deck, settings = mkdeck(db, deck, req, settings)
+
+    }
+
+    return deck, settings
+}
+
+// Determines if deck requests specific id
+func isidreq(r *http.Request) (int, bool) {
+
+    fvid := r.FormValue("id")
+
+    if len(fvid) < 1 { return 0, false }
+
+    id, e := strconv.Atoi(fvid)
+
+    if e == nil { return id, true }
+
+    return 0, false
 }
 
 // Handles incoming requests for decks
@@ -139,12 +205,26 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     e := r.ParseForm()
     rscore.Cherr(e)
+    var n int
 
-    n, e := strconv.Atoi(r.FormValue("amount"))
-    rscore.Cherr(e)
+    fvam := r.FormValue("amount")
 
+    if len(fvam) < 1 {
+        n = 0
+
+    } else {
+        n, e = strconv.Atoi(fvam)
+        rscore.Cherr(e)
+    }
+
+    id, isidr := isidreq(r)
     tags := gettagsfromreq(r)
+
+    fmt.Println("1")
+
     req := rscore.Deckreq{
+            Id: id,
+            Isidreq: isidr,
             N: n,
             Lang: r.FormValue("lang"),
             Tags: tags }
@@ -153,7 +233,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
     rscore.Addlog(rscore.L_REQ, mreq, r)
 
-    deck, settings := mkdeck(req, db, settings)
+    deck, settings := getdeck(req, db, settings)
 
     mdeck, e := json.Marshal(deck)
     rscore.Addlog(rscore.L_RESP, mdeck, r)
@@ -261,8 +341,6 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     settings = addtagstoindex(tags, settings, w)
     updatetaglists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
-
-    fmt.Printf("DEBUG: %+v\n", iobj)
 
     return settings
 }

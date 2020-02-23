@@ -45,6 +45,7 @@ var IMGMIME = []string{
 
 type Settings struct {
     Verb bool                   // Verbosity level
+    Dmax int                    // Max id of decks
     Tmax int                    // Max id of title objects
     Bmax int                    // Max id of body objects
     Imax int                    // Max id of image objects
@@ -53,9 +54,11 @@ type Settings struct {
 }
 
 type Deckreq struct {
+    Id int                      // Deck ID for db
     N int                       // Number of slides to generate
     Lang string                 // Languge code, 'en', 'de', 'se', etc
     Tags []string               // Slice of tags on which to base search
+    Isidreq bool                // true if request has specified ID
 }
 
 type Textreq struct {
@@ -89,17 +92,20 @@ type Imgobj struct {
     Id int                      // Index number
     Fname string                // File name
     Tags []string               // All tags where object exists (for associative decks)
+    Size int                    // S (0), M (1), L (2) or XL (3)
     H int                       // Image height
     W int                       // Image width
 }
 
 type Deck struct {
+    Id int                      // Deck ID for db
     N int                       // Total number of slides in deck
     Lang string                 // Languge code, 'en', 'de', 'se', etc
     Slides []Slide              // Slice of Slide objects
 }
 
 type Slide struct {
+    Type int                    // See CONTRIBUTING.md for type chart
     Title string                // Slide title
     Imgur string                // URL to image
     Btext string                // Body text
