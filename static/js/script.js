@@ -94,11 +94,11 @@ function createSlides(resp){
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
     }
-    let endText = document.createTextNode = "End of slideshow. Thanks for using randomslide!";
+    let endText = document.createTextNode("End of slideshow. Thanks for using randomslide!");
     let endP = document.createElement("h1");
     endP.appendChild(endText);
     outputEL.appendChild(endP);
-    
+
     setTimeout(loadingSlides, 1000);
 }
 
