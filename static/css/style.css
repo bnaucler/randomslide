@@ -175,6 +175,7 @@ textarea{
 
 .slideimg{
     max-width: 50%;
+    display: block;
 }
 
 fieldset{
