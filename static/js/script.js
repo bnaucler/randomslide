@@ -207,13 +207,13 @@ function changeCSS() {
 }
 
 function endScreen(){
-    let slides = document.getElementsByClassName("theSlides");
+    let output = document.getElementById("output");
     let slidechangeprev = document.getElementById("prev");
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    slides.innerHTML = "";
-    slides.innerHTML += "<h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2>";
+    output.innerHTML = "";
+    output.innerHTML += "<div class='theSlides'<h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
 }
 /* 
 todo:
