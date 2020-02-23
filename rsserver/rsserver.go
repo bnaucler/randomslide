@@ -7,6 +7,10 @@ import (
     "time"
     "flag"
     "sort"
+    "image"
+    "image/png"
+    "image/jpeg"
+    "image/gif"
     "strings"
     "strconv"
     "net/http"
@@ -20,6 +24,12 @@ import (
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
 )
+
+func init() {
+    image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
+    image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
+    image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
+}
 
 // Initialize logger
 func initlog(prgname string) {
@@ -229,7 +239,7 @@ func gettagsfromreq(r *http.Request) []string {
 }
 
 // Stores image object in database
-func addimgwtags(db *bolt.DB, fn string, tags []string,
+func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
 
     ofn := filepath.Base(fn)
@@ -237,7 +247,9 @@ func addimgwtags(db *bolt.DB, fn string, tags []string,
     iobj := rscore.Imgobj{
         Id: settings.Imax,
         Fname: ofn,
-        Tags: tags }
+        Tags: tags,
+        W: iw,
+        H: ih }
 
     // Add object to db
     mobj, e := json.Marshal(iobj)
@@ -249,6 +261,8 @@ func addimgwtags(db *bolt.DB, fn string, tags []string,
     settings = addtagstoindex(tags, settings, w)
     updatetaglists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
+
+    fmt.Printf("DEBUG: %+v\n", iobj)
 
     return settings
 }
@@ -281,12 +295,15 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
     defer tmpf.Close()
 
+    ic, _, e := image.DecodeConfig(f)
+    rscore.Cherr(e)
+
     fc, e := ioutil.ReadAll(f)
     rscore.Cherr(e)
     tmpf.Write(fc)
 
     tags := gettagsfromreq(r)
-    settings = addimgwtags(db, tmpf.Name(), tags, w, settings)
+    settings = addimgwtags(db, tmpf.Name(), ic.Width, ic.Height, tags, w, settings)
     rsdb.Wrsettings(db, settings)
 
     return settings

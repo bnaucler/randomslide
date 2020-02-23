@@ -89,6 +89,8 @@ type Imgobj struct {
     Id int                      // Index number
     Fname string                // File name
     Tags []string               // All tags where object exists (for associative decks)
+    H int                       // Image height
+    W int                       // Image width
 }
 
 type Deck struct {
