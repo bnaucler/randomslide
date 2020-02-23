@@ -191,11 +191,11 @@ function displayTimer(){
             document.getElementById("timeDisplay").innerHTML = timing;
             timing -= 1;
         }else {
-                changeSlide(1);
-                timing = timer;
-        }
-        if(slideshow === false){
-            clearInterval(timebased)
+            changeSlide(1);
+            timing = timer;
+            if(slideshow === false){
+                clearInterval(timebased)
+            }
         }
     }, 1000);
 }
