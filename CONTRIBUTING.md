@@ -51,6 +51,16 @@ tools/          - Tools for maintenence etc.
 * Picture with adjacent text
     - Theme can decide if text goes under, next to etc
 
+# Image sizes
+Images used will be classified in the following sizes:
+```
+Size (px)   Min W       Min H       Max W       Max H
+0 (S):
+1 (M):
+2 (L):
+3 (XL)
+```
+
 ## IRC
 The main developers can be found in the channel #ljusdal at EFNet.
 
