@@ -94,6 +94,11 @@ function createSlides(resp){
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
     }
+    let endText = document.createTextNode = "End of slideshow. Thanks for using randomslide!";
+    let endP = document.createElement("h1");
+    endP.appendChild(endText);
+    outputEL.appendChild(endP);
+    
     setTimeout(loadingSlides, 1000);
 }
 
@@ -152,7 +157,8 @@ function startSlide(){
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
     if(n > slides.length){
-        slideIndex = 1;
+        endScreen();
+        //slideIndex = 1;
         console.log("Slut på bilder, lägg in en end screen eller något");
     }
     if(n < 1){
@@ -165,15 +171,13 @@ function slideShow(n){
 }
 
 document.onkeydown = function(e){
-    if(slideshow == true){
-        switch (e.keyCode){
-            case 37:
-                changeSlide(-1);
-                break;
-            case 39:
-                changeSlide(1);
-                break;
-        }
+    switch (e.keyCode){
+        case 37:
+            changeSlide(-1);
+            break;
+        case 39:
+            changeSlide(1);
+            break;
     }
 }
 
@@ -186,16 +190,22 @@ function displayTimer(){
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
+
     var timing = timer;
-        setInterval(function(){
-            if(timing != 0){
-                document.getElementById("timeDisplay").innerHTML = timing;
-                timing -= 1;
-            }else {
+    let slides = document.getElementsByClassName("theSlides");
+    var ti = setInterval(function(){
+        if(timing != 0){
+            document.getElementById("timeDisplay").innerHTML = timing;
+            timing -= 1;
+        }else {
+            if(n > slides.length){
+                clearInterval(ti);
+            }else{
                 changeSlide(1);
                 timing = timer;
             }
-        }, 1000);
+        }
+    }, 1000);
 }
 
 
@@ -204,16 +214,13 @@ function changeCSS() {
 }
 
 
-
 /* 
 todo:
 
-slutbild på bildspelet
+1. slutbild på bildspelet
+2. olika slide-types -> olika funktion för att skapa slides
+    beroende på om det är en lista, en stor bild, en liten bild.
+3. CSS för olika slide-types
 
 
-CSS-random-funktion <- vart är det bäst att lägga in det här?
-vid byte av slide? när slides genereras?
-
-
-3 olika halvbra CSS
 */
