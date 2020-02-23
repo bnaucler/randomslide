@@ -29,6 +29,27 @@ tools/          - Tools for maintenence etc.
 * Different slide types
 * Handling of image types/sizes?
 * Refactoring image handler
+* Store generated decks in db for direct access
+* Store image sizes in object
+* Add image size to requests
+
+## Slide types
+* Big title
+    - Could be good to start a slide set with
+
+* Full screen picture
+
+* Bullet point list
+    - Needs new database object..
+
+* Title, picture, body text
+    - What we already have in alpha
+
+* 'inspirational quote'
+    - Soo much potential here
+
+* Picture with adjacent text
+    - Theme can decide if text goes under, next to etc
 
 ## IRC
 The main developers can be found in the channel #ljusdal at EFNet.

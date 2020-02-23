@@ -10,6 +10,7 @@ usage() {
     echo "-h: this message"
     echo "-f <arg>: specify server pidfile Location (default: $SPIDFILE)"
     echo "-m: SIGQUIT monitor"
+    echo "-s <arg>: specify server address (default: $SERVER)"
     echo "-r: remove server pidfile"
     echo "-k: SIGQUIT server"
     echo "-x: SIGKILL all servers"
