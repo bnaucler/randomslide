@@ -206,7 +206,7 @@ function endShow(){
 
 
 function changeCSS() {
-    document.getElementById('stylesheet').href='/slides1.css';
+    document.getElementById('style').href='/slides1.css';
 }
 
 
