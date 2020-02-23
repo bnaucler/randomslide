@@ -73,7 +73,7 @@ function fetchSlides(){
 // creating slides from the JSON 
 function createSlides(resp){
     for(i in resp){
-        var outputEl = document.getElementById("output");
+        let outputEl = document.getElementById("output");
         let div = document.createElement("div");
         div.setAttribute("class", "theSlides");
         div.style.display = "none";
@@ -94,6 +94,7 @@ function createSlides(resp){
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
     }
+    let outputEl = document.getElementById("output");
     let endText = document.createTextNode("End of slideshow. Thanks for using randomslide!");
     let endP = document.createElement("h1");
     endP.appendChild(endText);
