@@ -88,7 +88,7 @@ function createSlides(resp){
         div.appendChild(slideHeader);
 
         let slideImg = document.createElement("img");
-        slideImg.setAttribute("src", "https://picsum.photos/200");
+        slideImg.setAttribute("src", resp[i].Imgur);
         div.appendChild(slideImg);
   
         let slideTxt = document.createElement("div");
