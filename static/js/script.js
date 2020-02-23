@@ -185,17 +185,19 @@ function displayTimer(){
     slidechangenext.style.display = "none";
 
     var timing = timer;
-    if(slideshow === true){
-        setInterval(function(){
-            if(timing != 0){
-                document.getElementById("timeDisplay").innerHTML = timing;
-                timing -= 1;
-            }else {
-                    changeSlide(1);
-                    timing = timer;
-            }
-        }, 1000);
-    }
+
+    var  timebased = setInterval(function(){
+        if(timing != 0){
+            document.getElementById("timeDisplay").innerHTML = timing;
+            timing -= 1;
+        }else {
+                changeSlide(1);
+                timing = timer;
+        }
+        if(slideshow === false){
+            clearInterval(timebased)
+        }
+    }, 1000);
 }
 
 
@@ -219,6 +221,5 @@ todo:
 2. olika slide-types -> olika funktion för att skapa slides
     beroende på om det är en lista, en stor bild, en liten bild.
 3. CSS för olika slide-types
-
 
 */
