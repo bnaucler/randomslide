@@ -160,7 +160,9 @@ function slideShow(n){
     for(let i = 0; i < slides.length; i++){
         slides[i].style.display = "none"; 
     }
-    slides[slideIndex-1].style.display = "block"; 
+    if (n < slides.length){
+        slides[slideIndex-1].style.display = "block"; 
+    }
 }
 
     document.onkeydown = function(e){
