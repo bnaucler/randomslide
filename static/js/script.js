@@ -75,7 +75,7 @@ function fetchSlides(){
 function createSlides(resp){
     for(i in resp){
         let outputEl = document.getElementById("output");
-        let div = document.createElement("div");
+        let P = document.createElement("p");
         div.setAttribute("class", "theSlides");
         div.style.display = "none";
         outputEl.appendChild(div);
