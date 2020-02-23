@@ -150,9 +150,11 @@ function startSlide(){
 
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
+    let slidshow = true;
     if(n > slides.length){
         endScreen();
         console.log("Slut på bilder, lägg in en end screen eller något");
+        slideshow = false;
     }
     if(n < 1){
         slideIndex = slides.length;
@@ -160,9 +162,10 @@ function slideShow(n){
     for(let i = 0; i < slides.length; i++){
         slides[i].style.display = "none"; 
     }
-    if (n < slides.length){
+    if(slideshow){
         slides[slideIndex-1].style.display = "block"; 
     }
+
 }
 
     document.onkeydown = function(e){
