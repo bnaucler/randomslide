@@ -186,7 +186,7 @@ function displayTimer(){
 
     var timing = timer;
 
-    var  timebased = setInterval(function(){
+    var timebased = setInterval(function(){
         if(timing != 0){
             document.getElementById("timeDisplay").innerHTML = timing;
             timing -= 1;
