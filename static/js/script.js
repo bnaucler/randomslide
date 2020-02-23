@@ -75,7 +75,7 @@ function fetchSlides(){
 function createSlides(resp){
     for(i in resp){
         let outputEl = document.getElementById("output");
-        let P = document.createElement("p");
+        let div = document.createElement("div");
         div.setAttribute("class", "theSlides");
         div.style.display = "none";
         outputEl.appendChild(div);
@@ -93,7 +93,7 @@ function createSlides(resp){
         let slideTxt = document.createElement("p");
         let slideContent = document.createTextNode(resp[i].Btext);
         slideTxt.appendChild(slideContent);
-        p.appendChild(slideTxt);
+        div.appendChild(slideTxt);
     }
     setTimeout(loadingSlides, 1000);
 }
