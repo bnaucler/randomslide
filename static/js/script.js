@@ -212,8 +212,7 @@ function endScreen(){
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    output.innerHTML = "";
-    output.innerHTML += "<div class='theSlides'<h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
+    output.innerHTML = "<div class='theSlides'><h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
 }
 /* 
 todo:
