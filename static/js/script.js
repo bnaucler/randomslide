@@ -150,7 +150,7 @@ function startSlide(){
 
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
-    if(n > slides.length){
+    if(n >= slides.length){
         endScreen();
         console.log("Slut på bilder, lägg in en end screen eller något");
     }
