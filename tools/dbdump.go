@@ -11,6 +11,25 @@ import (
     "github.com/bnaucler/randomslide/lib/rsdb"
 )
 
+func retrdeck(db *bolt.DB, mxind int, buc []byte) []rscore.Deck {
+
+    var ret []rscore.Deck
+
+    for i := 0; i < mxind; i++ {
+
+        cobj := rscore.Deck{}
+
+        k := []byte(strconv.Itoa(i))
+        v, e := rsdb.Rdb(db, k, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(v, &cobj)
+        ret = append(ret, cobj)
+    }
+
+    return ret
+}
+
 func retrtxt(db *bolt.DB, mxind int, buc []byte) []rscore.Textobj {
 
     var ret []rscore.Textobj
@@ -81,4 +100,11 @@ func main() {
         btext := retrtxt(db, settings.Bmax, rscore.BBUC)
         fmt.Printf("BTEXT: %+v\n", btext)
     }
+
+    // DUMP DECKS
+    if settings.Dmax > 0 {
+        decks := retrtxt(db, settings.Dmax, rscore.DBUC)
+        fmt.Printf("DECKS: %+v\n", decks)
+    }
+
 }
