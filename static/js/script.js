@@ -198,7 +198,7 @@ function displayTimer(){
 
 
 function endShow(){
-    document.querySelectorAll(".slidechanger").style.display = "none";
+    document.getElementsByClassName(".slidechanger").style.display = "none";
     console.log("SLUT");
 }
 
