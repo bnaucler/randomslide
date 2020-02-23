@@ -29,7 +29,6 @@ function getTags(){
     tagJX.send();
 }
 
-
 document.getElementById('timerOrNot').addEventListener('change', function() {
     if(this.value === "timer"){
         document.getElementById("slideTimer").style.display = "inline";
@@ -183,7 +182,10 @@ function changeSlide(n){
 }
 
 function displayTimer(){
-    document.getElementsByClassName("slidechanger").style.display = "none";
+    let slidechangeprev = document.getElementById("prev");
+    let slidechangenext = document.getElementById("next");
+    slidechangeprev.style.display = "none";
+    slidechangenext.style.display = "none";
     var timing = timer;
         setInterval(function(){
             if(timing != 0){
@@ -194,12 +196,6 @@ function displayTimer(){
                 timing = timer;
             }
         }, 1000);
-}
-
-
-function endShow(){
-    document.getElementsByClassName(".slidechanger").style.display = "none";
-    console.log("SLUT");
 }
 
 
