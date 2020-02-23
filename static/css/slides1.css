@@ -59,7 +59,8 @@ header{
 }
 
 .slideimg{
-    max-width: 100%;
+    max-width: 1020px;
+    max-height: 700px;
     display: block;
     margin: auto;
 }
@@ -68,9 +69,10 @@ h2{
     text-align: center;
     font-weight: 700;
     font-size: 2em;
-
+    color: black;
 }
 
 p{
     text-align: center;
+    color: black;
 }

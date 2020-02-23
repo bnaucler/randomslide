@@ -132,11 +132,6 @@ textarea{
     width: 30em;
 }
 
-.slideimg{
-    max-width: 50%;
-    display: block;
-}
-
 fieldset{
     margin: 20px;
     border: 5px solid grey;
