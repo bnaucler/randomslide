@@ -88,7 +88,7 @@ function createSlides(resp){
         div.appendChild(slideHeader);
 
         let slideImg = document.createElement("img");
-        slideImg.setAttribute("src", resp[i].Imgur);
+        slideImg.setAttribute("src", "img/" + resp[i].Imgur);
         div.appendChild(slideImg);
   
         let slideTxt = document.createElement("div");
