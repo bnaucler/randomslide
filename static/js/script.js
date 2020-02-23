@@ -194,7 +194,8 @@ function displayTimer(){
             changeSlide(1);
             timing = timer;
             if(slideshow === false){
-                clearInterval(timebased)
+                clearInterval(timebased);
+                document.getElementById("timeDisplay").innerHTML = "";
             }
         }
     }, 1000);
@@ -211,8 +212,7 @@ function endScreen(){
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    output.innerHTML = "<div id='theSlides' style='display: inline;'><h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
-
+    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
 }
 /* 
 todo:
