@@ -139,6 +139,7 @@ function loadingSlides(){
 function startSlide(){
     let wrapper = document.getElementById("formwrapper");
     wrapper.innerHTML = "";
+    changeCSS();
     if(slideProg === "change"){
         slideshow = true;
     }
@@ -204,7 +205,9 @@ function endShow(){
 }
 
 
-
+function changeCSS() {
+    document.getElementById('stylesheet').href='/slides1.css';
+}
 
 
 
