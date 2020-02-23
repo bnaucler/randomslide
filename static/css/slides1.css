@@ -64,6 +64,14 @@ header{
     margin: auto;
 }
 
+h1{
+    text-align: center;
+    font-weight: 700;
+    font-size: 2.5em;
+    color: black;
+    margin-top: 0;
+}
+
 h2{
     text-align: center;
     font-weight: 700;
