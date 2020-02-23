@@ -90,10 +90,10 @@ function createSlides(resp){
         slideImg.classList.add("slideimg");
         div.appendChild(slideImg);
   
-        let slideTxt = document.createElement("div");
+        let slideTxt = document.createElement("p");
         let slideContent = document.createTextNode(resp[i].Btext);
         slideTxt.appendChild(slideContent);
-        div.appendChild(slideTxt);
+        p.appendChild(slideTxt);
     }
     setTimeout(loadingSlides, 1000);
 }
