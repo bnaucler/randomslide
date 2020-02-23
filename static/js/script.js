@@ -50,7 +50,6 @@ function fetchSlides(){
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             resp = JSON.parse(this.responseText);
-            console.log(resp.Slides);
         }
     }
 
@@ -94,17 +93,7 @@ function createSlides(resp){
         slideTxt.appendChild(slideContent);
         div.appendChild(slideTxt);
     }
-
-    let endText = document.createTextNode("End of slideshow.");
-    let end2 = document.createTextNode("Thanks for using randomslide!")
-    let endP = document.createElement("h1");
-    let endP2 = document.createElement("h2");
-    endP.appendChild(endText);
-    endP2.appendChild(end2)
-    div.appendChild(endP);
-    div.appendChild(endP2);
-
-    setTimeout(loadingSlides, 1000);
+    setTimeout(loadingSlides, 800);
 }
 
 function loadingSlides(){
@@ -217,7 +206,13 @@ function changeCSS() {
     document.getElementById('style').href='/css/slides1.css';
 }
 
-
+function endScreen(){
+    let putEnd = document.getElementById("output");
+    output.innerHTML = "";
+    output.innerHTML += "<h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2>";
+    
+    
+}
 /* 
 todo:
 
