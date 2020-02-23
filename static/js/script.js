@@ -73,7 +73,7 @@ function fetchSlides(){
 // creating slides from the JSON 
 function createSlides(resp){
     for(i in resp){
-        let outputEl = document.getElementById("output");
+        var outputEl = document.getElementById("output");
         let div = document.createElement("div");
         div.setAttribute("class", "theSlides");
         div.style.display = "none";
