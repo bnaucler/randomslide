@@ -203,7 +203,7 @@ function endShow(){
 
 
 function changeCSS() {
-    document.getElementById('style').href='/css/aslides1.css';
+    document.getElementById('style').href='/css/slides1.css';
 }
 
 
