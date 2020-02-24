@@ -84,7 +84,7 @@ function createSlides(resp){
         div.appendChild(slideHeader);
 
         let slideImg = document.createElement("img");
-        slideImg.setAttribute("src", "img/" + resp[i].Imgur);
+        slideImg.setAttribute("src", "img/" + resp[i].Img.Fname);
         slideImg.classList.add("slideimg");
         div.appendChild(slideImg);
   
@@ -217,7 +217,6 @@ function endScreen(){
 /* 
 todo:
 
-1. slutbild på bildspelet
 2. olika slide-types -> olika funktion för att skapa slides
     beroende på om det är en lista, en stor bild, en liten bild.
 3. CSS för olika slide-types
