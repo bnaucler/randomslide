@@ -27,7 +27,6 @@ tools/          - Tools for maintenence etc.
 ## TODO
 * Generate slides w. numbers
 * Different slide types
-* Handling of image types/sizes?
 * Refactoring image handler
 * Add image size to requests
 * User accounts with access levels
