@@ -203,7 +203,7 @@ function displayTimer(){
 
 
 function changeCSS() {
-    document.getElementById('style').href='/css/slides1.css';
+    document.getElementById('style').href='/css/slide4.css';
 }
 
 function endScreen(){
