@@ -29,9 +29,8 @@ tools/          - Tools for maintenence etc.
 * Different slide types
 * Handling of image types/sizes?
 * Refactoring image handler
-* Store generated decks in db for direct access
-* Store image sizes in object
 * Add image size to requests
+* User accounts with access levels
 
 ## Slide types
 * Big title
