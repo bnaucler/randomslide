@@ -98,9 +98,9 @@ func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
 }
 
 // Sends random image url from database, based on requested tags
-func getrndimgobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+func getrndimg(db *bolt.DB, kmax int, tags []string, buc []byte) rscore.Imgobj {
 
-    if kmax < 2 { return "" }
+    if kmax < 2 { return rscore.Imgobj{} }
 
     k := getkeyfromsel(db, tags, buc, kmax)
 
@@ -110,7 +110,7 @@ func getrndimgobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
     e = json.Unmarshal(mimg, &img)
     rscore.Cherr(e)
 
-    return img.Fname
+    return img
 }
 
 // Returns deck from database
@@ -147,7 +147,7 @@ func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
         slide := rscore.Slide{
             Title: getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC),
             Btext: getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC),
-            Imgur: getrndimgobj(db, settings.Imax, req.Tags, rscore.IBUC) }
+            Img: getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
 
         deck.Slides = append(deck.Slides, slide)
     }

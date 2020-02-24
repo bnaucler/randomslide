@@ -125,7 +125,7 @@ type Deck struct {
 type Slide struct {
     Type int                    // See CONTRIBUTING.md for type chart
     Title string                // Slide title
-    Imgur string                // URL to image
+    Img Imgobj                  // Image object
     Btext string                // Body text
 }
 
