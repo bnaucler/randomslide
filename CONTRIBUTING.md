@@ -34,6 +34,10 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * CLI tool for automated db import
 
+## Text types
+Title (ttext): 0-x char
+Body (btext): x-x char
+
 ## Slide types
 ```
 Index   Type                            Description
