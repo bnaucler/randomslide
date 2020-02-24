@@ -33,6 +33,7 @@ tools/          - Tools for maintenence etc.
 * User accounts with access levels
 * Proper automated tests
 * CLI tool for automated db import
+* Verification of text lengths
 
 ## Text types
 Title (ttext): 0-x char
