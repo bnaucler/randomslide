@@ -220,8 +220,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     id, isidr := isidreq(r)
     tags := gettagsfromreq(r)
 
-    fmt.Println("1")
-
     req := rscore.Deckreq{
             Id: id,
             Isidreq: isidr,
