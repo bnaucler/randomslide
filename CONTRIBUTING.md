@@ -35,25 +35,16 @@ tools/          - Tools for maintenence etc.
 * CLI tool for automated db import
 
 ## Slide types
-* Big title
-    - Could be good to start a slide set with
-
-* Full screen picture
-
-* Big number
-    - A slide just saying things like '+12%'
-
-* Bullet point list
-    - Needs new database object..
-
-* Title, picture, body text
-    - What we already have in alpha
-
-* 'inspirational quote'
-    - Soo much potential here
-
-* Picture with adjacent text
-    - Theme can decide if text goes under, next to etc
+```
+Index   Type                            Description
+0       Big title                       Could be good to start a slide set with
+1       Full screen picture
+2       Big number                      A slide just saying things like '+12%'
+3       Bullet point list
+4       Title, pic, body text           What we already have in alpha
+5       'Inspirational quote'           Soo much potential here
+6       Picture with text               Theme can decide if text goes under, next to etc
+```
 
 # Image sizes
 Images used will be classified in the following sizes:
