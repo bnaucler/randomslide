@@ -31,12 +31,17 @@ tools/          - Tools for maintenence etc.
 * Refactoring image handler
 * Add image size to requests
 * User accounts with access levels
+* Proper automated tests
+* CLI tool for automated db import
 
 ## Slide types
 * Big title
     - Could be good to start a slide set with
 
 * Full screen picture
+
+* Big number
+    - A slide just saying things like '+12%'
 
 * Bullet point list
     - Needs new database object..
