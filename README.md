@@ -36,15 +36,16 @@ Endpoint:               Variables:              Comment:
                                                 in database
 
 /getdeck                                        Request for slide deck
-                        amount                  # of slides requested
-                        lang                    language code 'en', 'sv' etc
-                        tags                    tags on which to base deck
+                        id          int         Retrieve saved deck with id#
+                        amount      int         # of slides requested
+                        lang        string      language code 'en', 'sv' etc
+                        tags        string      tags on which to base deck
 
 
 /addtext                                        Adds new text to database
-                        tags                    Which tags to associate text wit
-                        ttext                   Title text
-                        btext                   Body text
+                        tags        string      Which tags to associate text wit
+                        ttext       string      Title text
+                        btext       string      Body text
 
 ```
 
