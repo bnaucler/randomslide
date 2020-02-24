@@ -36,8 +36,8 @@ tools/          - Tools for maintenence etc.
 * Verification of text lengths
 
 ## Text types
-Title (ttext): 0-x char
-Body (btext): x-x char
+Title (ttext): 1-35 characters
+Body (btext): 5-80 characters
 
 ## Slide types
 ```
