@@ -316,18 +316,52 @@ func gettagsfromreq(r *http.Request) []string {
     return ret
 }
 
+// Conditionally returns image size type & true if fitting classification
+func getimgtype(w int, h int) (int, bool) {
+
+    i := 3
+
+    // Upper bounds check
+    if w > rscore.IMGMAX[3][0] || h > rscore.IMGMAX[3][1] {
+        return 0, false
+    }
+
+    for i >= 0 {
+        if w > rscore.IMGMIN[i][0] && h > rscore.IMGMIN[i][1] &&
+           w < rscore.IMGMAX[i][0] && h < rscore.IMGMAX[i][1] {
+               return i, true
+           }
+        i--
+    }
+
+    return 0, false
+}
+
 // Stores image object in database
 func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
 
     ofn := filepath.Base(fn)
 
+    isz, szok := getimgtype(iw, ih)
+
+    fmt.Printf("DEBUG: %d:%d - %+v, %+v\n", iw, ih, isz, szok)
+
+    if szok == false {
+        rscore.Sendstatus(rscore.C_WRSZ,
+            "Could not classify size - file not uploaded", w)
+        return settings
+    }
+
     iobj := rscore.Imgobj{
         Id: settings.Imax,
         Fname: ofn,
         Tags: tags,
         W: iw,
-        H: ih }
+        H: ih,
+        Size: isz }
+
+    fmt.Printf("DEBUG: %+v\n", iobj)
 
     // Add object to db
     mobj, e := json.Marshal(iobj)
@@ -381,6 +415,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     tags := gettagsfromreq(r)
     settings = addimgwtags(db, tmpf.Name(), ic.Width, ic.Height, tags, w, settings)
     rsdb.Wrsettings(db, settings)
+
+    rscore.Sendstatus(rscore.C_OK, "", w)
 
     return settings
 }

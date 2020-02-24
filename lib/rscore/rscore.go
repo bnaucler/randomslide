@@ -27,8 +27,26 @@ const L_REQ = 0
 const L_RESP = 1
 const L_SHUTDOWN = 2
 
-const C_OK = 0                  // Status OK
-const C_WRFF = 1                // Error code 1 - incorrect file format
+// Status codes
+const C_OK = 0                  // OK
+const C_WRFF = 1                // Incorrect file format
+const C_WRSZ = 2                // Not able to classify image size
+
+// Min bounds for image sizes (w, h)
+var IMGMIN = [][]int{
+    {150, 150},                 // 0: Small
+    {500, 500},                 // 1: Medium
+    {1000, 1000},               // 2: Large
+    {1920, 1080},               // 3: X Large
+}
+
+// Max bounds for image sizes (w, h)
+var IMGMAX = [][]int{
+    {499, 499},                 // 0: Small
+    {999, 799},                 // 1: Medium
+    {1919, 1079},               // 2: Large
+    {3000, 3000},               // 3: X Large
+}
 
 var DBUC = []byte("dbuc")       // Deck bucket
 var TBUC = []byte("tbuc")       // Title text bucket
