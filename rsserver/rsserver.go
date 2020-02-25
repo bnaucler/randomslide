@@ -145,6 +145,7 @@ func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
 
     for i := 0; i < req.N; i++ {
         slide := rscore.Slide{
+            Type: rand.Intn(6), // TODO
             Title: getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC),
             Btext: getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC),
             Img: getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
