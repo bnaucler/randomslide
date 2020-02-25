@@ -29,11 +29,14 @@ Server log files can be accessed at `static/logs` or in the admin interface.
 
 ```
 Endpoint:               Variables:              Comment:
-/restart                <null>                  Graceful server shutdown.
+/restart                                        Graceful server shutdown.
                                                 Requires VOLATILEMODE true
+                        wipe                    Wipes database and images if "yes"
+
 
 /gettags                <null>                  Retrieves list of all tags
                                                 in database
+
 
 /getdeck                                        Request for slide deck
                         id          int         Retrieve saved deck with id#
@@ -43,7 +46,7 @@ Endpoint:               Variables:              Comment:
 
 
 /addtext                                        Adds new text to database
-                        tags        string      Which tags to associate text wit
+                        tags        string      Which tags to associate text with
                         ttext       string      Title text
                         btext       string      Body text
 
