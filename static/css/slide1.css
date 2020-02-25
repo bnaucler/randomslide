@@ -1,0 +1,76 @@
+/* 1       Full screen picture
+this one needs some love*/
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    background: rgb(71, 96, 104);
+}
+
+header{
+    display: none;
+}
+
+#output{
+    font-size: 2em;
+    width: 100%;
+    position: relative;
+    margin: auto;
+    background: white;
+}
+
+.slidechanger{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 1,2em;
+    font-weight: bold;
+}
+
+.prev{
+    left: 0;
+    width: 75px;
+}
+
+.next{
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}  
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    margin-top: -30px;
+    padding: 16px;
+    color: #888;
+    font-weight: bold;
+    font-size: 3em;
+    border-radius: 10px;
+    user-select: none;
+    height: 150px;
+    text-align: center;
+}
+
+.prev:hover, .next:hover{
+    background: black;
+}
+
+.formwrapper{
+    width: 100%;
+}
+
+.theSlides{
+    min-height: 90vh;
+    padding: 100px;
+}
+
+.slideimg{
+    width: 100%;
+    max-height: 70vh;
+    height: auto;
+    margin: auto;
+}
