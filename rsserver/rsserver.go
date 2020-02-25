@@ -26,6 +26,8 @@ import (
 )
 
 func init() {
+    rand.Seed(time.Now().UnixNano())
+
     image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
     image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
@@ -523,8 +525,6 @@ func rsinit(settings rscore.Settings) rscore.Settings {
 }
 
 func main() {
-
-    rand.Seed(time.Now().UnixNano())
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
     dbptr := flag.String("d", rscore.DBNAME, "specify database to open")
