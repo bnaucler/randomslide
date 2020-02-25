@@ -38,7 +38,7 @@ tools/          - Tools for maintenence etc.
 * Check image repo size requirements
 
 ## Text types
-Title (ttext): 1-35 characters
+Title (ttext): 1-35 characters  
 Body (btext): 5-80 characters
 
 ## Slide types
