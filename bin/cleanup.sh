@@ -9,7 +9,7 @@ PORT=6291
 usage() {
     echo "$0 usage:"
     echo "-h: this message"
-    echo "-d: delete database file ($DBFILE)"
+    echo "-d: delete database and image file(s) ($DBFILE & static/img/*)"
     echo "-f <arg>: specify server pidfile Location (default: $SPIDFILE)"
     echo "-m: SIGQUIT monitor"
     echo "-s <arg>: specify server address (default: $SERVER)"
@@ -27,7 +27,7 @@ skill() {
 
 while getopts 'dhfmrkp:xs' flag; do
     case "${flag}" in
-        d) rm $DBFILE ;;
+        d) rm $DBFILE static/img/* ;;
         h) usage ;;
         f) SPIDFILE="${OPTARG}" ;;
         r) rm $SPIDFILE $MPIDFILE;;
