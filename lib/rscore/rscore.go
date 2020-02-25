@@ -19,6 +19,7 @@ import (
 const DEFAULTPORT = 6291
 const DBNAME = "./data/rs.db"
 const LOGPATH = "./static/log/"
+const IMGDIR = "./static/img/"
 const PIDFILEPATH = "./data/"
 
 const VOLATILEMODE = true

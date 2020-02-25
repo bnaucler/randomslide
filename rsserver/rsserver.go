@@ -404,7 +404,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     ext := filepath.Ext(hlr.Filename)
     fformat := fmt.Sprintf("img-*%s", ext)
-    tmpf, e := ioutil.TempFile("static/img", fformat)
+    tmpf, e := ioutil.TempFile(rscore.IMGDIR, fformat)
     rscore.Cherr(e)
     defer tmpf.Close()
 
@@ -491,14 +491,39 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(resp)
 }
 
+// Removes all files residing in dir
+func rmallfromdir(dir string) {
+
+    d, e := os.Open(dir)
+    rscore.Cherr(e)
+    defer d.Close()
+
+    fl, e := d.Readdirnames(-1)
+    rscore.Cherr(e)
+
+    for _, fn := range fl {
+        if fn == ".gitkeep" { continue }
+        e = os.RemoveAll(filepath.Join(dir, fn))
+        rscore.Cherr(e)
+    }
+}
+
 // Handles incoming requests for shutdowns
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
+
+    wipe := r.FormValue("wipe")
 
     rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), r)
     rscore.Sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, settings)
+
+    if wipe == "yes" {
+        db.Close()
+        os.Remove(rscore.DBNAME)
+        rmallfromdir(rscore.IMGDIR)
+    }
 
     go func() {
         time.Sleep(1 * time.Second)
