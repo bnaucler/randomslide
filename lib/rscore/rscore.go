@@ -281,6 +281,23 @@ func Prettyfsize(b int64) string {
     return ret
 }
 
+// Removes all files residing in dir (except .gitkeep)
+func Rmall(dir string) {
+
+    d, e := os.Open(dir)
+    Cherr(e)
+    defer d.Close()
+
+    fl, e := d.Readdirnames(-1)
+    Cherr(e)
+
+    for _, fn := range fl {
+        if fn == ".gitkeep" { continue }
+        e = os.RemoveAll(filepath.Join(dir, fn))
+        Cherr(e)
+    }
+}
+
 // Sends a status code response as JSON object
 func Sendstatus(code int, text string, w http.ResponseWriter) {
 

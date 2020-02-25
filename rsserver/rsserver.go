@@ -478,23 +478,6 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(resp)
 }
 
-// Removes all files residing in dir (except .gitkeep)
-func rmallfromdir(dir string) {
-
-    d, e := os.Open(dir)
-    rscore.Cherr(e)
-    defer d.Close()
-
-    fl, e := d.Readdirnames(-1)
-    rscore.Cherr(e)
-
-    for _, fn := range fl {
-        if fn == ".gitkeep" { continue }
-        e = os.RemoveAll(filepath.Join(dir, fn))
-        rscore.Cherr(e)
-    }
-}
-
 // Handles incoming requests for shutdowns
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -509,7 +492,7 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     if wipe == "yes" {
         db.Close()
         os.Remove(rscore.DBNAME)
-        rmallfromdir(rscore.IMGDIR)
+        rscore.Rmall(rscore.IMGDIR)
     }
 
     rscore.Shutdown(settings)
