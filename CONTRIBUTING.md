@@ -28,14 +28,12 @@ tools/          - Tools for maintenence etc.
 * Generate slides w. numbers
 * Different slide types
 * Refactoring image handler
-* Add image size to requests
 * User accounts with access levels
 * Proper automated tests
 * CLI tool for automated db import
 * Verification of text lengths
-* Database wipe from frontend
-* Remove all images at database wipe
 * Check image repo size requirements
+* Verbosity levels
 
 ## Text types
 Title (ttext): 1-35 characters  
