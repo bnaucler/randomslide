@@ -24,6 +24,9 @@ const PIDFILEPATH = "./data/"
 
 const VOLATILEMODE = true
 
+const TTEXTMAX = 35
+const BTEXTMAX = 80
+
 const L_REQ = 0
 const L_RESP = 1
 const L_SHUTDOWN = 2

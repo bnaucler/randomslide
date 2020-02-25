@@ -443,12 +443,12 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     settings = addtagstoindex(tags, settings, w)
 
-    if len(tr.Ttext) > 1 {
+    if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
         addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)
         settings.Tmax++
     }
 
-    if len(tr.Btext) > 1 {
+    if len(tr.Btext) > 1 && len(tr.Btext) < rscore.BTEXTMAX {
         addtextwtags(tr.Btext, tags, db, settings.Bmax, rscore.BBUC)
         settings.Bmax++
     }
