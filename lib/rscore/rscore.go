@@ -8,12 +8,18 @@ package rscore
 */
 
 import (
+    "os"
     "fmt"
     "log"
     "net"
+    "time"
     "regexp"
+    "strconv"
     "net/http"
+    "io/ioutil"
+    "os/signal"
     "encoding/json"
+    "path/filepath"
 )
 
 const DEFAULTPORT = 6291        // Default port can also be supplied with -p flag
@@ -144,6 +150,66 @@ type Statusresp struct {
 func Cherr(e error) error {
     if e != nil { log.Fatal(e) }
     return e
+}
+
+// Enables clean shutdown. Needs delay for caller to send response
+func Shutdown(settings Settings) {
+
+    go func() {
+        time.Sleep(1 * time.Second)
+        os.Remove(settings.Pidfile)
+        os.Exit(0)
+    }()
+}
+
+// Setting up signal handler
+func Sighandler(settings Settings) {
+
+    sigc := make(chan os.Signal, 1)
+    signal.Notify(sigc, os.Interrupt)
+    go func(){
+        for sig := range sigc {
+            fmt.Printf("Caught %+v - cleaning up.\n", sig)
+            Shutdown(settings)
+        }
+    }()
+}
+
+// Creating PID file
+func Mkpidfile(settings Settings, prgname string, pid int) Settings {
+
+    settings.Pidfile = fmt.Sprintf("%s%s.pid", PIDFILEPATH, prgname)
+    e := ioutil.WriteFile(settings.Pidfile, []byte(strconv.Itoa(pid)), 0644)
+    Cherr(e)
+
+    return settings
+}
+
+// Initialize logger
+func Initlog(prgname string) {
+
+    logfile := fmt.Sprintf("%s/%s.log", LOGPATH, prgname)
+
+    f, e := os.OpenFile(logfile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+    Cherr(e)
+
+    log.SetOutput(f)
+    log.SetFlags(log.LstdFlags | log.Lshortfile)
+}
+
+// Creates pid file, signal handler and starts logging
+func Rsinit(settings Settings) Settings {
+
+    prgname := filepath.Base(os.Args[0])
+    pid := os.Getpid()
+
+    settings = Mkpidfile(settings, prgname, pid)
+    Sighandler(settings)
+    Initlog(prgname)
+
+    log.Printf("%s started with PID: %d\n", prgname, pid)
+
+    return settings
 }
 
 // Removes whitespace and special characters from string

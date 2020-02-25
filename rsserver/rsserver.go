@@ -3,7 +3,6 @@ package main
 import (
     "os"
     "fmt"
-    "log"
     "time"
     "flag"
     "sort"
@@ -14,7 +13,6 @@ import (
     "strings"
     "strconv"
     "net/http"
-    "os/signal"
     "math/rand"
     "io/ioutil"
     "path/filepath"
@@ -32,19 +30,6 @@ func init() {
     image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
     image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
-
-}
-
-// Initialize logger
-func initlog(prgname string) {
-
-    logfile := fmt.Sprintf("%s/%s.log", rscore.LOGPATH, prgname)
-
-    f, e := os.OpenFile(logfile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
-    rscore.Cherr(e)
-
-    log.SetOutput(f)
-    log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
 // Creates valid selection list from tags
@@ -493,7 +478,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(resp)
 }
 
-// Removes all files residing in dir
+// Removes all files residing in dir (except .gitkeep)
 func rmallfromdir(dir string) {
 
     d, e := os.Open(dir)
@@ -508,15 +493,6 @@ func rmallfromdir(dir string) {
         e = os.RemoveAll(filepath.Join(dir, fn))
         rscore.Cherr(e)
     }
-}
-
-func shutdown(settings rscore.Settings) {
-
-    go func() {
-        time.Sleep(1 * time.Second)
-        os.Remove(settings.Pidfile)
-        os.Exit(0)
-    }()
 }
 
 // Handles incoming requests for shutdowns
@@ -536,34 +512,7 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
         rmallfromdir(rscore.IMGDIR)
     }
 
-    shutdown(settings)
-}
-
-// Creates pid file and starts logging
-func rsinit(settings rscore.Settings) rscore.Settings {
-
-    prgname := filepath.Base(os.Args[0])
-    pid := os.Getpid()
-
-    settings.Pidfile = fmt.Sprintf("%s%s.pid", rscore.PIDFILEPATH, prgname)
-    e := ioutil.WriteFile(settings.Pidfile, []byte(strconv.Itoa(pid)), 0644)
-    rscore.Cherr(e)
-
-    initlog(prgname)
-
-    // SIGINT handler
-    sigc := make(chan os.Signal, 1)
-    signal.Notify(sigc, os.Interrupt)
-    go func(){
-        for sig := range sigc {
-            fmt.Printf("Caught %+v - cleaning up.\n", sig)
-            shutdown(settings)
-        }
-    }()
-
-    if settings.Verb { log.Printf("%s started with PID: %d\n", prgname, pid) }
-
-    return settings
+    rscore.Shutdown(settings)
 }
 
 func main() {
@@ -579,7 +528,7 @@ func main() {
 
     settings := rsdb.Rsettings(db)
     settings.Verb = *vptr
-    settings = rsinit(settings)
+    settings = rscore.Rsinit(settings)
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
