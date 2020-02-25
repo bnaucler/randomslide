@@ -311,11 +311,6 @@ func getimgtype(w int, h int) (int, bool) {
 
     i := 3
 
-    // Upper bounds check
-    if w > rscore.IMGMAX[3][0] || h > rscore.IMGMAX[3][1] {
-        return 0, false
-    }
-
     for i >= 0 {
         if w > rscore.IMGMIN[i][0] && h > rscore.IMGMIN[i][1] &&
            w < rscore.IMGMAX[i][0] && h < rscore.IMGMAX[i][1] {
