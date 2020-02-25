@@ -14,6 +14,7 @@ import (
     "strings"
     "strconv"
     "net/http"
+    "os/signal"
     "math/rand"
     "io/ioutil"
     "path/filepath"
@@ -31,6 +32,7 @@ func init() {
     image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
     image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
+
 }
 
 // Initialize logger
@@ -508,6 +510,15 @@ func rmallfromdir(dir string) {
     }
 }
 
+func shutdown(settings rscore.Settings) {
+
+    go func() {
+        time.Sleep(1 * time.Second)
+        os.Remove(settings.Pidfile)
+        os.Exit(0)
+    }()
+}
+
 // Handles incoming requests for shutdowns
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -525,11 +536,7 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
         rmallfromdir(rscore.IMGDIR)
     }
 
-    go func() {
-        time.Sleep(1 * time.Second)
-        os.Remove(settings.Pidfile)
-        os.Exit(0)
-    }()
+    shutdown(settings)
 }
 
 // Creates pid file and starts logging
@@ -543,6 +550,16 @@ func rsinit(settings rscore.Settings) rscore.Settings {
     rscore.Cherr(e)
 
     initlog(prgname)
+
+    // SIGINT handler
+    sigc := make(chan os.Signal, 1)
+    signal.Notify(sigc, os.Interrupt)
+    go func(){
+        for sig := range sigc {
+            fmt.Printf("Caught %+v - cleaning up.\n", sig)
+            shutdown(settings)
+        }
+    }()
 
     if settings.Verb { log.Printf("%s started with PID: %d\n", prgname, pid) }
 
