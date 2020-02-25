@@ -33,9 +33,12 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * CLI tool for automated db import
 * Verification of text lengths
+* Database wipe from frontend
+* Remove all images at database wipe
+* Check image repo size requirements
 
 ## Text types
-Title (ttext): 1-35 characters
+Title (ttext): 1-35 characters  
 Body (btext): 5-80 characters
 
 ## Slide types
