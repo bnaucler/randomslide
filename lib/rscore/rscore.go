@@ -16,22 +16,23 @@ import (
     "encoding/json"
 )
 
-const DEFAULTPORT = 6291
-const DBNAME = "./data/rs.db"
-const LOGPATH = "./static/log/"
-const IMGDIR = "./static/img/"
-const PIDFILEPATH = "./data/"
+const DEFAULTPORT = 6291        // Default port can also be supplied with -p flag
+const DBNAME = "./data/rs.db"   // Database location (change at own peril)
+const LOGPATH = "./static/log/" // Logs should be accessible from frontend
+const IMGDIR = "./static/img/"  // Image directory
+const PIDFILEPATH = "./data/"   // Base directory for storage of PID file
 
 const VOLATILEMODE = true
 
-const TTEXTMAX = 35
-const BTEXTMAX = 80
+const TTEXTMAX = 35             // Max length for title text
+const BTEXTMAX = 80             // Max length for body text
 
-const L_REQ = 0
-const L_RESP = 1
-const L_SHUTDOWN = 2
+// Logging codes parsed by Addlog()
+const L_REQ = 0                 // Request log
+const L_RESP = 1                // Response log
+const L_SHUTDOWN = 2            // Server shutdown request log
 
-// Status codes
+// Status response codes sent to client
 const C_OK = 0                  // OK
 const C_WRFF = 1                // Incorrect file format
 const C_WRSZ = 2                // Not able to classify image size
@@ -58,8 +59,9 @@ var BBUC = []byte("bbuc")       // Body text bucket
 var IBUC = []byte("ibuc")       // Image bucket
 var SBUC = []byte("sbuc")       // Settings bucket
 
-var INDEX = []byte(".index")
+var INDEX = []byte(".index")    // Untouchable database index position
 
+// For verification of image mime types
 var IMGMIME = []string{
     "image/jpeg",
     "image/png",
