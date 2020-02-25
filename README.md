@@ -5,6 +5,9 @@ Generate random slides for online presentation.
 Björn W Naucler (mail@bnaucler.se)  
 Morgan Andersson (info@ameste.se)
 
+## Dependencies
+Go and [BoltDB](https://github.com/boltdb/bolt) - the code has been tested on Arch Linux 5.5 and FreeBSD 12, but should be fairly portable.
+
 ## Project purpose
 Slideshow karaokae or other pranks. Actual real world usefullness can be questioned.
 
