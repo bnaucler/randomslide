@@ -30,7 +30,6 @@ tools/          - Tools for maintenence etc.
 * Refactoring image handler
 * User accounts with access levels
 * Proper automated tests
-* CLI tool for automated db import
 * Verification of text lengths
 * Check image repo size requirements
 * Verbosity levels
