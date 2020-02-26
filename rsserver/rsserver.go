@@ -500,9 +500,7 @@ func main() {
     vptr := flag.Bool("v", false, "verbose mode")
     flag.Parse()
 
-    db, e := bolt.Open(*dbptr, 0640, nil)
-    rscore.Cherr(e)
-    defer db.Close()
+    db := rsdb.Open(*dbptr)
 
     settings := rsdb.Rsettings(db)
     settings.Verb = *vptr
@@ -538,6 +536,6 @@ func main() {
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
-    e = http.ListenAndServe(lport, nil)
+    e := http.ListenAndServe(lport, nil)
     rscore.Cherr(e)
 }

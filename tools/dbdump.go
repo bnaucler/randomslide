@@ -73,9 +73,7 @@ func main() {
 
     if len(os.Args) < 2 { os.Exit(1) }
 
-    db, e := bolt.Open(os.Args[1], 0640, nil)
-    rscore.Cherr(e)
-    defer db.Close()
+    db := rsdb.Open(os.Args[1])
 
     settings := rsdb.Rsettings(db)
 

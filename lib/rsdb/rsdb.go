@@ -14,6 +14,16 @@ import (
     "github.com/bnaucler/randomslide/lib/rscore"
 )
 
+// Opens the database
+func Open(dbname string) *bolt.DB {
+
+    db, e := bolt.Open(dbname, 0640, nil)
+    rscore.Cherr(e)
+    defer db.Close()
+
+    return db
+}
+
 // Write JSON encoded byte slice to DB
 func Wrdb(db *bolt.DB, k []byte, v []byte, cbuc []byte) (e error) {
 
