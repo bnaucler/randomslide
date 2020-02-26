@@ -231,6 +231,14 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// Wrapper for tag status responses
+func sendtagstatus(r int, w http.ResponseWriter) {
+
+    var sstr string
+    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
+    rscore.Sendstatus(rscore.C_OK, sstr, w)
+}
+
 // Returns a slice of cleaned tags from http request
 func gettagsfromreq(r *http.Request) []string {
 
@@ -294,7 +302,8 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     rscore.Cherr(e)
 
     // Update relevant tags
-    settings = rsdb.Tagstoindex(tags, settings, w)
+    nt, settings := rsdb.Tagstoindex(tags, settings)
+    sendtagstatus(nt, w)
     rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
 
@@ -362,7 +371,8 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ltxt, e := json.Marshal(tr)
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
-    settings = rsdb.Tagstoindex(tags, settings, w)
+    nt, settings := rsdb.Tagstoindex(tags, settings)
+    sendtagstatus(nt, w)
 
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
         rsdb.Addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)

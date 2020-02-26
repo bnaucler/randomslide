@@ -9,7 +9,6 @@ package rsdb
 
 import (
     "fmt"
-    "net/http"
     "sort"
     "strconv"
     "encoding/json"
@@ -94,8 +93,7 @@ func Countobj(db *bolt.DB, tn string, buc []byte) int {
 }
 
 // Updates index to include new tags
-func Tagstoindex(tags []string, settings rscore.Settings,
-    w http.ResponseWriter) rscore.Settings {
+func Tagstoindex(tags []string, settings rscore.Settings) (int, rscore.Settings) {
 
     r := 0
 
@@ -108,11 +106,7 @@ func Tagstoindex(tags []string, settings rscore.Settings,
 
     if r != 0 { sort.Strings(settings.Taglist) }
 
-    var sstr string
-    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
-    rscore.Sendstatus(rscore.C_OK, sstr, w)
-
-    return settings
+    return r, settings
 }
 
 // Updates all relevant tag lists
