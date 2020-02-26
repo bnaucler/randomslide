@@ -9,6 +9,9 @@ package rsdb
 
 import (
     "fmt"
+    "net/http"
+    "sort"
+    "strconv"
     "encoding/json"
     "github.com/boltdb/bolt"
     "github.com/bnaucler/randomslide/lib/rscore"
@@ -90,3 +93,62 @@ func Countobj(db *bolt.DB, tn string, buc []byte) int {
     return len(ttag.Ids)
 }
 
+// Updates index to include new tags
+func Tagstoindex(tags []string, settings rscore.Settings,
+    w http.ResponseWriter) rscore.Settings {
+
+    r := 0
+
+    for _, t := range tags {
+        if rscore.Findstrinslice(t, settings.Taglist) == false {
+            settings.Taglist = append(settings.Taglist, t)
+            r++
+        }
+    }
+
+    if r != 0 { sort.Strings(settings.Taglist) }
+
+    var sstr string
+    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
+    rscore.Sendstatus(rscore.C_OK, sstr, w)
+
+    return settings
+}
+
+// Updates all relevant tag lists
+func Updatetaglists(db *bolt.DB, tags []string, i int, buc []byte) {
+
+    for _, s := range tags {
+        ctag := rscore.Tag{}
+        key := []byte(s)
+
+        resp, e := Rdb(db, key, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(resp, &ctag)
+        ctag.Ids = append(ctag.Ids, i)
+
+        dbw, e := json.Marshal(ctag)
+        e = Wrdb(db, key, dbw, buc)
+        rscore.Cherr(e)
+    }
+}
+
+// Conditionally adds tagged text to database
+func Addtextwtags(text string, tags []string, db *bolt.DB,
+    mxindex int, buc []byte) {
+
+    to := rscore.Textobj{
+            Id: mxindex,
+            Text: text,
+            Tags: tags }
+
+    // Storing the object in db
+    key := []byte(strconv.Itoa(mxindex))
+    mtxt, e := json.Marshal(to)
+    e = Wrdb(db, key, mtxt, buc)
+    rscore.Cherr(e)
+
+    // Update all relevant tag lists
+    Updatetaglists(db, tags, mxindex, buc)
+}

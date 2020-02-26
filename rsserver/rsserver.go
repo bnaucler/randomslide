@@ -5,7 +5,6 @@ import (
     "fmt"
     "time"
     "flag"
-    "sort"
     "image"
     "image/png"
     "image/jpeg"
@@ -232,66 +231,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Updates index to include new tags
-func addtagstoindex(tags []string, settings rscore.Settings,
-    w http.ResponseWriter) rscore.Settings {
-
-    r := 0
-
-    for _, t := range tags {
-        if rscore.Findstrinslice(t, settings.Taglist) == false {
-            settings.Taglist = append(settings.Taglist, t)
-            r++
-        }
-    }
-
-    if r != 0 { sort.Strings(settings.Taglist) }
-
-    var sstr string
-    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
-    rscore.Sendstatus(rscore.C_OK, sstr, w)
-
-    return settings
-}
-
-// Updates all relevant tag lists
-func updatetaglists(db *bolt.DB, tags []string, i int, buc []byte) {
-
-    for _, s := range tags {
-        ctag := rscore.Tag{}
-        key := []byte(s)
-
-        resp, e := rsdb.Rdb(db, key, buc)
-        rscore.Cherr(e)
-
-        json.Unmarshal(resp, &ctag)
-        ctag.Ids = append(ctag.Ids, i)
-
-        dbw, e := json.Marshal(ctag)
-        e = rsdb.Wrdb(db, key, dbw, buc)
-        rscore.Cherr(e)
-    }
-}
-
-// Conditionally adds tagged text to database
-func addtextwtags(text string, tags []string, db *bolt.DB,
-    mxindex int, buc []byte) {
-
-    to := rscore.Textobj{
-            Id: mxindex,
-            Text: text,
-            Tags: tags }
-
-    // Storing the object in db
-    key := []byte(strconv.Itoa(mxindex))
-    mtxt, e := json.Marshal(to)
-    e = rsdb.Wrdb(db, key, mtxt, buc)
-    rscore.Cherr(e)
-
-    // Update all relevant tag lists
-    updatetaglists(db, tags, mxindex, buc)
-}
-
 // Returns a slice of cleaned tags from http request
 func gettagsfromreq(r *http.Request) []string {
 
@@ -355,8 +294,8 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     rscore.Cherr(e)
 
     // Update relevant tags
-    settings = addtagstoindex(tags, settings, w)
-    updatetaglists(db, tags, settings.Imax, rscore.IBUC)
+    settings = rsdb.Tagstoindex(tags, settings, w)
+    rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
 
     return settings
@@ -423,15 +362,15 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ltxt, e := json.Marshal(tr)
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
-    settings = addtagstoindex(tags, settings, w)
+    settings = rsdb.Tagstoindex(tags, settings, w)
 
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
-        addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)
+        rsdb.Addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)
         settings.Tmax++
     }
 
     if len(tr.Btext) > 1 && len(tr.Btext) < rscore.BTEXTMAX {
-        addtextwtags(tr.Btext, tags, db, settings.Bmax, rscore.BBUC)
+        rsdb.Addtextwtags(tr.Btext, tags, db, settings.Bmax, rscore.BBUC)
         settings.Bmax++
     }
 
