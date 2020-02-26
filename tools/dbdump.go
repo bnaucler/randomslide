@@ -81,11 +81,15 @@ func main() {
     fmt.Printf("SETTINGS: %+v\n", settings)
 
     // DUMP TAG LISTS
-    ttl := gettaglist(db, settings.Taglist, rscore.TBUC)
-    fmt.Printf("TTEXT TAG LIST: %+v\n", ttl)
+    if settings.Tmax > 0 {
+        ttl := gettaglist(db, settings.Taglist, rscore.TBUC)
+        fmt.Printf("TTEXT TAG LIST: %+v\n", ttl)
+    }
 
-    btl := gettaglist(db, settings.Taglist, rscore.BBUC)
-    fmt.Printf("BTEXT TAG LIST: %+v\n", btl)
+    if settings.Bmax > 0 {
+        btl := gettaglist(db, settings.Taglist, rscore.BBUC)
+        fmt.Printf("BTEXT TAG LIST: %+v\n", btl)
+    }
 
     // DUMP TTEXT
     if settings.Tmax > 0 {
