@@ -6,6 +6,7 @@ import (
     "time"
     "flag"
     "image"
+    "bytes"
     "image/png"
     "image/jpeg"
     "image/gif"
@@ -277,8 +278,6 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
 
     isz, szok := getimgtype(iw, ih)
 
-    fmt.Printf("DEBUG: %d:%d - %+v, %+v\n", iw, ih, isz, szok)
-
     if szok == false {
         rscore.Sendstatus(rscore.C_WRSZ,
             "Could not classify size - file not uploaded", w)
@@ -292,8 +291,6 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
         W: iw,
         H: ih,
         Size: isz }
-
-    fmt.Printf("DEBUG: %+v\n", iobj)
 
     // Add object to db
     mobj, e := json.Marshal(iobj)
@@ -338,12 +335,15 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
     defer tmpf.Close()
 
-    ic, _, e := image.DecodeConfig(f)
-    rscore.Cherr(e)
-
     fc, e := ioutil.ReadAll(f)
     rscore.Cherr(e)
     tmpf.Write(fc)
+
+    ibuf, e := ioutil.ReadFile(tmpf.Name())
+    rscore.Cherr(e)
+    fszr := bytes.NewReader(ibuf)
+    ic, _, e := image.DecodeConfig(fszr)
+    rscore.Cherr(e)
 
     tags := gettagsfromreq(r)
     settings = addimgwtags(db, tmpf.Name(), ic.Width, ic.Height, tags, w, settings)
