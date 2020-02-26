@@ -11,8 +11,15 @@ Go and [BoltDB](https://github.com/boltdb/bolt) - the code has been tested on Ar
 ## Project purpose
 Slideshow karaokae or other pranks. Actual real world usefullness can be questioned.
 
+## Installation
+```
+go get github.com/bnaucler/randomslide
+go get github.com/boltdb/bolt
+```
+
+`bin/build.sh all` to build server and tools.  
+
 ## Usage
-Build the server with `bin/build.sh all` to build server and tools.  
 Launch with `bin/rsserver`  
 You can also use `bin/rsmonitor.sh` to automatically restart the server.
 
@@ -27,6 +34,10 @@ Usage of bin/rsserver:
 ```
 
 Server log files can be accessed at `static/logs` or in the admin interface.
+
+## CLI tools
+`dbdump` will, perhaps unsurprisingly, dump the database to console. Not recommended with large data sets, but useful when troubleshooting.  
+`batchimport` can import a UTF-8-encoded text file as text objects directly into the database.
 
 ### API reference
 
