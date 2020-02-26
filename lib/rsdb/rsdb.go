@@ -21,7 +21,6 @@ func Open(dbname string) *bolt.DB {
 
     db, e := bolt.Open(dbname, 0640, nil)
     rscore.Cherr(e)
-    defer db.Close()
 
     return db
 }

@@ -450,6 +450,7 @@ func main() {
     flag.Parse()
 
     db := rsdb.Open(*dbptr)
+    defer db.Close()
 
     settings := rsdb.Rsettings(db)
     settings.Verb = *vptr
