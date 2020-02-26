@@ -19,7 +19,7 @@ data/           - Home of database & pidfiles
 lib/            - Custom golang libraries
 rsserver/       - Source file(s) of server
 static/         - HTML, CSS, JS and images
-static/log      - Server and monitor log files
+static/log/     - Server and monitor log files
 tests/          - Scripts for server tests
 tools/          - Tools for maintenence etc.
 ```
@@ -27,10 +27,10 @@ tools/          - Tools for maintenence etc.
 ## TODO
 * Generate slides w. numbers
 * Different slide types
+* DB objects to store images by size
 * Refactoring image handler
 * User accounts with access levels
 * Proper automated tests
-* Verification of text lengths
 * Check image repo size requirements
 * Verbosity levels
 
