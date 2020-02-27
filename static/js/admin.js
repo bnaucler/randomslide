@@ -1,4 +1,4 @@
-function restartServer(){
+function restartServer(){   
     var xh = new XMLHttpRequest();
     xh.open('GET', "/restart", true);
     xh.send();
