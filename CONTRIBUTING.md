@@ -20,12 +20,10 @@ lib/            - Custom golang libraries
 rsserver/       - Source file(s) of server
 static/         - HTML, CSS, JS and images
 static/log/     - Server and monitor log files
-tests/          - Scripts for server tests
 tools/          - Tools for maintenence etc.
 ```
 
 ## TODO
-* Generate slides w. numbers
 * DB objects to store images by size
 * Refactoring image handler
 * User accounts with access levels
