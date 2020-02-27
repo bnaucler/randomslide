@@ -231,9 +231,7 @@ function changeCSS(slideToStyle) {
         case 'slide6':
             csslink.href='/css/slide6.css';
             break;
-
     }
-
 }
 
 function endScreen(){

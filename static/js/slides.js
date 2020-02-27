@@ -1,4 +1,3 @@
-
 function slide0(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
