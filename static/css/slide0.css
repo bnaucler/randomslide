@@ -60,10 +60,15 @@ header{
 
 h2{
     text-align: center;
-    padding-top: 25%;
     font-weight: 700;
+}
+
+.slideimg{
+    margin: auto;
+    display: block;
 }
 
 .theSlides{
     min-height: 90vh;
+    padding-top: 10px;
 }
