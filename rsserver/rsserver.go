@@ -184,26 +184,26 @@ func setslidetype(i int) rscore.Slidetype {
     return st
 }
 
+// Retrieves relevant data based on slide type
+func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
+    req rscore.Deckreq) rscore.Slide {
+
+    slide := rscore.Slide{Type: st.Type}
+
+    if st.TT { slide.Title = getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC) }
+    if st.BT { slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
+    if st.IMG { slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+
+    return slide
+}
+
 // Returns a new slide deck according to request
 func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     settings rscore.Settings) (rscore.Deck, rscore.Settings) {
 
     for i := 0; i < req.N; i++ {
         st := setslidetype(i)
-        slide := rscore.Slide{Type: st.Type}
-
-        if st.TT {
-            slide.Title = getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC)
-        }
-
-        if st.BT {
-            slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC)
-        }
-
-        if st.IMG {
-            slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
-        }
-
+        slide := getslide(db, st, settings, req)
         deck.Slides = append(deck.Slides, slide)
     }
 
