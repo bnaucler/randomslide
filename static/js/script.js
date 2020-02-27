@@ -162,7 +162,8 @@ function slideShow(n){
     }
     if(slideshow === true){
         slides[slideIndex-1].style.display = "block";
-        changeCSS(slides[slideIndex-1]);
+        console.log(slides[slideIndex-1].id);
+        changeCSS(slides[slideIndex-1].id);
     }
 
 }
@@ -208,8 +209,8 @@ function displayTimer(){
 
 function changeCSS(slideToStyle) {
     var csslink = document.getElementById('style');
-
-    switch(slideToStyle.id){
+    console.log(slideToStyle);
+    switch(slideToStyle){
         case 'slide0':
             csslink.href='/css/slide0.css';
             break;
@@ -223,8 +224,8 @@ function changeCSS(slideToStyle) {
             csslink.href='/css/slide3.css';
             break;
         case 'slide4':            
-        csslink.href='/css/slide4.css';
-        break;
+            csslink.href='/css/slide4.css';
+            break;
         case 'slide5':
             csslink.href='/css/slide5.css';
             break;
