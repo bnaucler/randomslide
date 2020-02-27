@@ -5,6 +5,7 @@ import (
     "fmt"
     "time"
     "flag"
+    "sort"
     "image"
     "bytes"
     "image/png"
@@ -19,6 +20,7 @@ import (
     "encoding/json"
 
     "github.com/boltdb/bolt"
+    "golang.org/x/crypto/bcrypt"
 
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
@@ -154,7 +156,7 @@ func setslidetype(i int) rscore.Slidetype {
         st.BT = false
         st.IMG = true
 
-    case 2: // Big number TODO: generator
+    case 2: // Big number
         st.TT = false
         st.BT = false
         st.IMG = false
@@ -374,7 +376,7 @@ func gettagsfromreq(r *http.Request) []string {
     itags := strings.Split(rtags, " ")
 
     for _, s := range itags {
-        ret = append(ret, rscore.Cleanstring(s))
+        ret = append(ret, rscore.Cleanstring(s, rscore.RXTAGS))
     }
 
     return ret
@@ -569,6 +571,99 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Shutdown(settings)
 }
 
+// Returns true if key returns something from database
+func isindb(db *bolt.DB, k []byte, buc []byte) bool {
+
+    v, e := rsdb.Rdb(db, k, buc)
+
+    if len(v) == 0 || e != nil { return false }
+    return true
+}
+
+// Write user index to database
+func updateuserindex(db *bolt.DB, uname string,
+    settings rscore.Settings) rscore.Settings {
+
+    users := rscore.Uindex{}
+    var mindex []byte
+
+    if settings.Umax > 0 {
+        mindex, e := rsdb.Rdb(db, rscore.INDEX, rscore.UBUC)
+        rscore.Cherr(e)
+        e = json.Unmarshal(mindex, &users)
+        rscore.Cherr(e)
+    }
+
+    users.Names = append(users.Names, uname)
+    sort.Strings(users.Names)
+
+    mindex, e := json.Marshal(users)
+
+    fmt.Printf("DEBUG: %+v\n", users.Names)
+
+    e = rsdb.Wrdb(db, rscore.INDEX, mindex, rscore.UBUC)
+    rscore.Cherr(e)
+
+    settings.Umax++
+    return settings
+
+}
+
+// Handles incoming requests for user registrations
+func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) rscore.Settings {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    u := rscore.User{}
+    ur := rscore.Uresp{}
+
+    user := r.FormValue("user")
+    pass := r.FormValue("pass")
+
+    hash, e := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+    rscore.Cherr(e)
+
+    // Username already takem - registration not possible
+    if settings.Umax > 0 {
+        if isindb(db, []byte(user), rscore.UBUC) {
+            rscore.Sendstatus(rscore.C_UIDB, "Username already in db", w)
+            return settings
+        }
+    }
+
+    // Username includes illegal characters
+    if user != rscore.Cleanstring(user, rscore.RXUSER) {
+            rscore.Sendstatus(rscore.C_UICH,
+                "Username includes illegal characters", w)
+            return settings
+    }
+
+    u.Name = user
+    u.Skey = rscore.Randstr(rscore.SKEYLEN)
+    ur.Name = u.Name
+    ur.Skey = u.Skey
+    u.Pass = hash
+
+    settings = updateuserindex(db, user, settings)
+
+    mu, e := json.Marshal(u)
+    rscore.Cherr(e)
+    e = rsdb.Wrdb(db, []byte(user), mu, rscore.UBUC)
+    rscore.Cherr(e)
+
+    mr, e := json.Marshal(ur)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, mr, r)
+
+    enc := json.NewEncoder(w)
+    enc.Encode(ur)
+
+    rsdb.Wrsettings(db, settings)
+    return settings
+}
+
 func main() {
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
@@ -610,6 +705,11 @@ func main() {
     // Upload images
     http.HandleFunc("/addimg", func(w http.ResponseWriter, r *http.Request) {
         settings = imgreqhandler(w, r, db, settings)
+    })
+
+    // User registration
+    http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+        settings = reghandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)

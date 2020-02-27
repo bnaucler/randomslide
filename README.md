@@ -48,6 +48,11 @@ Endpoint:               Variables:              Comment:
                         wipe        string      Wipes database and images if "yes"
 
 
+/register                                       Register a user account
+                        user        string      Username
+                        pass        string      Password
+
+
 /gettags                <null>                  Retrieves list of all tags
                                                 in database
 
