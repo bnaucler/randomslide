@@ -159,9 +159,9 @@ func setslidetype(i int) rscore.Slidetype {
         st.BT = false
         st.IMG = false
 
-    case 3: // Bullet point list TODO: new db object
+    case 3: // Bullet point list
         st.TT = false
-        st.BT = true
+        st.BT = false
         st.IMG = false
 
     case 4: // Title, body & img
@@ -184,6 +184,27 @@ func setslidetype(i int) rscore.Slidetype {
     return st
 }
 
+// Generate bullet point list for slide type 3
+func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
+
+    var bps []string
+    var bp string
+
+    rnd := rscore.BPMAX - rscore.BPMIN
+    n := rand.Intn(rnd)
+    n += rscore.BPMIN
+
+    for i := 0 ; i < n ; i ++ {
+        for len(bp) == 0 || len(bp) > rscore.BPOINTMAX {
+            bp = getrndtextobj(db, settings.Tmax, tags, rscore.TBUC)
+        }
+        bps = append(bps, bp)
+        bp = ""
+    }
+
+    return bps
+}
+
 // Retrieves relevant data based on slide type
 func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     req rscore.Deckreq) rscore.Slide {
@@ -193,6 +214,10 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     if st.TT { slide.Title = getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC) }
     if st.BT { slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
     if st.IMG { slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+
+    if st.Type == 3 {
+        slide.Bpts = bpgen(db, req.Tags, settings)
+    }
 
     return slide
 }
@@ -431,6 +456,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     tr := rscore.Textreq{
             Ttext: r.FormValue("ttext"),
             Btext: r.FormValue("btext"),
+            Bpoint: r.FormValue("bpoint"),
             Tags: tags }
 
     ltxt, e := json.Marshal(tr)

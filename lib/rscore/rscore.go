@@ -32,8 +32,11 @@ const VOLATILEMODE = true
 
 const TTEXTMAX = 35             // Max length for title text
 const BTEXTMAX = 80             // Max length for body text
+const BPOINTMAX = 20             // Max length for bullet point
 
 const STYPES = 7                // Number of slide types available
+const BPMIN = 3                 // Min number of bullet points for lists
+const BPMAX = 8                 // Max number of bullet points for lists
 
 // Logging codes parsed by Addlog()
 const L_REQ = 0                 // Request log
@@ -96,6 +99,7 @@ type Deckreq struct {
 type Textreq struct {
     Ttext string                // Title text object to add to db
     Btext string                // Body text object to add to db
+    Bpoint string               // Bullet points for making lists
     Tags []string               // Tags for indexing
 }
 
@@ -146,8 +150,9 @@ type Slidetype struct {
 type Slide struct {
     Type int                    // See CONTRIBUTING.md for type chart
     Title string                // Slide title
-    Img Imgobj                  // Image object
     Btext string                // Body text
+    Bpts []string               // Bullet points
+    Img Imgobj                  // Image object
 }
 
 type Statusresp struct {
