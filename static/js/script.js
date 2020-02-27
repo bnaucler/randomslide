@@ -71,27 +71,31 @@ function fetchSlides(){
 
 // creating slides from the JSON 
 function createSlides(resp){
+
     for(i in resp){
-        let outputEl = document.getElementById("output");
-        var div = document.createElement("div");
-        div.setAttribute("class", "theSlides");
-        div.style.display = "none";
-        outputEl.appendChild(div);
-
-        let slideHeader = document.createElement("h2");
-        let headerText = document.createTextNode(resp[i].Title);
-        slideHeader.appendChild(headerText);
-        div.appendChild(slideHeader);
-
-        let slideImg = document.createElement("img");
-        slideImg.setAttribute("src", "img/" + resp[i].Img.Fname);
-        slideImg.classList.add("slideimg");
-        div.appendChild(slideImg);
-  
-        let slideTxt = document.createElement("p");
-        let slideContent = document.createTextNode(resp[i].Btext);
-        slideTxt.appendChild(slideContent);
-        div.appendChild(slideTxt);
+        switch(resp[i].Type){
+            case 0:
+                slide0(resp[i]);
+                break;
+            case 1:
+                slide1(resp[i]);
+                break;
+            case 2:
+                slide2(resp[i]);
+                break;
+            case 3:
+                slide3(resp[i]);
+                break;
+            case 4:
+                slide4(resp[i]);
+                break;
+            case 5:
+                slide5(resp[i]);
+                break;
+            case 6:
+                slide6(resp[i]);
+                break;
+        }
     }
     setTimeout(loadingSlides, 800);
 }
