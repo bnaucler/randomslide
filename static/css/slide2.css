@@ -63,14 +63,15 @@ header{
     background: black;
 }
 
-.bignumber{
+h3{
     display: block;
     text-align: center;
     margin: auto;
     padding-top: 2em;
-    font-size: 4em;
+    font-size: 3.5em;
 }
 
 .theSlides{
     min-height: 90vh;
 }
+
