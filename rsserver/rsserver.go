@@ -128,16 +128,81 @@ func getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     return deck
 }
 
+// Determines an appropriate slide type to generate
+func setslidetype(i int) rscore.Slidetype {
+
+    st := rscore.Slidetype{}
+
+    // We always start with type 0 (big title)
+    if i == 0 {
+        st.Type = 0
+
+    } else {
+        st.Type = rand.Intn(rscore.STYPES)
+    }
+
+    // TODO: Make proper index objects
+    switch st.Type {
+
+    case 0: // Big title
+        st.TT = true
+        st.BT = false
+        st.IMG = false
+
+    case 1: // Full screen picture
+        st.TT = false
+        st.BT = false
+        st.IMG = true
+
+    case 2: // Big number TODO: generator
+        st.TT = true
+        st.BT = false
+        st.IMG = false
+
+    case 3: // Bullet point list TODO: new db object
+        st.TT = false
+        st.BT = true
+        st.IMG = false
+
+    case 4: // Title, body & img
+        st.TT = true
+        st.BT = true
+        st.IMG = true
+
+    case 5: // Inspirational quote TODO: add q-marks
+        st.TT = true
+        st.BT = false
+        st.IMG = false
+
+    case 6: // Picture with text
+        st.TT = false
+        st.BT = true
+        st.IMG = true
+
+    }
+
+    return st
+}
+
 // Returns a new slide deck according to request
 func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     settings rscore.Settings) (rscore.Deck, rscore.Settings) {
 
     for i := 0; i < req.N; i++ {
-        slide := rscore.Slide{
-            Type: rand.Intn(6), // TODO
-            Title: getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC),
-            Btext: getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC),
-            Img: getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+        st := setslidetype(i)
+        slide := rscore.Slide{Type: st.Type}
+
+        if st.TT {
+            slide.Title = getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC)
+        }
+
+        if st.BT {
+            slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC)
+        }
+
+        if st.IMG {
+            slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
+        }
 
         deck.Slides = append(deck.Slides, slide)
     }

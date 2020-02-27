@@ -33,6 +33,8 @@ const VOLATILEMODE = true
 const TTEXTMAX = 35             // Max length for title text
 const BTEXTMAX = 80             // Max length for body text
 
+const STYPES = 7                // Number of slide types available
+
 // Logging codes parsed by Addlog()
 const L_REQ = 0                 // Request log
 const L_RESP = 1                // Response log
@@ -132,6 +134,13 @@ type Deck struct {
     N int                       // Total number of slides in deck
     Lang string                 // Languge code, 'en', 'de', 'se', etc
     Slides []Slide              // Slice of Slide objects
+}
+
+type Slidetype struct {
+    Type int                    // The type ID number
+    TT bool                     // Includes title text
+    BT bool                     // Includes body text
+    IMG bool                    // Includes image
 }
 
 type Slide struct {
