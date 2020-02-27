@@ -68,7 +68,7 @@ func main() {
 
     var n int
     for _, f := range fn {
-        if *vptr { fmt.Printf("Importing %s...\n", fn) }
+        if *vptr { fmt.Printf("Importing %s...\n", f) }
         settings, n = importfile(db, f, tags, settings)
         if *vptr { fmt.Printf("%d lines imported\n", n) }
     }
