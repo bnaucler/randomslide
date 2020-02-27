@@ -147,7 +147,7 @@ func setslidetype(i int) rscore.Slidetype {
     case 0: // Big title
         st.TT = true
         st.BT = false
-        st.IMG = false
+        st.IMG = true
 
     case 1: // Full screen picture
         st.TT = false
@@ -155,21 +155,21 @@ func setslidetype(i int) rscore.Slidetype {
         st.IMG = true
 
     case 2: // Big number TODO: generator
-        st.TT = true
+        st.TT = false
         st.BT = false
         st.IMG = false
 
     case 3: // Bullet point list
         st.TT = false
         st.BT = false
-        st.IMG = false
+        st.IMG = true
 
     case 4: // Title, body & img
         st.TT = true
         st.BT = true
         st.IMG = true
 
-    case 5: // Inspirational quote TODO: add q-marks
+    case 5: // Inspirational quote
         st.TT = true
         st.BT = false
         st.IMG = false
@@ -205,6 +205,38 @@ func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
     return bps
 }
 
+// Flips a coin, returns random bool
+func coin() bool {
+
+    rnd := rand.Intn(2)
+
+    if rnd == 0 { return false }
+    return true
+}
+
+// Generate numbers of slide type 2
+func numgen() string {
+
+    p := byte(' ')
+    s := byte(' ')
+
+    n := rand.Intn(rscore.RNUMBMAX)
+
+    for i := 0; i < rscore.RNUMEMAX; i ++ {
+        if coin() { n *= 10 }
+    }
+
+    plen := len(rscore.NUMPREF)
+    if coin() { p = rscore.NUMPREF[rand.Intn(plen)] }
+
+    slen := len(rscore.NUMSUFF)
+    if coin() { s = rscore.NUMSUFF[rand.Intn(slen)] }
+
+    ret := fmt.Sprintf("%s%d%s", string(p), n, string(s))
+
+    return strings.TrimSpace(ret)
+}
+
 // Retrieves relevant data based on slide type
 func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     req rscore.Deckreq) rscore.Slide {
@@ -215,7 +247,11 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     if st.BT { slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
     if st.IMG { slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
 
-    if st.Type == 3 {
+    if st.Type == 2 {
+        slide.Title = numgen()
+        fmt.Println(slide.Title)
+
+    } else if st.Type == 3 {
         slide.Bpts = bpgen(db, req.Tags, settings)
     }
 

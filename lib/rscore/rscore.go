@@ -32,7 +32,12 @@ const VOLATILEMODE = true
 
 const TTEXTMAX = 35             // Max length for title text
 const BTEXTMAX = 80             // Max length for body text
-const BPOINTMAX = 20             // Max length for bullet point
+const BPOINTMAX = 20            // Max length for bullet point
+const RNUMBMAX = 30             // Random number base max
+const RNUMEMAX = 3              // Random number exponent max
+
+var NUMPREF = []byte("$+-")     // Potential number prefixes for slide type 2
+var NUMSUFF = []byte("%!?")     // Potential number suffixes for slide type 2
 
 const STYPES = 7                // Number of slide types available
 const BPMIN = 3                 // Min number of bullet points for lists
