@@ -161,7 +161,6 @@ function slideShow(n){
     }
     if(slideshow === true){
         slides[slideIndex-1].style.display = "block";
-        console.log(slides[slideIndex-1].id);
         changeCSS(slides[slideIndex-1].id);
     }
 
@@ -208,7 +207,6 @@ function displayTimer(){
 
 function changeCSS(slideToStyle) {
     var csslink = document.getElementById('style');
-    console.log(slideToStyle);
     switch(slideToStyle){
         case 'slide0':
             csslink.href='/css/slide0.css';
