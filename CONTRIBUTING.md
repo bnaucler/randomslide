@@ -26,13 +26,14 @@ tools/          - Tools for maintenence etc.
 
 ## TODO
 * Generate slides w. numbers
-* Different slide types
 * DB objects to store images by size
 * Refactoring image handler
 * User accounts with access levels
 * Proper automated tests
 * Check image repo size requirements
 * Verbosity levels
+* Slide type probability chart
+* Slide type repetition limits
 
 ## Text types
 Title (ttext): 1-35 characters  
