@@ -137,7 +137,6 @@ function loadingSlides(){
 function startSlide(){
     let wrapper = document.getElementById("formwrapper");
     wrapper.innerHTML = "";
-    changeCSS();
     slideShow();
     if(slideProg === "change"){
         document.getElementById("prev").style.display = "inline";
