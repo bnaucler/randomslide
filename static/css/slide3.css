@@ -62,19 +62,18 @@ header{
 
 .theSlides{
     min-height: 90vh;
-}
-
-.list{
-    margin: auto;
     padding-top: 2em;
 }
 
+
+
 ul{
     margin: auto;
-    width: 50%;
-    line-height: 2em;
+    width: 40%;
+    line-height: 3em;
 }
 
 li{
     margin: auto;
+    font-size: 1.5em;
 }
