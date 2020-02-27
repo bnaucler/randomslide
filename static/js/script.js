@@ -71,7 +71,6 @@ function fetchSlides(){
 
 // creating slides from the JSON 
 function createSlides(resp){
-
     for(i in resp){
         switch(resp[i].Type){
             case 0:
@@ -162,7 +161,8 @@ function slideShow(n){
         slides[i].style.display = "none"; 
     }
     if(slideshow === true){
-        slides[slideIndex-1].style.display = "block"; 
+        slides[slideIndex-1].style.display = "block";
+        changeCSS(slides[slideIndex-1]);
     }
 
 }
@@ -206,8 +206,34 @@ function displayTimer(){
 }
 
 
-function changeCSS() {
-    document.getElementById('style').href='/css/slide4.css';
+function changeCSS(slideToStyle) {
+    var csslink = document.getElementById('style');
+
+    switch(slideToStyle.id){
+        case 'slide0':
+            csslink.href='/css/slide0.css';
+            break;
+        case 'slide1':
+            csslink.href='/css/slide1.css';
+            break;
+        case 'slide2':
+            csslink.href='/css/slide2.css';
+            break;
+        case 'slide3':
+            csslink.href='/css/slide3.css';
+            break;
+        case 'slide4':            
+        csslink.href='/css/slide4.css';
+        break;
+        case 'slide5':
+            csslink.href='/css/slide5.css';
+            break;
+        case 'slide6':
+            csslink.href='/css/slide6.css';
+            break;
+
+    }
+
 }
 
 function endScreen(){

@@ -3,6 +3,7 @@ function slide0(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide0");
     div.style.display = "none";
     outputEl.appendChild(div);
 
@@ -21,6 +22,7 @@ function slide1(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide1");
     div.style.display = "none";
     outputEl.appendChild(div);
 
@@ -34,6 +36,7 @@ function slide2(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide2");
     div.style.display = "none";
     outputEl.appendChild(div);
 
@@ -47,6 +50,7 @@ function slide3(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide3");
     div.style.display = "none";
     outputEl.appendChild(div);
 
@@ -64,6 +68,7 @@ function slide4(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide4");
     div.style.display = "none";
     outputEl.appendChild(div);
 
@@ -87,6 +92,7 @@ function slide5(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide5");
     div.style.display = "none";
     outputEl.appendChild(div);
 
@@ -100,6 +106,7 @@ function slide6(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide6");
     div.style.display = "none";
     outputEl.appendChild(div);
 
