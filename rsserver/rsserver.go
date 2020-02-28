@@ -240,7 +240,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     id, isidr := isidreq(r)
-    tags := gettagsfromreq(r)
+    tags := rscore.Formattags(r.FormValue("tags"))
 
     req := rscore.Deckreq{
             Id: id,
@@ -270,20 +270,6 @@ func sendtagstatus(r int, w http.ResponseWriter) {
     var sstr string
     if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
     rscore.Sendstatus(rscore.C_OK, sstr, w)
-}
-
-// Returns a slice of cleaned tags from http request
-func gettagsfromreq(r *http.Request) []string {
-
-    var ret []string
-    rtags := r.FormValue("tags")
-    itags := strings.Split(rtags, " ")
-
-    for _, s := range itags {
-        ret = append(ret, rscore.Cleanstring(s, rscore.RXTAGS))
-    }
-
-    return ret
 }
 
 // Conditionally returns image size type & true if fitting classification
@@ -377,7 +363,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ic, _, e := image.DecodeConfig(fszr)
     rscore.Cherr(e)
 
-    tags := gettagsfromreq(r)
+    tags := rscore.Formattags(r.FormValue("tags"))
     settings = addimgwtags(db, tmpf.Name(), ic.Width, ic.Height, tags, w, settings)
     rsdb.Wrsettings(db, settings)
 
@@ -393,7 +379,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     rscore.Cherr(e)
 
-    tags := gettagsfromreq(r)
+    tags := rscore.Formattags(r.FormValue("tags"))
 
     tr := rscore.Textreq{
             Ttext: r.FormValue("ttext"),

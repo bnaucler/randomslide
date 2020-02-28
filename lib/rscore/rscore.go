@@ -14,6 +14,7 @@ import (
     "net"
     "time"
     "regexp"
+    "strings"
     "strconv"
     "net/http"
     "io/ioutil"
@@ -94,7 +95,8 @@ var INDEX = []byte(".index")    // Untouchable database index position
 var IMGMIME = []string{
     "image/jpeg",
     "image/png",
-    "image/gif" }
+    "image/gif",
+}
 
 type Settings struct {
     Verb bool                   // Verbosity level
@@ -348,6 +350,20 @@ func Prettyfsize(b int64) string {
         ret = fmt.Sprintf("%d.%dKB", k, (b % 1024) / 100)
     } else {
         ret = fmt.Sprintf("%d.%dMB", m, k / 100)
+    }
+
+    return ret
+}
+
+// Transforms whitespace separated string to tag slice
+func Formattags(s string) []string {
+
+    var ret []string
+
+    itags := strings.Split(s, " ")
+
+    for _, s := range itags {
+        ret = append(ret, Cleanstring(s, RXTAGS))
     }
 
     return ret
