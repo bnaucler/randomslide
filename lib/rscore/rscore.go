@@ -61,6 +61,7 @@ const C_WRFF = 1                // Incorrect file format
 const C_WRSZ = 2                // Not able to classify image size
 const C_UIDB = 3                // User already exists in database
 const C_UICH = 4                // Username includes illegal characters
+const C_NOSU = 5                // No such user
 
 // Min bounds for image sizes (w, h)
 var IMGMIN = [][]int{
@@ -112,7 +113,7 @@ type User struct {
     Alev int                    // Access level
 }
 
-type Uresp struct {
+type Login struct {
     Name string                 // User name
     Skey string                 // Session key
     Alev int                    // Access level

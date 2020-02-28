@@ -77,6 +77,28 @@ func Rsettings(db *bolt.DB) rscore.Settings {
     return settings
 }
 
+// Writes user to database
+func Wruser(db *bolt.DB, u rscore.User) {
+
+    mu, e := json.Marshal(u)
+    rscore.Cherr(e)
+    e =Wrdb(db, []byte(u.Name), mu, rscore.UBUC)
+    rscore.Cherr(e)
+}
+
+// Returns user account from database
+func Ruser(db *bolt.DB, uname string) rscore.User {
+
+    u := rscore.User{}
+
+    mu, e := Rdb(db, []byte(uname), rscore.UBUC)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mu, &u)
+
+    if e == nil { return u }
+    return rscore.User{}
+}
+
 // Returns number of text objects per tag from db
 func Countobj(db *bolt.DB, tn string, buc []byte) int {
 

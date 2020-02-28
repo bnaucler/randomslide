@@ -599,8 +599,6 @@ func updateuserindex(db *bolt.DB, uname string,
 
     mindex, e := json.Marshal(users)
 
-    fmt.Printf("DEBUG: %+v\n", users.Names)
-
     e = rsdb.Wrdb(db, rscore.INDEX, mindex, rscore.UBUC)
     rscore.Cherr(e)
 
@@ -617,7 +615,6 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     u := rscore.User{}
-    ur := rscore.Uresp{}
 
     user := r.FormValue("user")
     pass := r.FormValue("pass")
@@ -642,26 +639,81 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     u.Name = user
     u.Skey = rscore.Randstr(rscore.SKEYLEN)
-    ur.Name = u.Name
-    ur.Skey = u.Skey
     u.Pass = hash
 
+    li := getloginobj(u)
+
     settings = updateuserindex(db, user, settings)
+    rsdb.Wruser(db, u)
 
-    mu, e := json.Marshal(u)
+    ml, e := json.Marshal(li)
     rscore.Cherr(e)
-    e = rsdb.Wrdb(db, []byte(user), mu, rscore.UBUC)
-    rscore.Cherr(e)
-
-    mr, e := json.Marshal(ur)
-    rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, mr, r)
+    rscore.Addlog(rscore.L_RESP, ml, r)
 
     enc := json.NewEncoder(w)
-    enc.Encode(ur)
+    enc.Encode(li)
 
     rsdb.Wrsettings(db, settings)
     return settings
+}
+
+// Returns true if user password validates
+func valuser(u rscore.User, pass []byte) bool {
+
+    e := bcrypt.CompareHashAndPassword(u.Pass, pass)
+
+    if e == nil { return true }
+    return false
+}
+
+// Creates login object
+func getloginobj(u rscore.User) rscore.Login {
+
+    ur := rscore.Login{}
+    ur.Name = u.Name
+    ur.Skey = u.Skey
+    ur.Alev = u.Alev
+
+    return ur
+}
+
+// Handles incoming login requests
+func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    user := r.FormValue("user")
+    pass := r.FormValue("pass")
+
+    if settings.Umax < 1 {
+        rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
+        return
+
+    }
+    // TODO refactor to new func
+    if user != rscore.Cleanstring(user, rscore.RXUSER) {
+            rscore.Sendstatus(rscore.C_UICH,
+                "Username includes illegal characters", w)
+            return
+    }
+
+    u := rsdb.Ruser(db, user)
+    li := rscore.Login{}
+
+    if valuser(u, []byte(pass)) {
+        u.Skey = rscore.Randstr(rscore.SKEYLEN)
+        li = getloginobj(u)
+        rsdb.Wruser(db, u)
+    }
+
+    ml, e := json.Marshal(li)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, ml, r)
+
+    enc := json.NewEncoder(w)
+    enc.Encode(li)
 }
 
 func main() {
@@ -710,6 +762,10 @@ func main() {
     // User registration
     http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
         settings = reghandler(w, r, db, settings)
+    })
+
+    http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+        loginhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)
