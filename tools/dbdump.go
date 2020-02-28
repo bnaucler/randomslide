@@ -91,6 +91,11 @@ func main() {
         fmt.Printf("BTEXT TAG LIST: %+v\n", btl)
     }
 
+    if settings.Imax > 0 {
+        il := gettaglist(db, settings.Taglist, rscore.IBUC)
+        fmt.Printf("IMAGE TAG LIST: %+v\n", il)
+    }
+
     // DUMP TTEXT
     if settings.Tmax > 0 {
         ttext := retrtxt(db, settings.Tmax, rscore.TBUC)
