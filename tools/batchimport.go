@@ -63,7 +63,7 @@ func main() {
 
     var tags []string
     for _, s := range stags {
-        tags = append(tags, rscore.Cleanstring(s))
+        tags = append(tags, rscore.Cleanstring(s, rscore.RXTAGS))
     }
 
     var n int
