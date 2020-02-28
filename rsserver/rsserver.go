@@ -6,7 +6,6 @@ import (
     "fmt"
     "time"
     "flag"
-    "sort"
     "bytes"
     "image"
     "image/png"
@@ -438,33 +437,6 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Shutdown(settings)
 }
 
-// Write user index to database
-func updateuserindex(db *bolt.DB, uname string,
-    settings rscore.Settings) rscore.Settings {
-
-    users := rscore.Uindex{}
-    var mindex []byte
-
-    if settings.Umax > 0 {
-        mindex, e := rsdb.Rdb(db, rscore.INDEX, rscore.UBUC)
-        rscore.Cherr(e)
-        e = json.Unmarshal(mindex, &users)
-        rscore.Cherr(e)
-    }
-
-    users.Names = append(users.Names, uname)
-    sort.Strings(users.Names)
-
-    mindex, e := json.Marshal(users)
-
-    e = rsdb.Wrdb(db, rscore.INDEX, mindex, rscore.UBUC)
-    rscore.Cherr(e)
-
-    settings.Umax++
-    return settings
-
-}
-
 // Handles incoming requests for user registrations
 func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -497,7 +469,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     li := getloginobj(u)
 
-    settings = updateuserindex(db, u.Name, settings)
+    settings = rsdb.Wruindex(db, u.Name, settings)
     rsdb.Wruser(db, u)
 
     ml, e := json.Marshal(li)

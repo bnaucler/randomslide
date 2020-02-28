@@ -108,6 +108,32 @@ func Wrimage(db *bolt.DB, k []byte, img rscore.Imgobj) {
     rscore.Cherr(e)
 }
 
+// Write user index to database
+func Wruindex(db *bolt.DB, uname string,
+    settings rscore.Settings) rscore.Settings {
+
+    users := rscore.Uindex{}
+    var mindex []byte
+
+    if settings.Umax > 0 {
+        mindex, e := Rdb(db, rscore.INDEX, rscore.UBUC)
+        rscore.Cherr(e)
+        e = json.Unmarshal(mindex, &users)
+        rscore.Cherr(e)
+    }
+
+    users.Names = append(users.Names, uname)
+    sort.Strings(users.Names)
+
+    mindex, e := json.Marshal(users)
+
+    e = Wrdb(db, rscore.INDEX, mindex, rscore.UBUC)
+    rscore.Cherr(e)
+
+    settings.Umax++
+    return settings
+}
+
 // Returns deck from database
 func Getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     settings rscore.Settings) rscore.Deck {
