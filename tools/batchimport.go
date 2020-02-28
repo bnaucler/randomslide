@@ -5,7 +5,6 @@ import (
     "fmt"
     "flag"
     "bufio"
-    "strings"
 
     "github.com/boltdb/bolt"
     "github.com/bnaucler/randomslide/lib/rscore"
@@ -79,13 +78,7 @@ func main() {
     db := rsdb.Open(*dbptr)
     defer db.Close()
     settings := rsdb.Rsettings(db)
-    stags := strings.Split(*tptr, " ")
-
-    // TODO refactor to core function
-    var tags []string
-    for _, s := range stags {
-        tags = append(tags, rscore.Cleanstring(s, rscore.RXTAGS))
-    }
+    tags := rscore.Formattags(*tptr)
 
     if *iptr == true {
         settings = readimg(db, fn, tags, settings, *vptr)
