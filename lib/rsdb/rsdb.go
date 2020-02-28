@@ -100,6 +100,32 @@ func Ruser(db *bolt.DB, uname string) rscore.User {
     return rscore.User{}
 }
 
+// Returns deck from database
+func Getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
+    settings rscore.Settings) rscore.Deck {
+
+    var k int
+
+    if req.Id >= settings.Dmax {
+        return rscore.Deck{}
+
+    } else if settings.Dmax < 1 {
+        return rscore.Deck{}
+
+    } else {
+        k = req.Id
+    }
+
+    bk := []byte(strconv.Itoa(k))
+    mdeck, e := Rdb(db, bk, rscore.DBUC)
+    rscore.Cherr(e)
+
+    e = json.Unmarshal(mdeck, &deck)
+    rscore.Cherr(e)
+
+    return deck
+}
+
 // Creates valid selection list from tags
 func Mksel(db *bolt.DB, tags []string, buc []byte) []int {
 

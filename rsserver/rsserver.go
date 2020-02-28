@@ -34,32 +34,6 @@ func init() {
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
 }
 
-// Returns deck from database
-func getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
-    settings rscore.Settings) rscore.Deck {
-
-    var k int
-
-    if req.Id >= settings.Dmax {
-        return rscore.Deck{}
-
-    } else if settings.Dmax < 1 {
-        return rscore.Deck{}
-
-    } else {
-        k = req.Id
-    }
-
-    bk := []byte(strconv.Itoa(k))
-    mdeck, e := rsdb.Rdb(db, bk, rscore.DBUC)
-    rscore.Cherr(e)
-
-    e = json.Unmarshal(mdeck, &deck)
-    rscore.Cherr(e)
-
-    return deck
-}
-
 // Determines an appropriate slide type to generate
 func setslidetype(i int) rscore.Slidetype {
 
@@ -223,7 +197,7 @@ func getdeck(req rscore.Deckreq, db *bolt.DB,
             Lang: req.Lang }
 
     if req.Isidreq {
-        deck = getdeckfdb(db, deck, req, settings)
+        deck = rsdb.Getdeckfdb(db, deck, req, settings)
 
     } else {
         deck, settings = mkdeck(db, deck, req, settings)
