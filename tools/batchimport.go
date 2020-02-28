@@ -47,12 +47,32 @@ func importfile(db *bolt.DB, fn string, tags []string,
     return settings, ret
 }
 
+func readimg(db *bolt.DB, fn []string, tags []string,
+    settings rscore.Settings, verb bool) rscore.Settings {
+
+
+    return settings
+}
+
+func readtext(db *bolt.DB, fn []string, tags []string,
+    settings rscore.Settings, verb bool) rscore.Settings {
+
+    var n int
+    for _, f := range fn {
+        if verb { fmt.Printf("Importing %s...\n", f) }
+        settings, n = importfile(db, f, tags, settings)
+        if verb { fmt.Printf("%d lines imported\n", n) }
+    }
+
+    return settings
+}
+
 func main() {
 
     dbptr := flag.String("d", rscore.DBNAME, "specify database to open")
     tptr := flag.String("t", "", "Tags to associate")
     vptr := flag.Bool("v", false, "verbose mode")
-    // iptr := flag.Bool("i", false, "Image dir import") // TODO
+    iptr := flag.Bool("i", false, "Image dir import")
     flag.Parse()
     fn := flag.Args()
 
@@ -61,16 +81,17 @@ func main() {
     settings := rsdb.Rsettings(db)
     stags := strings.Split(*tptr, " ")
 
+    // TODO refactor to core function
     var tags []string
     for _, s := range stags {
         tags = append(tags, rscore.Cleanstring(s, rscore.RXTAGS))
     }
 
-    var n int
-    for _, f := range fn {
-        if *vptr { fmt.Printf("Importing %s...\n", f) }
-        settings, n = importfile(db, f, tags, settings)
-        if *vptr { fmt.Printf("%d lines imported\n", n) }
+    if *iptr == true {
+        settings = readimg(db, fn, tags, settings, *vptr)
+
+    } else {
+        settings = readtext(db, fn, tags, settings, *vptr)
     }
 
     rsdb.Wrsettings(db, settings)
