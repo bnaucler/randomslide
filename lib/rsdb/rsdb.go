@@ -11,6 +11,7 @@ import (
     "fmt"
     "sort"
     "strconv"
+    "math/rand"
     "encoding/json"
     "github.com/boltdb/bolt"
     "github.com/bnaucler/randomslide/lib/rscore"
@@ -75,6 +76,132 @@ func Rsettings(db *bolt.DB) rscore.Settings {
     rscore.Cherr(e)
 
     return settings
+}
+
+// Writes user to database
+func Wruser(db *bolt.DB, u rscore.User) {
+
+    mu, e := json.Marshal(u)
+    rscore.Cherr(e)
+    e =Wrdb(db, []byte(u.Name), mu, rscore.UBUC)
+    rscore.Cherr(e)
+}
+
+// Returns user account from database
+func Ruser(db *bolt.DB, uname string) rscore.User {
+
+    u := rscore.User{}
+
+    mu, e := Rdb(db, []byte(uname), rscore.UBUC)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mu, &u)
+
+    if e == nil { return u }
+    return rscore.User{}
+}
+
+// Returns deck from database
+func Getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
+    settings rscore.Settings) rscore.Deck {
+
+    var k int
+
+    if req.Id >= settings.Dmax {
+        return rscore.Deck{}
+
+    } else if settings.Dmax < 1 {
+        return rscore.Deck{}
+
+    } else {
+        k = req.Id
+    }
+
+    bk := []byte(strconv.Itoa(k))
+    mdeck, e := Rdb(db, bk, rscore.DBUC)
+    rscore.Cherr(e)
+
+    e = json.Unmarshal(mdeck, &deck)
+    rscore.Cherr(e)
+
+    return deck
+}
+
+// Creates valid selection list from tags
+func Mksel(db *bolt.DB, tags []string, buc []byte) []int {
+
+    var sel []int
+    ctags := rscore.Tag{}
+
+    for _, t := range tags {
+        bt := []byte(t)
+        mtags, e := Rdb(db, bt, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(mtags, &ctags)
+        sel = append(sel, ctags.Ids...)
+    }
+
+    return sel
+}
+
+// Returns a random key based on tag list
+func Getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
+
+    sel := Mksel(db, tags, buc)
+    smax := len(sel)
+
+    var k []byte
+
+    if smax > 0 {
+        ki := rand.Intn(smax)
+        k = []byte(strconv.Itoa(sel[ki]))
+
+    } else {
+        ki := rand.Intn(kmax)
+        k = []byte(strconv.Itoa(ki))
+    }
+
+    return k
+}
+// Sends random text object from database, based on requested tags
+func Getrndtxt(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    if kmax < 2 { return "" }
+
+    k := Getkeyfromsel(db, tags, buc, kmax)
+
+    txt := rscore.Textobj{}
+    mtxt, e := Rdb(db, k, buc)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mtxt, &txt)
+    rscore.Cherr(e)
+
+    return txt.Text
+}
+
+// Sends random image url from database, based on requested tags
+func Getrndimg(db *bolt.DB, kmax int, tags []string, buc []byte) rscore.Imgobj {
+
+    if kmax < 2 { return rscore.Imgobj{} }
+
+    k := Getkeyfromsel(db, tags, buc, kmax)
+
+    img := rscore.Imgobj{}
+    mimg, e := Rdb(db, k, buc)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mimg, &img)
+    rscore.Cherr(e)
+
+    return img
+}
+
+// Returns true if key returns something from database
+func Isindb(db *bolt.DB, k []byte, buc []byte) bool {
+
+    v, e := Rdb(db, k, buc)
+
+    if len(v) == 0 || e != nil { return false }
+    return true
 }
 
 // Returns number of text objects per tag from db

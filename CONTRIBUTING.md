@@ -26,7 +26,8 @@ tools/          - Tools for maintenence etc.
 ## TODO
 * DB objects to store images by size
 * Refactoring image handler
-* User accounts with access levels
+* User account access levels
+* Security checks with session keys
 * Proper automated tests
 * Check image repo size requirements
 * Verbosity levels

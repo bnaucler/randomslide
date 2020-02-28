@@ -5,6 +5,7 @@ import (
     "fmt"
     "time"
     "flag"
+    "sort"
     "image"
     "bytes"
     "image/png"
@@ -19,6 +20,7 @@ import (
     "encoding/json"
 
     "github.com/boltdb/bolt"
+    "golang.org/x/crypto/bcrypt"
 
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
@@ -30,102 +32,6 @@ func init() {
     image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
     image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
-}
-
-// Creates valid selection list from tags
-func mksel(db *bolt.DB, tags []string, buc []byte) []int {
-
-    var sel []int
-    ctags := rscore.Tag{}
-
-    for _, t := range tags {
-        bt := []byte(t)
-        mtags, e := rsdb.Rdb(db, bt, buc)
-        rscore.Cherr(e)
-
-        json.Unmarshal(mtags, &ctags)
-        sel = append(sel, ctags.Ids...)
-    }
-
-    return sel
-}
-
-// Returns a random key based on tag list
-func getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
-
-    sel := mksel(db, tags, buc)
-    smax := len(sel)
-
-    var k []byte
-
-    if smax > 0 {
-        ki := rand.Intn(smax)
-        k = []byte(strconv.Itoa(sel[ki]))
-
-    } else {
-        ki := rand.Intn(kmax)
-        k = []byte(strconv.Itoa(ki))
-    }
-
-    return k
-}
-
-// Sends random text object from database, based on requested tags
-func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
-
-    if kmax < 2 { return "" }
-
-    k := getkeyfromsel(db, tags, buc, kmax)
-
-    txt := rscore.Textobj{}
-    mtxt, e := rsdb.Rdb(db, k, buc)
-    rscore.Cherr(e)
-    e = json.Unmarshal(mtxt, &txt)
-    rscore.Cherr(e)
-
-    return txt.Text
-}
-
-// Sends random image url from database, based on requested tags
-func getrndimg(db *bolt.DB, kmax int, tags []string, buc []byte) rscore.Imgobj {
-
-    if kmax < 2 { return rscore.Imgobj{} }
-
-    k := getkeyfromsel(db, tags, buc, kmax)
-
-    img := rscore.Imgobj{}
-    mimg, e := rsdb.Rdb(db, k, buc)
-    rscore.Cherr(e)
-    e = json.Unmarshal(mimg, &img)
-    rscore.Cherr(e)
-
-    return img
-}
-
-// Returns deck from database
-func getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
-    settings rscore.Settings) rscore.Deck {
-
-    var k int
-
-    if req.Id >= settings.Dmax {
-        return rscore.Deck{}
-
-    } else if settings.Dmax < 1 {
-        return rscore.Deck{}
-
-    } else {
-        k = req.Id
-    }
-
-    bk := []byte(strconv.Itoa(k))
-    mdeck, e := rsdb.Rdb(db, bk, rscore.DBUC)
-    rscore.Cherr(e)
-
-    e = json.Unmarshal(mdeck, &deck)
-    rscore.Cherr(e)
-
-    return deck
 }
 
 // Determines an appropriate slide type to generate
@@ -154,7 +60,7 @@ func setslidetype(i int) rscore.Slidetype {
         st.BT = false
         st.IMG = true
 
-    case 2: // Big number TODO: generator
+    case 2: // Big number
         st.TT = false
         st.BT = false
         st.IMG = false
@@ -196,7 +102,7 @@ func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
 
     for i := 0 ; i < n ; i ++ {
         for len(bp) == 0 || len(bp) > rscore.BPOINTMAX {
-            bp = getrndtextobj(db, settings.Tmax, tags, rscore.TBUC)
+            bp = rsdb.Getrndtxt(db, settings.Tmax, tags, rscore.TBUC)
         }
         bps = append(bps, bp)
         bp = ""
@@ -243,9 +149,9 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     slide := rscore.Slide{Type: st.Type}
 
-    if st.TT { slide.Title = getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC) }
-    if st.BT { slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
-    if st.IMG { slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+    if st.TT { slide.Title = rsdb.Getrndtxt(db, settings.Tmax, req.Tags, rscore.TBUC) }
+    if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
+    if st.IMG { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
 
     if st.Type == 2 {
         slide.Title = numgen()
@@ -291,7 +197,7 @@ func getdeck(req rscore.Deckreq, db *bolt.DB,
             Lang: req.Lang }
 
     if req.Isidreq {
-        deck = getdeckfdb(db, deck, req, settings)
+        deck = rsdb.Getdeckfdb(db, deck, req, settings)
 
     } else {
         deck, settings = mkdeck(db, deck, req, settings)
@@ -374,7 +280,7 @@ func gettagsfromreq(r *http.Request) []string {
     itags := strings.Split(rtags, " ")
 
     for _, s := range itags {
-        ret = append(ret, rscore.Cleanstring(s))
+        ret = append(ret, rscore.Cleanstring(s, rscore.RXTAGS))
     }
 
     return ret
@@ -569,6 +475,129 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Shutdown(settings)
 }
 
+// Write user index to database
+func updateuserindex(db *bolt.DB, uname string,
+    settings rscore.Settings) rscore.Settings {
+
+    users := rscore.Uindex{}
+    var mindex []byte
+
+    if settings.Umax > 0 {
+        mindex, e := rsdb.Rdb(db, rscore.INDEX, rscore.UBUC)
+        rscore.Cherr(e)
+        e = json.Unmarshal(mindex, &users)
+        rscore.Cherr(e)
+    }
+
+    users.Names = append(users.Names, uname)
+    sort.Strings(users.Names)
+
+    mindex, e := json.Marshal(users)
+
+    e = rsdb.Wrdb(db, rscore.INDEX, mindex, rscore.UBUC)
+    rscore.Cherr(e)
+
+    settings.Umax++
+    return settings
+
+}
+
+// Handles incoming requests for user registrations
+func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) rscore.Settings {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    u := rscore.User{}
+    u.Name = r.FormValue("user")
+    pass := r.FormValue("pass")
+
+    // Username already taken - registration not possible
+    if settings.Umax > 0 {
+        if rsdb.Isindb(db, []byte(u.Name), rscore.UBUC) {
+            rscore.Sendstatus(rscore.C_UIDB, "Username already in db", w)
+            return settings
+        }
+    }
+
+    // Username includes illegal characters
+    if u.Name != rscore.Cleanstring(u.Name, rscore.RXUSER) {
+            rscore.Sendstatus(rscore.C_UICH,
+                "Username includes illegal characters", w)
+            return settings
+    }
+
+    u.Skey = rscore.Randstr(rscore.SKEYLEN)
+    u.Pass, e = bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+    rscore.Cherr(e)
+
+    li := getloginobj(u)
+
+    settings = updateuserindex(db, u.Name, settings)
+    rsdb.Wruser(db, u)
+
+    ml, e := json.Marshal(li)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, ml, r)
+
+    enc := json.NewEncoder(w)
+    enc.Encode(li)
+
+    rsdb.Wrsettings(db, settings)
+    return settings
+}
+
+// Creates login object
+func getloginobj(u rscore.User) rscore.Login {
+
+    ur := rscore.Login{}
+    ur.Name = u.Name
+    ur.Skey = u.Skey
+    ur.Alev = u.Alev
+
+    return ur
+}
+
+// Handles incoming login requests
+func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    user := r.FormValue("user")
+    pass := r.FormValue("pass")
+
+    if settings.Umax < 1 {
+        rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
+        return
+
+    }
+    // TODO refactor to new func
+    if user != rscore.Cleanstring(user, rscore.RXUSER) {
+            rscore.Sendstatus(rscore.C_UICH,
+                "Username includes illegal characters", w)
+            return
+    }
+
+    u := rsdb.Ruser(db, user)
+    li := rscore.Login{}
+
+    if rscore.Valuser(u, []byte(pass)) {
+        u.Skey = rscore.Randstr(rscore.SKEYLEN)
+        li = getloginobj(u)
+        rsdb.Wruser(db, u)
+    }
+
+    ml, e := json.Marshal(li)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, ml, r)
+
+    enc := json.NewEncoder(w)
+    enc.Encode(li)
+}
+
 func main() {
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
@@ -610,6 +639,15 @@ func main() {
     // Upload images
     http.HandleFunc("/addimg", func(w http.ResponseWriter, r *http.Request) {
         settings = imgreqhandler(w, r, db, settings)
+    })
+
+    // User registration
+    http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+        settings = reghandler(w, r, db, settings)
+    })
+
+    http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+        loginhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)

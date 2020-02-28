@@ -18,11 +18,15 @@ import (
     "net/http"
     "io/ioutil"
     "os/signal"
+    "math/rand"
     "encoding/json"
     "path/filepath"
+
+    "golang.org/x/crypto/bcrypt"
 )
 
 const DEFAULTPORT = 6291        // Default port can also be supplied with -p flag
+
 const DBNAME = "./data/rs.db"   // Database location (change at own peril)
 const LOGPATH = "./static/log/" // Logs should be accessible from frontend
 const IMGDIR = "./static/img/"  // Image directory
@@ -36,12 +40,17 @@ const BPOINTMAX = 20            // Max length for bullet point
 const RNUMBMAX = 30             // Random number base max
 const RNUMEMAX = 3              // Random number exponent max
 
+const SKEYLEN = 40              // # of characters in a session key
+
 var NUMPREF = []byte("$+-")     // Potential number prefixes for slide type 2
 var NUMSUFF = []byte("%!?")     // Potential number suffixes for slide type 2
 
 const STYPES = 7                // Number of slide types available
 const BPMIN = 3                 // Min number of bullet points for lists
 const BPMAX = 8                 // Max number of bullet points for lists
+
+var RXUSER = "[^a-z0-9]+"       // Regex for allowed user names
+var RXTAGS = "[^a-zåäöüæø]+"    // Regex for allowed tags
 
 // Logging codes parsed by Addlog()
 const L_REQ = 0                 // Request log
@@ -52,6 +61,9 @@ const L_SHUTDOWN = 2            // Server shutdown request log
 const C_OK = 0                  // OK
 const C_WRFF = 1                // Incorrect file format
 const C_WRSZ = 2                // Not able to classify image size
+const C_UIDB = 3                // User already exists in database
+const C_UICH = 4                // Username includes illegal characters
+const C_NOSU = 5                // No such user
 
 // Min bounds for image sizes (w, h)
 var IMGMIN = [][]int{
@@ -74,6 +86,7 @@ var TBUC = []byte("tbuc")       // Title text bucket
 var BBUC = []byte("bbuc")       // Body text bucket
 var IBUC = []byte("ibuc")       // Image bucket
 var SBUC = []byte("sbuc")       // Settings bucket
+var UBUC = []byte("ubuc")       // User bucket
 
 var INDEX = []byte(".index")    // Untouchable database index position
 
@@ -89,8 +102,23 @@ type Settings struct {
     Tmax int                    // Max id of title objects
     Bmax int                    // Max id of body objects
     Imax int                    // Max id of image objects
+    Umax int                    // Max user ID in database
     Pidfile string              // Location of pidfile
     Taglist []string            // List of all existing tags TODO: Make map w ID
+}
+
+type User struct {
+    Name string                 // Username
+    Pass []byte                 // Password hash
+    Email string                // Email address
+    Skey string                 // Session key
+    Alev int                    // Access level
+}
+
+type Login struct {
+    Name string                 // User name
+    Skey string                 // Session key
+    Alev int                    // Access level
 }
 
 type Deckreq struct {
@@ -112,11 +140,15 @@ type Tag struct {
     Ids    []int                // All IDs associated with tag
 }
 
+type Uindex struct {
+    Names []string              // All user names in database
+}
+
 type Rtag struct {
-    Name string                  // Tag name
-    TN int                       // Number of title objects in db
-    BN int                       // Number of body objects in db
-    IN int                       // Number of image objects in db
+    Name string                 // Tag name
+    TN int                      // Number of title objects in db
+    BN int                      // Number of body objects in db
+    IN int                      // Number of image objects in db
 }
 
 type Tagresp struct {
@@ -231,10 +263,22 @@ func Rsinit(settings Settings) Settings {
     return settings
 }
 
-// Removes whitespace and special characters from string
-func Cleanstring(src string) string {
+// Returns random sting with length ln
+func Randstr(ln int) (string){
 
-    rx, e := regexp.Compile("[^a-zåäöüæø]+")
+    const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
+    var cslen = len(charset)
+
+    b := make([]byte, ln)
+    for i := range b { b[i] = charset[rand.Intn(cslen)] }
+
+    return string(b)
+}
+
+// Removes whitespace and special characters from string
+func Cleanstring(src string, pat string) string {
+
+    rx, e := regexp.Compile(pat)
     Cherr(e)
 
     dst := rx.ReplaceAllString(src, "")
@@ -259,6 +303,15 @@ func getclientip(r *http.Request) string {
     Cherr(e)
 
     return ip
+}
+
+// Returns true if user password validates
+func Valuser(u User, pass []byte) bool {
+
+    e := bcrypt.CompareHashAndPassword(u.Pass, pass)
+
+    if e == nil { return true }
+    return false
 }
 
 // Log file wrapper
