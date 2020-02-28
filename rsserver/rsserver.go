@@ -644,15 +644,6 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Returns true if user password validates
-func valuser(u rscore.User, pass []byte) bool {
-
-    e := bcrypt.CompareHashAndPassword(u.Pass, pass)
-
-    if e == nil { return true }
-    return false
-}
-
 // Creates login object
 func getloginobj(u rscore.User) rscore.Login {
 
@@ -689,7 +680,7 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     u := rsdb.Ruser(db, user)
     li := rscore.Login{}
 
-    if valuser(u, []byte(pass)) {
+    if rscore.Valuser(u, []byte(pass)) {
         u.Skey = rscore.Randstr(rscore.SKEYLEN)
         li = getloginobj(u)
         rsdb.Wruser(db, u)

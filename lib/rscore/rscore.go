@@ -21,6 +21,8 @@ import (
     "math/rand"
     "encoding/json"
     "path/filepath"
+
+    "golang.org/x/crypto/bcrypt"
 )
 
 const DEFAULTPORT = 6291        // Default port can also be supplied with -p flag
@@ -301,6 +303,15 @@ func getclientip(r *http.Request) string {
     Cherr(e)
 
     return ip
+}
+
+// Returns true if user password validates
+func Valuser(u User, pass []byte) bool {
+
+    e := bcrypt.CompareHashAndPassword(u.Pass, pass)
+
+    if e == nil { return true }
+    return false
 }
 
 // Log file wrapper
