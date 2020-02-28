@@ -42,17 +42,22 @@ form{
 
 .formwrapper {
     margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-select, input {
-    background: white;
-    padding: 10px;
+.item{
+    margin: 10px;
     border: 5px 5px 0px 5px solid;
-    border-color: whitesmoke;
     border-radius: 5px;
     font-size: 1.2em;
     font-weight: bold;
+    border-color: whitesmoke;
+    padding: 10px;
+    background: white;
 }
+
 
 option:hover{
     background-color: lightgrey;
