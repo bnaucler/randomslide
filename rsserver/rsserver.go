@@ -34,76 +34,6 @@ func init() {
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
 }
 
-// Creates valid selection list from tags
-func mksel(db *bolt.DB, tags []string, buc []byte) []int {
-
-    var sel []int
-    ctags := rscore.Tag{}
-
-    for _, t := range tags {
-        bt := []byte(t)
-        mtags, e := rsdb.Rdb(db, bt, buc)
-        rscore.Cherr(e)
-
-        json.Unmarshal(mtags, &ctags)
-        sel = append(sel, ctags.Ids...)
-    }
-
-    return sel
-}
-
-// Returns a random key based on tag list
-func getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
-
-    sel := mksel(db, tags, buc)
-    smax := len(sel)
-
-    var k []byte
-
-    if smax > 0 {
-        ki := rand.Intn(smax)
-        k = []byte(strconv.Itoa(sel[ki]))
-
-    } else {
-        ki := rand.Intn(kmax)
-        k = []byte(strconv.Itoa(ki))
-    }
-
-    return k
-}
-
-// Sends random text object from database, based on requested tags
-func getrndtextobj(db *bolt.DB, kmax int, tags []string, buc []byte) string {
-
-    if kmax < 2 { return "" }
-
-    k := getkeyfromsel(db, tags, buc, kmax)
-
-    txt := rscore.Textobj{}
-    mtxt, e := rsdb.Rdb(db, k, buc)
-    rscore.Cherr(e)
-    e = json.Unmarshal(mtxt, &txt)
-    rscore.Cherr(e)
-
-    return txt.Text
-}
-
-// Sends random image url from database, based on requested tags
-func getrndimg(db *bolt.DB, kmax int, tags []string, buc []byte) rscore.Imgobj {
-
-    if kmax < 2 { return rscore.Imgobj{} }
-
-    k := getkeyfromsel(db, tags, buc, kmax)
-
-    img := rscore.Imgobj{}
-    mimg, e := rsdb.Rdb(db, k, buc)
-    rscore.Cherr(e)
-    e = json.Unmarshal(mimg, &img)
-    rscore.Cherr(e)
-
-    return img
-}
-
 // Returns deck from database
 func getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     settings rscore.Settings) rscore.Deck {
@@ -198,7 +128,7 @@ func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
 
     for i := 0 ; i < n ; i ++ {
         for len(bp) == 0 || len(bp) > rscore.BPOINTMAX {
-            bp = getrndtextobj(db, settings.Tmax, tags, rscore.TBUC)
+            bp = rsdb.Getrndtxt(db, settings.Tmax, tags, rscore.TBUC)
         }
         bps = append(bps, bp)
         bp = ""
@@ -245,9 +175,9 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     slide := rscore.Slide{Type: st.Type}
 
-    if st.TT { slide.Title = getrndtextobj(db, settings.Tmax, req.Tags, rscore.TBUC) }
-    if st.BT { slide.Btext = getrndtextobj(db, settings.Bmax, req.Tags, rscore.BBUC) }
-    if st.IMG { slide.Img = getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+    if st.TT { slide.Title = rsdb.Getrndtxt(db, settings.Tmax, req.Tags, rscore.TBUC) }
+    if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
+    if st.IMG { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
 
     if st.Type == 2 {
         slide.Title = numgen()

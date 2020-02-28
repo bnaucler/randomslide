@@ -11,6 +11,7 @@ import (
     "fmt"
     "sort"
     "strconv"
+    "math/rand"
     "encoding/json"
     "github.com/boltdb/bolt"
     "github.com/bnaucler/randomslide/lib/rscore"
@@ -97,6 +98,75 @@ func Ruser(db *bolt.DB, uname string) rscore.User {
 
     if e == nil { return u }
     return rscore.User{}
+}
+
+// Creates valid selection list from tags
+func Mksel(db *bolt.DB, tags []string, buc []byte) []int {
+
+    var sel []int
+    ctags := rscore.Tag{}
+
+    for _, t := range tags {
+        bt := []byte(t)
+        mtags, e := Rdb(db, bt, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(mtags, &ctags)
+        sel = append(sel, ctags.Ids...)
+    }
+
+    return sel
+}
+
+// Returns a random key based on tag list
+func Getkeyfromsel(db *bolt.DB, tags []string, buc []byte, kmax int) []byte {
+
+    sel := Mksel(db, tags, buc)
+    smax := len(sel)
+
+    var k []byte
+
+    if smax > 0 {
+        ki := rand.Intn(smax)
+        k = []byte(strconv.Itoa(sel[ki]))
+
+    } else {
+        ki := rand.Intn(kmax)
+        k = []byte(strconv.Itoa(ki))
+    }
+
+    return k
+}
+// Sends random text object from database, based on requested tags
+func Getrndtxt(db *bolt.DB, kmax int, tags []string, buc []byte) string {
+
+    if kmax < 2 { return "" }
+
+    k := Getkeyfromsel(db, tags, buc, kmax)
+
+    txt := rscore.Textobj{}
+    mtxt, e := Rdb(db, k, buc)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mtxt, &txt)
+    rscore.Cherr(e)
+
+    return txt.Text
+}
+
+// Sends random image url from database, based on requested tags
+func Getrndimg(db *bolt.DB, kmax int, tags []string, buc []byte) rscore.Imgobj {
+
+    if kmax < 2 { return rscore.Imgobj{} }
+
+    k := Getkeyfromsel(db, tags, buc, kmax)
+
+    img := rscore.Imgobj{}
+    mimg, e := Rdb(db, k, buc)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mimg, &img)
+    rscore.Cherr(e)
+
+    return img
 }
 
 // Returns true if key returns something from database
