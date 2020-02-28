@@ -5,14 +5,25 @@
 }
 
 body{
-    background: rgb(71, 96, 104);
+    background: rgb(44, 85, 79)
 }
 
 .wrapper{
     margin: auto;
-    max-width: 900px;
-    background: rgb(71, 96, 104);
-    padding: 10px;
+    max-width: 800px;
+    background: rgb(184, 101, 68);
+    padding: 20px;
+    border-radius: 2em;
+}
+
+header{
+    margin: auto;
+}
+
+.logo{
+    
+    width: auto;
+    max-height: 200px;
 }
 
 #category{
@@ -58,6 +69,11 @@ form{
     background: white;
 }
 
+label{
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-left: 10px;
+}
 
 option:hover{
     background-color: lightgrey;
