@@ -83,7 +83,7 @@ func Wruser(db *bolt.DB, u rscore.User) {
 
     mu, e := json.Marshal(u)
     rscore.Cherr(e)
-    e =Wrdb(db, []byte(u.Name), mu, rscore.UBUC)
+    e = Wrdb(db, []byte(u.Name), mu, rscore.UBUC)
     rscore.Cherr(e)
 }
 
@@ -98,6 +98,14 @@ func Ruser(db *bolt.DB, uname string) rscore.User {
 
     if e == nil { return u }
     return rscore.User{}
+}
+
+// Writes image to database
+func Wrimage(db *bolt.DB, k []byte, img rscore.Imgobj) {
+
+    mimg, e := json.Marshal(img)
+    e = Wrdb(db, k, mimg, rscore.IBUC)
+    rscore.Cherr(e)
 }
 
 // Returns deck from database

@@ -6,8 +6,8 @@ import (
     "time"
     "flag"
     "sort"
-    "image"
     "bytes"
+    "image"
     "image/png"
     "image/jpeg"
     "image/gif"
@@ -272,29 +272,13 @@ func sendtagstatus(r int, w http.ResponseWriter) {
     rscore.Sendstatus(rscore.C_OK, sstr, w)
 }
 
-// Conditionally returns image size type & true if fitting classification
-func getimgtype(w int, h int) (int, bool) {
-
-    i := 3
-
-    for i >= 0 {
-        if w > rscore.IMGMIN[i][0] && h > rscore.IMGMIN[i][1] &&
-           w < rscore.IMGMAX[i][0] && h < rscore.IMGMAX[i][1] {
-               return i, true
-           }
-        i--
-    }
-
-    return 0, false
-}
-
 // Stores image object in database
 func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
 
     ofn := filepath.Base(fn)
 
-    isz, szok := getimgtype(iw, ih)
+    isz, szok := rscore.Getimgtype(iw, ih)
 
     if szok == false {
         rscore.Sendstatus(rscore.C_WRSZ,
@@ -302,19 +286,10 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
         return settings
     }
 
-    iobj := rscore.Imgobj{
-        Id: settings.Imax,
-        Fname: ofn,
-        Tags: tags,
-        W: iw,
-        H: ih,
-        Size: isz }
+    img := rscore.Mkimgobj(ofn, tags, iw, ih, isz, settings)
 
-    // Add object to db
-    mobj, e := json.Marshal(iobj)
-    k := []byte(strconv.Itoa(settings.Imax))
-    e = rsdb.Wrdb(db, k, mobj, rscore.IBUC)
-    rscore.Cherr(e)
+    k := []byte(strconv.Itoa(img.Id))
+    rsdb.Wrimage(db, k, img)
 
     // Update relevant tags
     nt, settings := rsdb.Tagstoindex(tags, settings)

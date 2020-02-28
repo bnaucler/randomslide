@@ -9,6 +9,7 @@ package rscore
 
 import (
     "os"
+    "io"
     "fmt"
     "log"
     "net"
@@ -369,6 +370,22 @@ func Formattags(s string) []string {
     return ret
 }
 
+// Makes a hard copy of a file on the file system
+func Cp(s string, d string) (int64, error) {
+
+    sf, e := os.Open(s)
+    Cherr(e)
+    defer sf.Close()
+
+    df, e := os.Create(d)
+    Cherr(e)
+    defer df.Close()
+
+    b, e := io.Copy(df, sf)
+
+    return b, e
+}
+
 // Removes all files residing in dir (except .gitkeep)
 func Rmall(dir string) {
 
@@ -384,6 +401,37 @@ func Rmall(dir string) {
         e = os.RemoveAll(filepath.Join(dir, fn))
         Cherr(e)
     }
+}
+
+// Conditionally returns image size type & true if fitting classification
+func Getimgtype(w int, h int) (int, bool) {
+
+    i := 3
+
+    for i >= 0 {
+        if w > IMGMIN[i][0] && h > IMGMIN[i][1] &&
+           w < IMGMAX[i][0] && h < IMGMAX[i][1] {
+               return i, true
+           }
+        i--
+    }
+
+    return 0, false
+}
+
+func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,
+    settings Settings) Imgobj {
+
+    img := Imgobj{
+        Id: settings.Imax,
+        Fname: fn,
+        Tags: tags,
+        W: iw,
+        H: ih,
+        Size: szt,
+    }
+
+    return img
 }
 
 // Sends a status code response as JSON object

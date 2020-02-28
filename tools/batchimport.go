@@ -3,15 +3,35 @@ package main
 import (
     "os"
     "fmt"
+    "time"
     "flag"
     "bufio"
+    "image"
+    "bytes"
+    "strconv"
+    "image/png"
+    "image/jpeg"
+    "image/gif"
+    "math/rand"
+    "io/ioutil"
+    "path/filepath"
 
     "github.com/boltdb/bolt"
+
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
 )
 
-func importfile(db *bolt.DB, fn string, tags []string,
+func init() {
+    rand.Seed(time.Now().UnixNano())
+
+    image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
+    image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
+    image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
+}
+
+
+func readtxtfile(db *bolt.DB, fn string, tags []string,
     settings rscore.Settings) (rscore.Settings, int) {
 
     f, e := os.Open(fn)
@@ -46,20 +66,69 @@ func importfile(db *bolt.DB, fn string, tags []string,
     return settings, ret
 }
 
-func readimg(db *bolt.DB, fn []string, tags []string,
+func readimg(db *bolt.DB, opath string, fl []string, tags []string,
+    settings rscore.Settings) (int, rscore.Settings) {
+
+    n := 0
+
+    for _, fn := range fl {
+
+        ext := filepath.Ext(fn)
+        fnp := fmt.Sprintf("%s/%s", opath, fn)
+
+        ibuf, e := ioutil.ReadFile(fnp)
+        rscore.Cherr(e)
+
+        fszr := bytes.NewReader(ibuf)
+        ic, _, e := image.DecodeConfig(fszr)
+        if e != nil { continue }
+
+        isz, szok := rscore.Getimgtype(ic.Width, ic.Height)
+        if !szok { continue }
+
+        nfn := fmt.Sprintf("%s%s", rscore.Randstr(20), ext)
+        nfnp := fmt.Sprintf("%s%s", rscore.IMGDIR, nfn)
+
+        _, e = rscore.Cp(fnp, nfnp)
+
+        id := []byte(strconv.Itoa(settings.Imax))
+        img := rscore.Mkimgobj(nfn, tags, ic.Width, ic.Height, isz, settings)
+
+        n++
+        rsdb.Wrimage(db, id, img)
+        settings.Imax++
+    }
+
+    return n, settings
+}
+
+func readimgdir(db *bolt.DB, dns []string, tags []string,
     settings rscore.Settings, verb bool) rscore.Settings {
 
+    var n int
+
+    for _, dn := range dns {
+        d, e := os.Open(dn)
+        rscore.Cherr(e)
+        defer d.Close()
+
+        if verb { fmt.Printf("Importing images from %s...\n", dn) }
+        fl, e := d.Readdirnames(-1)
+        rscore.Cherr(e)
+        n, settings = readimg(db, dn, fl, tags, settings)
+        if verb { fmt.Printf("%d images imported\n", n) }
+    }
 
     return settings
 }
 
-func readtext(db *bolt.DB, fn []string, tags []string,
+func readtextdir(db *bolt.DB, fn []string, tags []string,
     settings rscore.Settings, verb bool) rscore.Settings {
 
     var n int
     for _, f := range fn {
         if verb { fmt.Printf("Importing %s...\n", f) }
-        settings, n = importfile(db, f, tags, settings)
+        settings, n = readtxtfile(db, f, tags, settings)
         if verb { fmt.Printf("%d lines imported\n", n) }
     }
 
@@ -81,10 +150,10 @@ func main() {
     tags := rscore.Formattags(*tptr)
 
     if *iptr == true {
-        settings = readimg(db, fn, tags, settings, *vptr)
+        settings = readimgdir(db, fn, tags, settings, *vptr)
 
     } else {
-        settings = readtext(db, fn, tags, settings, *vptr)
+        settings = readtextdir(db, fn, tags, settings, *vptr)
     }
 
     rsdb.Wrsettings(db, settings)
