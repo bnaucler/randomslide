@@ -53,6 +53,11 @@ Endpoint:               Variables:              Comment:
                         pass        string      Password
 
 
+/login                                          Login to get higher access level
+                        user        string      Username
+                        pass        string      Password
+
+
 /gettags                <null>                  Retrieves list of all tags
                                                 in database
 
