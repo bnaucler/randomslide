@@ -11,68 +11,50 @@
 
     <div class="wrapper">
     <header>
-        <h2>randomslide v0.2a</h2>
+        <img src="randomSlide02.svg" class="logo" />
+        <nav>
         <a href="admin.html">adminpage</a><br />
         <a href="upload.html">upload content</a>
+        </nav>
     </header>
 
     <div class="formwrapper" id="formwrapper">
         <h3>Choose things:</h3>
         <br />
             
-                <label for="category">Category(CTRL + CLICK to select more than 1):</label>
+                <label for="category">Category(CTRL + CLICK to select more than one):</label>
                     <br />
-                    <p>Tag (amount of Titles) (amount of Texts) (amount of IMGs)</p>
-                    <br />
-                <select id="category" name="category" multiple>
+     
+                <select id="category" name="category" class="item" multiple>
 
                 </select>  
                     <br />
                     <br />
                 <label for="amountOfSlides">Amount of slides to be generated? (min 5, max 25):</label>
                     <br />
-                <input type="number" name="amountOfSlides" id="amountOfSlides" min="5" max="25" value="5">
+                <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
                     <br />
                     <br />
                 <label for="language">Language?</label>
                 <br />
-                <select id="lang" name="lang">
+                <select id="lang" name="lang" class="item">
                     <option value="en">English</option>
                 </select>
                     <br />
                     <br />
 
-
-
-
-                <label for="cssRand">Random CSS for each slide or choose one for all?</label>
-                <br />  
-                <select name="cssRand" id="cssRand">
-                    <option value="random" selected="selected">Random!</option>
-                    <option value="myself">Choose. :(</option>
-                </select>
-                    <br />
-                    <br />
-                <div id="cssPre">
-                    <label for="css1">CSS1</label>
-                    <input type="radio" id="css1" name="css">
-                    <label for="css2">CSS2</label>
-                    <input type="radio" id="css2" name="css">
-                    <label for="css3">CSS3</label>
-                    <input type="radio" id="css3" name="css">
-                </div>
                     <br />
                     <br />
                 <label for="timerOrNot">Change slide yourself or on a timer?</label>
                     <br />
-                <select name="timerOrNot" id="timerOrNot">
+                <select name="timerOrNot" id="timerOrNot" class="item">
                     <option value="change" selected="selected">Change myself</option>
                     <option value="timer">Timer!</option>
                 </select> 
                     <br />
                     <br />
 
-                <div id="slideTimer">
+                <div id="slideTimer" class="item">
                     <label for="time">Time between slide changes? (30-240 sec):</label>
                     <br />
                     <br />
@@ -80,7 +62,7 @@
                 </div>
                     <br />
                     <br />
-                <button class="smallgaybutton" onclick="fetchSlides()">Generate!</button>
+                <button class="smallgaybutton item" onclick="fetchSlides()">Generate!</button>
             
         </div>
 
