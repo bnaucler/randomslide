@@ -571,15 +571,6 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Shutdown(settings)
 }
 
-// Returns true if key returns something from database
-func isindb(db *bolt.DB, k []byte, buc []byte) bool {
-
-    v, e := rsdb.Rdb(db, k, buc)
-
-    if len(v) == 0 || e != nil { return false }
-    return true
-}
-
 // Write user index to database
 func updateuserindex(db *bolt.DB, uname string,
     settings rscore.Settings) rscore.Settings {
@@ -615,35 +606,31 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     u := rscore.User{}
-
-    user := r.FormValue("user")
+    u.Name = r.FormValue("user")
     pass := r.FormValue("pass")
 
-    hash, e := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
-    rscore.Cherr(e)
-
-    // Username already takem - registration not possible
+    // Username already taken - registration not possible
     if settings.Umax > 0 {
-        if isindb(db, []byte(user), rscore.UBUC) {
+        if rsdb.Isindb(db, []byte(u.Name), rscore.UBUC) {
             rscore.Sendstatus(rscore.C_UIDB, "Username already in db", w)
             return settings
         }
     }
 
     // Username includes illegal characters
-    if user != rscore.Cleanstring(user, rscore.RXUSER) {
+    if u.Name != rscore.Cleanstring(u.Name, rscore.RXUSER) {
             rscore.Sendstatus(rscore.C_UICH,
                 "Username includes illegal characters", w)
             return settings
     }
 
-    u.Name = user
     u.Skey = rscore.Randstr(rscore.SKEYLEN)
-    u.Pass = hash
+    u.Pass, e = bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+    rscore.Cherr(e)
 
     li := getloginobj(u)
 
-    settings = updateuserindex(db, user, settings)
+    settings = updateuserindex(db, u.Name, settings)
     rsdb.Wruser(db, u)
 
     ml, e := json.Marshal(li)

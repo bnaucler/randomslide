@@ -99,6 +99,15 @@ func Ruser(db *bolt.DB, uname string) rscore.User {
     return rscore.User{}
 }
 
+// Returns true if key returns something from database
+func Isindb(db *bolt.DB, k []byte, buc []byte) bool {
+
+    v, e := Rdb(db, k, buc)
+
+    if len(v) == 0 || e != nil { return false }
+    return true
+}
+
 // Returns number of text objects per tag from db
 func Countobj(db *bolt.DB, tn string, buc []byte) int {
 
