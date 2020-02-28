@@ -2,6 +2,7 @@ package main
 
 import (
     "os"
+    "io"
     "fmt"
     "time"
     "flag"
@@ -305,10 +306,10 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
 
     r.ParseMultipartForm(10 << 20)
-    f, hlr, e := r.FormFile("file")
+    sf, hlr, e := r.FormFile("file")
     e = rscore.Cherr(e)
     if e != nil { return settings }
-    defer f.Close()
+    defer sf.Close()
 
     mt := hlr.Header["Content-Type"][0]
 
@@ -323,23 +324,24 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
     ext := filepath.Ext(hlr.Filename)
-    fformat := fmt.Sprintf("img-*%s", ext)
-    tmpf, e := ioutil.TempFile(rscore.IMGDIR, fformat)
-    rscore.Cherr(e)
-    defer tmpf.Close()
+    fn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
+    fnp := fmt.Sprintf("%s%s", rscore.IMGDIR, fn)
 
-    fc, e := ioutil.ReadAll(f)
+    df, e := os.Create(fnp)
     rscore.Cherr(e)
-    tmpf.Write(fc)
+    defer df.Close()
 
-    ibuf, e := ioutil.ReadFile(tmpf.Name())
+    rscore.Cherr(e)
+    _, e = io.Copy(df, sf)
+
+    ibuf, e := ioutil.ReadFile(fnp)
     rscore.Cherr(e)
     fszr := bytes.NewReader(ibuf)
     ic, _, e := image.DecodeConfig(fszr)
     rscore.Cherr(e)
 
     tags := rscore.Formattags(r.FormValue("tags"))
-    settings = addimgwtags(db, tmpf.Name(), ic.Width, ic.Height, tags, w, settings)
+    settings = addimgwtags(db, fn, ic.Width, ic.Height, tags, w, settings)
     rsdb.Wrsettings(db, settings)
 
     rscore.Sendstatus(rscore.C_OK, "", w)

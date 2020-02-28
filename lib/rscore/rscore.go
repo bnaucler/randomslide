@@ -43,6 +43,7 @@ const RNUMBMAX = 30             // Random number base max
 const RNUMEMAX = 3              // Random number exponent max
 
 const SKEYLEN = 40              // # of characters in a session key
+const RFNLEN = 20               // Length of random file names (w/o .ext)
 
 var NUMPREF = []byte("$+-")     // Potential number prefixes for slide type 2
 var NUMSUFF = []byte("%!?")     // Potential number suffixes for slide type 2
