@@ -96,9 +96,11 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
 
         n++
         rsdb.Wrimage(db, id, img)
+        rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
         settings.Imax++
     }
 
+    fmt.Printf("DEBUG: %+v\n", tags)
     return n, settings
 }
 
@@ -119,6 +121,7 @@ func readimgdir(db *bolt.DB, dns []string, tags []string,
         if verb { fmt.Printf("%d images imported\n", n) }
     }
 
+    _, settings = rsdb.Tagstoindex(tags, settings)
     return settings
 }
 
