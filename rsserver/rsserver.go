@@ -264,14 +264,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Wrapper for tag status responses
-func sendtagstatus(r int, w http.ResponseWriter) {
-
-    var sstr string
-    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
-    rscore.Sendstatus(rscore.C_OK, sstr, w)
-}
-
 // Stores image object in database
 func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
@@ -293,7 +285,7 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
 
     // Update relevant tags
     nt, settings := rsdb.Tagstoindex(tags, settings)
-    sendtagstatus(nt, w)
+    rscore.Sendtagstatus(nt, w)
     rsdb.Uilists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
 
@@ -367,7 +359,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
     nt, settings := rsdb.Tagstoindex(tags, settings)
-    sendtagstatus(nt, w)
+    rscore.Sendtagstatus(nt, w)
 
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
         rsdb.Addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)

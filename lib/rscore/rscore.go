@@ -454,3 +454,11 @@ func Sendstatus(code int, text string, w http.ResponseWriter) {
     enc := json.NewEncoder(w)
     enc.Encode(resp)
 }
+
+// Wrapper for tag status responses
+func Sendtagstatus(r int, w http.ResponseWriter) {
+
+    var sstr string
+    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
+    Sendstatus(C_OK, sstr, w)
+}
