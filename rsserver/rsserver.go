@@ -264,34 +264,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Stores image object in database
-func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
-    w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
-
-    ofn := filepath.Base(fn)
-
-    isz, szok := rscore.Getimgtype(iw, ih)
-
-    if szok == false {
-        rscore.Sendstatus(rscore.C_WRSZ,
-            "Could not classify size - file not uploaded", w)
-        return settings
-    }
-
-    img := rscore.Mkimgobj(ofn, tags, iw, ih, isz, settings)
-
-    k := []byte(strconv.Itoa(img.Id))
-    rsdb.Wrimage(db, k, img)
-
-    // Update relevant tags
-    nt, settings := rsdb.Tagstoindex(tags, settings)
-    rscore.Sendtagstatus(nt, w)
-    rsdb.Uilists(db, tags, settings.Imax, rscore.IBUC)
-    settings.Imax++
-
-    return settings
-}
-
 // Handles incoming requests to add images
 func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -332,7 +304,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     tags := rscore.Formattags(r.FormValue("tags"))
-    settings = addimgwtags(db, fn, ic.Width, ic.Height, tags, w, settings)
+    settings = rsdb.Addimgwtags(db, fn, ic.Width, ic.Height, tags, w, settings)
     rsdb.Wrsettings(db, settings)
 
     rscore.Sendstatus(rscore.C_OK, "", w)
