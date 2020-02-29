@@ -46,7 +46,7 @@ Server log files can be accessed at `static/logs` or in the admin interface.
 ```
 Endpoint:               Variables:              Comment:
 /restart                                        Graceful server shutdown.
-                                                Requires VOLATILEMODE true
+                                                Requires launching with -x
                         wipe        string      Wipes database and images if "yes"
 
 

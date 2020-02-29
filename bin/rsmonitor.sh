@@ -11,7 +11,7 @@ startserver() {
     bin/build.sh all >> $MONLOGFILE
     DATE=`date +'%a | %Y-%m-%d | %R:%S'`
     echo "$DATE: Restarting server" >> $MONLOGFILE
-    nohup bin/rsserver -v -p $1 >> $MONLOGFILE &
+    nohup bin/rsserver -x -v -p $1 >> $MONLOGFILE &
 }
 
 usage() {
