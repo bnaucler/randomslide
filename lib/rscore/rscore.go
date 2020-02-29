@@ -94,6 +94,14 @@ var UBUC = []byte("ubuc")       // User bucket
 
 var INDEX = []byte(".index")    // Untouchable database index position
 
+// Index keys to be used for image size indexes
+var IKEY = []string {
+    ".s0",
+    ".s1",
+    ".s2",
+    ".s3",
+}
+
 // For verification of image mime types
 var IMGMIME = []string{
     "image/jpeg",
@@ -141,7 +149,7 @@ type Textreq struct {
     Tags []string               // Tags for indexing
 }
 
-type Tag struct {
+type Iindex struct {
     Ids    []int                // All IDs associated with tag
 }
 

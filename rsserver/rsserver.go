@@ -294,7 +294,7 @@ func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     // Update relevant tags
     nt, settings := rsdb.Tagstoindex(tags, settings)
     sendtagstatus(nt, w)
-    rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
+    rsdb.Uilists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
 
     return settings

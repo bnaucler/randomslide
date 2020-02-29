@@ -96,7 +96,7 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
 
         n++
         rsdb.Wrimage(db, id, img)
-        rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
+        rsdb.Uilists(db, tags, settings.Imax, rscore.IBUC)
         settings.Imax++
     }
 

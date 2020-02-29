@@ -164,7 +164,7 @@ func Getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
 func Mksel(db *bolt.DB, tags []string, buc []byte) []int {
 
     var sel []int
-    ctags := rscore.Tag{}
+    ctags := rscore.Iindex{}
 
     for _, t := range tags {
         bt := []byte(t)
@@ -241,7 +241,7 @@ func Isindb(db *bolt.DB, k []byte, buc []byte) bool {
 // Returns number of text objects per tag from db
 func Countobj(db *bolt.DB, tn string, buc []byte) int {
 
-    ttag := rscore.Tag{}
+    ttag := rscore.Iindex{}
     k := []byte(tn)
 
     v, e := Rdb(db, k, buc)
@@ -269,11 +269,11 @@ func Tagstoindex(tags []string, settings rscore.Settings) (int, rscore.Settings)
     return r, settings
 }
 
-// Updates all relevant tag lists
-func Updatetaglists(db *bolt.DB, tags []string, i int, buc []byte) {
+// Updates all relevant index lists
+func Uilists(db *bolt.DB, tags []string, i int, buc []byte) {
 
     for _, s := range tags {
-        ctag := rscore.Tag{}
+        ctag := rscore.Iindex{}
         key := []byte(s)
 
         resp, e := Rdb(db, key, buc)
@@ -304,5 +304,5 @@ func Addtextwtags(text string, tags []string, db *bolt.DB,
     rscore.Cherr(e)
 
     // Update all relevant tag lists
-    Updatetaglists(db, tags, mxindex, buc)
+    Uilists(db, tags, mxindex, buc)
 }

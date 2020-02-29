@@ -52,7 +52,7 @@ func retrtxt(db *bolt.DB, mxind int, buc []byte) []rscore.Textobj {
 func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
 
     var ret []string
-    ctag := rscore.Tag{}
+    ctag := rscore.Iindex{}
 
     for _, t := range tl {
 
