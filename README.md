@@ -2,8 +2,8 @@
 Generate random slides for online presentation.
 
 ## Created by
-Björn W Naucler (mail@bnaucler.se)  
-Morgan Andersson (info@ameste.se)
+Björn W Naucler (bwn@randomslide.com)  
+Morgan Andersson (ma@randomslide.com)
 
 ## Dependencies
 [BoltDB](https://github.com/boltdb/bolt) & [bcrypt](https://golang.org/x/crypto/bcrypt)  
