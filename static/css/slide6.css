@@ -22,7 +22,7 @@ header{
     width: 100%;
     position: relative;
     margin: auto;
-    background: white;
+    background-image: linear-gradient(white, rgb(116, 190, 214));
 }
 
 .slidechanger{
@@ -67,7 +67,8 @@ header{
 }
 
 .theSlides{
-    min-height: 75vh;
+    min-height: 50vh;
+    max-height: 80vh;
     padding: 100px;
 }
 
@@ -75,6 +76,8 @@ header{
     width: 50%;
     display: block;
     margin: auto;
+    border: 1px solid silver;
+    border-radius: 1em 0.5em 1em 0.5em;
 }
 
 p{
