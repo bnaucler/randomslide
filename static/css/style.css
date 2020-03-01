@@ -16,19 +16,13 @@ body{
     border-radius: 2em;
 }
 
-header{
-    margin: auto;
-}
-
 .logo{
-    
     width: auto;
-    max-height: 200px;
+    max-height: 150px;
 }
 
 #category{
-    width: 400px;
-    height: 200px;
+    height: 250px;
 }
 
 h2{

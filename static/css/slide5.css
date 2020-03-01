@@ -9,7 +9,7 @@ body{
     background: rgb(71, 96, 104);
 }
 
-header{
+.logo{
     display: none;
 }
 
@@ -56,4 +56,44 @@ header{
 
 .prev:hover, .next:hover{
     background: black;
+}
+
+figure {
+    position: relative;
+    height: 85vh;
+    padding: 1em;
+    width: 90%;
+    margin: auto;
+}
+
+figure > figcaption {
+	position: absolute;
+	top: 1em;                      /* vertical alignment */
+    left: 50%;
+    top: 40%;
+	transform: translateX(-50%);
+	display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background: rgba(138, 104, 104, 0.349);
+    color: black;
+    text-shadow: 1px 1px whitesmoke;
+    padding: 10px;;
+    font-size: 1.5em;
+    font-weight: 700;
+    border-radius: 10px;
+}
+
+figure > img {
+	position: absolute;
+	left: 50%;                     /* horizontal alignment */
+    transform: translateX(-50%);   /* horizontal alignment (fine tuning) */
+    max-height: 80vh;
+    filter: blur(2px);
+}
+
+
+.theSlides{
+    min-height: 90vh;
+    padding-top: 10px;
 }
