@@ -264,42 +264,6 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
-// Wrapper for tag status responses
-func sendtagstatus(r int, w http.ResponseWriter) {
-
-    var sstr string
-    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
-    rscore.Sendstatus(rscore.C_OK, sstr, w)
-}
-
-// Stores image object in database
-func addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
-    w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
-
-    ofn := filepath.Base(fn)
-
-    isz, szok := rscore.Getimgtype(iw, ih)
-
-    if szok == false {
-        rscore.Sendstatus(rscore.C_WRSZ,
-            "Could not classify size - file not uploaded", w)
-        return settings
-    }
-
-    img := rscore.Mkimgobj(ofn, tags, iw, ih, isz, settings)
-
-    k := []byte(strconv.Itoa(img.Id))
-    rsdb.Wrimage(db, k, img)
-
-    // Update relevant tags
-    nt, settings := rsdb.Tagstoindex(tags, settings)
-    sendtagstatus(nt, w)
-    rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
-    settings.Imax++
-
-    return settings
-}
-
 // Handles incoming requests to add images
 func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -340,7 +304,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Cherr(e)
 
     tags := rscore.Formattags(r.FormValue("tags"))
-    settings = addimgwtags(db, fn, ic.Width, ic.Height, tags, w, settings)
+    settings = rsdb.Addimgwtags(db, fn, ic.Width, ic.Height, tags, w, settings)
     rsdb.Wrsettings(db, settings)
 
     rscore.Sendstatus(rscore.C_OK, "", w)
@@ -367,7 +331,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Addlog(rscore.L_REQ, ltxt, r)
 
     nt, settings := rsdb.Tagstoindex(tags, settings)
-    sendtagstatus(nt, w)
+    rscore.Sendtagstatus(nt, w)
 
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
         rsdb.Addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)

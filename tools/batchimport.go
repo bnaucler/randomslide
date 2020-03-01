@@ -89,14 +89,18 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         nfn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
         nfnp := fmt.Sprintf("%s%s", rscore.IMGDIR, nfn)
 
+        // Append the appropriate size tag to slice
+        tags = append(tags, rscore.IKEY[isz])
+
         _, e = rscore.Cp(fnp, nfnp)
+        rscore.Cherr(e)
 
         id := []byte(strconv.Itoa(settings.Imax))
         img := rscore.Mkimgobj(nfn, tags, ic.Width, ic.Height, isz, settings)
 
         n++
         rsdb.Wrimage(db, id, img)
-        rsdb.Updatetaglists(db, tags, settings.Imax, rscore.IBUC)
+        rsdb.Uilists(db, tags, settings.Imax, rscore.IBUC)
         settings.Imax++
     }
 

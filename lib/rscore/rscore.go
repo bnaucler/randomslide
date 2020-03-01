@@ -94,6 +94,14 @@ var UBUC = []byte("ubuc")       // User bucket
 
 var INDEX = []byte(".index")    // Untouchable database index position
 
+// Index keys to be used for image size indexes
+var IKEY = []string {
+    ".s0",
+    ".s1",
+    ".s2",
+    ".s3",
+}
+
 // For verification of image mime types
 var IMGMIME = []string{
     "image/jpeg",
@@ -141,7 +149,7 @@ type Textreq struct {
     Tags []string               // Tags for indexing
 }
 
-type Tag struct {
+type Iindex struct {
     Ids    []int                // All IDs associated with tag
 }
 
@@ -445,4 +453,12 @@ func Sendstatus(code int, text string, w http.ResponseWriter) {
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
+}
+
+// Wrapper for tag status responses
+func Sendtagstatus(r int, w http.ResponseWriter) {
+
+    var sstr string
+    if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
+    Sendstatus(C_OK, sstr, w)
 }
