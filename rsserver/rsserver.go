@@ -210,6 +210,14 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     switch st.Type {
 
+    case 1:
+        // TODO (temporary hack for testing)
+        ctr := 0
+        for slide.Img.Size != 3 && ctr < 100{
+            slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
+            ctr++
+        }
+
     case 2:
         slide.Title = numgen()
 
