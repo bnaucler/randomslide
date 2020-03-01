@@ -9,7 +9,7 @@ body{
     background: rgb(71, 96, 104);
 }
 
-header{
+.logo{
     display: none;
 }
 
@@ -58,16 +58,31 @@ header{
     background: black;
 }
 
-h2{
-    text-align: center;
-    font-weight: 700;
-    padding-top: 0;
+figure {
+    height: 85vh;
+    padding: 2em;
+    width: 90%;
+    margin: auto;
 }
 
-.slideimg{
-    margin: auto;
-    display: block;
+figure > figcaption {
+	position: absolute;
+	top: 60 px;                      /* vertical alignment */
+	left: 50%;
+	transform: translateX(-50%);
+    color: black;
+    font-size: 1.5em;
+    font-weight: 700;
 }
+
+figure > img {
+	position: absolute;
+	left: 50%;                     /* horizontal alignment */
+    transform: translateX(-50%);   /* horizontal alignment (fine tuning) */
+    max-height: 70vh;
+    margin-top: 3em;
+}
+
 
 .theSlides{
     min-height: 90vh;
