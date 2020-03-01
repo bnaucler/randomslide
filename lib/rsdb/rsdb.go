@@ -309,7 +309,7 @@ func Addtextwtags(text string, tags []string, db *bolt.DB,
     Uilists(db, tags, mxindex, buc)
 }
 
-// Stores image object in database
+// Stores image object in database TODO make work for batchimport
 func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
     w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
 
@@ -323,13 +323,16 @@ func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
         return settings
     }
 
-    img := rscore.Mkimgobj(ofn, tags, iw, ih, isz, settings)
+    // Update tag index before appending size tag
+    nt, settings := Tagstoindex(tags, settings)
+    tags = append(tags, rscore.IKEY[isz])
 
+    // Write image object to database
+    img := rscore.Mkimgobj(ofn, tags, iw, ih, isz, settings)
     k := []byte(strconv.Itoa(img.Id))
     Wrimage(db, k, img)
 
     // Update relevant tags
-    nt, settings := Tagstoindex(tags, settings)
     rscore.Sendtagstatus(nt, w)
     Uilists(db, tags, settings.Imax, rscore.IBUC)
     settings.Imax++
