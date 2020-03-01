@@ -3,9 +3,6 @@
 
 */
 
-
-/* 1       Full screen picture
-this one needs some love*/
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
 
 * {
@@ -72,19 +69,14 @@ header{
 .theSlides{
     min-height: 75vh;
     padding: 100px;
-    
 }
 
 .slideimg{
     width: 50%;
-    height: auto;
+    display: block;
     margin: auto;
-    float: left;
-    margin-left: 150px;
 }
 
 p{
-    position: absolute;
-    top: 400px;
-    right: 500px;
+    text-align: center;
 }

@@ -39,7 +39,7 @@ function slide2(resp){
     div.style.display = "none";
     outputEl.appendChild(div);
 
-    let slideHeader = document.createElement("h2");
+    let slideHeader = document.createElement("h3");
     let headerText = document.createTextNode(resp.Title);
     slideHeader.appendChild(headerText);
     div.appendChild(slideHeader);
@@ -95,10 +95,18 @@ function slide5(resp){
     div.style.display = "none";
     outputEl.appendChild(div);
 
-    let slideHeader = document.createElement("h3");
-    let headerText = document.createTextNode(resp.Title);
-    slideHeader.appendChild(headerText);
-    div.appendChild(slideHeader);
+    let imgNo = Math.floor(Math.random() * 4);
+
+    let figure = document.createElement("figure");
+    let slideImg = document.createElement("img");
+    let caption = document.createElement("figcaption");
+    slideImg.setAttribute("src", "img/inspo" + imgNo + ".jpg");
+    slideImg.classList.add("slideimg");
+    let captionText = document.createTextNode('"' + resp.Title + '"');
+    caption.appendChild(captionText);
+    figure.appendChild(slideImg);
+    figure.appendChild(caption);
+    div.appendChild(figure);
 }
 
 function slide6(resp){
