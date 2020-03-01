@@ -99,7 +99,7 @@ function slide5(resp){
 
     let figure = document.createElement("figure");
     let slideImg = document.createElement("img");
-    let caption = document.createAttribute("figcaption");
+    let caption = document.createElement("figcaption");
     slideImg.setAttribute("src", "img/inspo" + imgNo + ".jpg");
     slideImg.classList.add("slideimg");
     let captionText = document.createTextNode(resp.Title);
