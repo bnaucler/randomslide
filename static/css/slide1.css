@@ -19,7 +19,7 @@ header{
     width: 100%;
     position: relative;
     margin: auto;
-    background: white;
+    background-image: linear-gradient(rgb(107, 145, 196), rgb(88, 88, 243));
 }
 
 .slidechanger{
@@ -65,7 +65,8 @@ header{
 
 .theSlides{
     min-height: 90vh;
-    padding: 100px;
+    padding-left: 100px;
+    padding-right: 100px;
 }
 
 .slideimg{
@@ -73,4 +74,7 @@ header{
     max-height: 70vh;
     height: auto;
     margin: auto;
+    margin-top: 3%;
+    border: 5px solid salmon;
+    border-radius: 1em;
 }
