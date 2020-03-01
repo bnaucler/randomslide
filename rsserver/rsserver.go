@@ -34,18 +34,35 @@ func init() {
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
 }
 
+// Sets a random slide type based on current probabilities
+func rndslidetype(i int, sprob []int) (int, []int) {
+
+    // We always start with a title slide
+    if i == 0 { return 0, sprob }
+
+    tot := 0
+    for _, v := range sprob { tot += v }
+
+    target := rand.Intn(tot)
+    p := 0
+    n := 0
+
+    for {
+        p += sprob[n]
+        if p >= target { break }
+        n++
+    }
+
+    return n, sprob
+}
+
 // Determines an appropriate slide type to generate
-func setslidetype(i int) rscore.Slidetype {
+func setslidetype(i int, sprob []int) (rscore.Slidetype, []int) {
 
     st := rscore.Slidetype{}
 
     // We always start with type 0 (big title)
-    if i == 0 {
-        st.Type = 0
-
-    } else {
-        st.Type = rand.Intn(rscore.STYPES)
-    }
+    st.Type, sprob = rndslidetype(i, sprob)
 
     // TODO: Make proper index objects
     switch st.Type {
@@ -91,7 +108,7 @@ func setslidetype(i int) rscore.Slidetype {
         st.IMG = false
     }
 
-    return st
+    return st, sprob
 }
 
 // Generate bullet point list for slide type 3
@@ -210,8 +227,11 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     settings rscore.Settings) (rscore.Deck, rscore.Settings) {
 
+    var st rscore.Slidetype
+    sprob := rscore.SPROB
+
     for i := 0; i < req.N; i++ {
-        st := setslidetype(i)
+        st, sprob = setslidetype(i, sprob)
         slide := getslide(db, st, settings, req)
         deck.Slides = append(deck.Slides, slide)
     }

@@ -69,6 +69,9 @@ const C_UIDB = 3                // User already exists in database
 const C_UICH = 4                // Username includes illegal characters
 const C_NOSU = 5                // No such user
 
+// Probability chart for slide occurance. Higher number = higher probability.
+var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}
+
 // Min bounds for image sizes (w, h)
 var IMGMIN = [][]int{
     {150, 150},                 // 0: Small
