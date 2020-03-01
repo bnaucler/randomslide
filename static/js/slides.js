@@ -39,7 +39,7 @@ function slide2(resp){
     div.style.display = "none";
     outputEl.appendChild(div);
 
-    let slideHeader = document.createElement("h2");
+    let slideHeader = document.createElement("h3");
     let headerText = document.createTextNode(resp.Title);
     slideHeader.appendChild(headerText);
     div.appendChild(slideHeader);
