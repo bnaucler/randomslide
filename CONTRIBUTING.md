@@ -48,6 +48,7 @@ Index   Type                            Description
 4       Title, pic, body text           What we already have in alpha
 5       'Inspirational quote'           Soo much potential here
 6       Picture with text               Theme can decide if text goes under, next to etc
+7       Graph                           No good slideshow is complete without a graph
 ```
 
 # Image sizes
