@@ -19,7 +19,7 @@ header{
     width: 100%;
     position: relative;
     margin: auto;
-    background: white;
+    background-image: repeating-radial-gradient(rgb(98, 187, 177), rgb(79, 252, 137));
 }
 
 .slidechanger{
@@ -59,18 +59,16 @@ header{
     background: black;
 }
 
-
 .theSlides{
     min-height: 90vh;
     padding-top: 2em;
 }
 
-
-
 ul{
     margin: auto;
-    width: 40%;
+    width: 25%;
     line-height: 3em;
+    list-style-type: disc;
 }
 
 li{
