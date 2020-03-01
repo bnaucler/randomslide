@@ -40,15 +40,15 @@ Body (btext): 5-80 characters
 
 ## Slide types
 ```
-Index   Type                            Description
-0       Big title                       Could be good to start a slide set with
-1       Full screen picture
-2       Big number                      A slide just saying things like '+12%'
-3       Bullet point list
-4       Title, pic, body text           What we already have in alpha
-5       'Inspirational quote'           Soo much potential here
-6       Picture with text               Theme can decide if text goes under, next to etc
-7       Graph                           No good slideshow is complete without a graph
+Index   Img sz  Type                        Description
+0               Big title                   Could be good to start a slide set with
+1       XL      Full screen picture
+2               Big number                  A slide just saying things like '+12%'
+3               Bullet point list
+4               Title, pic, body text       What we already have in alpha
+5               'Inspirational quote'       Soo much potential here
+6               Picture with text           Theme can decide if text goes under, next to etc
+7               Graph                       No good slideshow is complete without a graph
 ```
 
 # Image sizes
