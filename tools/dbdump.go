@@ -54,6 +54,7 @@ func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
     var ret []string
     ctag := rscore.Iindex{}
 
+    tl = append(tl, rscore.IKEY...)
     for _, t := range tl {
 
         k := []byte(t)
