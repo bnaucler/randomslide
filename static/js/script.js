@@ -37,13 +37,6 @@ document.getElementById('timerOrNot').addEventListener('change', function() {
     }
   });
 
-  document.getElementById('cssRand').addEventListener('change', function() {
-    if(this.value === "myself"){
-        document.getElementById("cssPre").style.display = "inline";
-    } else{
-        document.getElementById("cssPre").style.display = "none";
-    }
-  });
 
 function fetchSlides(){
     var xhttp = new XMLHttpRequest();
