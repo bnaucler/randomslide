@@ -49,7 +49,7 @@ const RFNLEN = 20               // Length of random file names (w/o .ext)
 var NUMPREF = []byte("$+-")     // Potential number prefixes for slide type 2
 var NUMSUFF = []byte("%!?")     // Potential number suffixes for slide type 2
 
-const STYPES = 7                // Number of slide types available
+const STYPES = 8                // Number of slide types available
 const BPMIN = 3                 // Min number of bullet points for lists
 const BPMAX = 8                 // Max number of bullet points for lists
 
@@ -202,6 +202,7 @@ type Slide struct {
     Title string                // Slide title
     Btext string                // Body text
     Bpts []string               // Bullet points
+    Dpts []int                  // Graph data points
     Img Imgobj                  // Image object
 }
 

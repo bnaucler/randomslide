@@ -85,6 +85,10 @@ func setslidetype(i int) rscore.Slidetype {
         st.BT = true
         st.IMG = true
 
+    case 7: // Graph
+        st.TT = true
+        st.BT = false
+        st.IMG = false
     }
 
     return st
@@ -120,17 +124,34 @@ func coin() bool {
     return true
 }
 
+// Flips coins to get random exponent
+func rndexp(n int) int {
+
+    for i := 0; i < rscore.RNUMEMAX; i++ {
+        if coin() { n *= 10 }
+    }
+
+    return n
+}
+
+// Returns number with fixed exponent
+func setexp(n int, e int) int {
+
+    for i := 0; i < e; i ++ {
+        n *= 10
+    }
+
+    return n
+}
+
 // Generate numbers of slide type 2
 func numgen() string {
 
     p := byte(' ')
     s := byte(' ')
 
-    n := rand.Intn(rscore.RNUMBMAX)
-
-    for i := 0; i < rscore.RNUMEMAX; i ++ {
-        if coin() { n *= 10 }
-    }
+    b := rand.Intn(rscore.RNUMBMAX)
+    n := rndexp(b)
 
     plen := len(rscore.NUMPREF)
     if coin() { p = rscore.NUMPREF[rand.Intn(plen)] }
@@ -143,6 +164,23 @@ func numgen() string {
     return strings.TrimSpace(ret)
 }
 
+func dpgen() []int {
+
+    var ret []int
+
+    dp := rand.Intn(4)
+    dp += 2
+    e := rand.Intn(rscore.RNUMEMAX)
+
+    for i := 0; i < dp; i++ {
+        b := rand.Intn(rscore.RNUMBMAX)
+        n := setexp(b, e)
+        ret = append(ret, n)
+    }
+
+    return ret
+}
+
 // Retrieves relevant data based on slide type
 func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     req rscore.Deckreq) rscore.Slide {
@@ -153,12 +191,16 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
     if st.IMG { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
 
-    if st.Type == 2 {
-        slide.Title = numgen()
-        fmt.Println(slide.Title)
+    switch st.Type {
 
-    } else if st.Type == 3 {
+    case 2:
+        slide.Title = numgen()
+
+    case 3:
         slide.Bpts = bpgen(db, req.Tags, settings)
+
+    case 7:
+        slide.Dpts = dpgen()
     }
 
     return slide
