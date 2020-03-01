@@ -21,7 +21,7 @@ header{
     width: 100%;
     position: relative;
     margin: auto;
-    background: white;
+    background-image: radial-gradient(rgb(129, 192, 212), rgb(214, 163, 248));
 }
 
 .slidechanger{
@@ -67,7 +67,17 @@ h3{
     margin: auto;
     padding-top: 2em;
     font-size: 4.5em;
+    font-weight: 700;
+    animation: 3s ease 0s 1 bignumber;
 }
+
+@keyframes bignumber{
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+
+
+
 
 .theSlides{
     min-height: 90vh;
