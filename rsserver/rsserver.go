@@ -34,6 +34,24 @@ func init() {
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
 }
 
+// Updates slilde probabilities
+func setsprob(n int, sprob []int) []int {
+
+    if sprob[n] > 1 {
+        for i := range sprob {
+            if i == n {
+                sprob[i]--
+
+            } else {
+                if coin() { sprob[i]++ }
+
+            }
+        }
+    }
+
+    return sprob
+}
+
 // Sets a random slide type based on current probabilities
 func rndslidetype(i int, sprob []int) (int, []int) {
 
@@ -52,6 +70,8 @@ func rndslidetype(i int, sprob []int) (int, []int) {
         if p >= target { break }
         n++
     }
+
+    sprob = setsprob(n, sprob)
 
     return n, sprob
 }
