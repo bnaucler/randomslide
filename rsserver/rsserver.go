@@ -500,6 +500,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     u := rscore.User{}
     u.Name = r.FormValue("user")
+    u.Email = r.FormValue("email") // TODO validate
     pass := r.FormValue("pass")
 
     // Username already taken - registration not possible
@@ -587,6 +588,49 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(li)
 }
 
+// Validates skey - returns true if user is logged in
+func valskey(db *bolt.DB, uname string, skey string) (bool, rscore.User) {
+
+    u := rsdb.Ruser(db, uname)
+
+    if skey == u.Skey { return true, u }
+    return false, rscore.User{}
+}
+
+// Appends str to file at fname
+func appendfile(fname string, str string) {
+
+    f, e := os.OpenFile(fname, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+    rscore.Cherr(e)
+    defer f.Close()
+
+    _, e = f.WriteString(str)
+    rscore.Cherr(e)
+}
+
+// Receives feedback data and saves to file
+func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+    str := r.FormValue("fb")
+
+    sok, u := valskey(db, uname, skey)
+
+    if !sok {
+        rscore.Sendstatus(rscore.C_NLOG, "User not logged in - no skey match", w)
+        return
+    }
+
+    d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, str)
+    appendfile(rscore.FBFILE, d)
+    rscore.Sendstatus(rscore.C_OK, "", w)
+}
+
 func main() {
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
@@ -636,8 +680,14 @@ func main() {
         settings = reghandler(w, r, db, settings)
     })
 
+    // User login
     http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
         loginhandler(w, r, db, settings)
+    })
+
+    // Feedback
+    http.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
+        feedbackhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)

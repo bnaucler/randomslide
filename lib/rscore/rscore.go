@@ -33,6 +33,7 @@ const DBNAME = "./data/rs.db"   // Database location (change at own peril)
 const LOGPATH = "./static/log/" // Logs should be accessible from frontend
 const IMGDIR = "./static/img/"  // Image directory
 const PIDFILEPATH = "./data/"   // Base directory for storage of PID file
+const FBFILE = "./data/fb.txt"  // Storage of feedback data
 
 const VERBDEF = false           // Verbose mode defaults to false
 const VOLATILEDEF = false       // Volatile mode defaults to false
@@ -68,6 +69,7 @@ const C_WRSZ = 2                // Not able to classify image size
 const C_UIDB = 3                // User already exists in database
 const C_UICH = 4                // Username includes illegal characters
 const C_NOSU = 5                // No such user
+const C_NLOG = 6                // User not logged in
 
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}
