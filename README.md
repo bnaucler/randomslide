@@ -71,16 +71,22 @@ Endpoint:               Variables:              Comment:
                         tags        string      tags on which to base deck
 
 
-/addtext                                        Adds new text to database
+/addtext*                                       Adds new text to database
                         tags        string      Which tags to associate text with
                         ttext       string      Title text
                         btext       string      Body text
 
 
-/addimg                                         Adds new images to the database
+/addimg*                                        Adds new images to the database
                         file        file        The image file itself
                         tags        string      Which tags to associate the image with
+
+
+/feedback*                                      Give feedback on user experience
+                        fb          string      The feedback info itself
+
 ```
+Endpoints marked with `*` requires the user to be logged in.
 
 ## Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for best practices and information on how to get involved in the project.
