@@ -33,6 +33,7 @@ Usage of bin/rsserver:
   -p int
     	port number to listen (default 6291)
   -v	verbose mode
+  -x	volatile mod
 ```
 
 Server log files can be accessed at `static/logs` or in the admin interface.
