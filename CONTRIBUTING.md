@@ -30,7 +30,7 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * Check image repo size requirements
 * Verbosity levels
-* Slide type repetition limits
+* Image upload status reporting
 
 ## Text types
 Title (ttext): 1-35 characters  
