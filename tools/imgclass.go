@@ -19,32 +19,6 @@ func init() {
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
 }
 
-func getclass(x int, y int) int {
-
-    div := y / 10
-    nx := x / div
-    ny := y / div
-
-    fmt.Printf("DEBUG: %dx%d\n", nx, ny)
-
-    switch {
-    case nx > 20:
-        return 6 // Ultrawide
-    case nx > 16:
-        return 5 // Wide
-    case nx > 14:
-        return 4 // Normal
-    case nx > 12:
-        return 3 // Almost-box
-    case nx > 10:
-        return 2 // Box
-    case nx > 5:
-        return 1 // Portrait
-    }
-
-    return 0 // Ultra portrait
-}
-
 func main() {
 
     flist, e := ioutil.ReadDir(os.Args[1])
@@ -58,10 +32,20 @@ func main() {
         defer f.Close()
 
         i, _, e := image.Decode(f)
+
         rscore.Cherr(e)
         b := i.Bounds()
-        c := getclass(b.Max.X, b.Max.Y)
+        c, szok := rscore.Getimgtype(b.Max.X, b.Max.Y)
+        ni, rsz := rscore.Scaleimage(i, c)
+        b = ni.Bounds()
 
-        fmt.Printf("%s: %dx%d (class %d)\n", fname.Name(), b.Max.X, b.Max.Y, c)
+        if szok {
+            fmt.Printf("%s: %dx%d (class %d, scaled: %v)\n",
+                fname.Name(), b.Max.X, b.Max.Y, c, rsz)
+
+        } else {
+            fmt.Printf("%s: %dx%d (Could not be classified)\n",
+                fname.Name(), b.Max.X, b.Max.Y)
+        }
     }
 }

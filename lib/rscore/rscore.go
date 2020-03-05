@@ -14,6 +14,7 @@ import (
     "log"
     "net"
     "time"
+    "image"
     "regexp"
     "strings"
     "strconv"
@@ -24,6 +25,7 @@ import (
     "encoding/json"
     "path/filepath"
 
+    "github.com/nfnt/resize"
     "golang.org/x/crypto/bcrypt"
 )
 
@@ -81,7 +83,7 @@ const IMG_BO = 2                // Box-shaped
 const IMG_PO = 3                // Portrait
 
 // Min bounds for image sizes (w, h)
-var IMGMIN = [][]int{
+var IMGMIN = [][]uint{
     {1920, 1080},               // 0: X Large
     {640, 360},                 // 1: Landscape
     {360, 360},                 // 2: Box-shaped
@@ -89,7 +91,7 @@ var IMGMIN = [][]int{
 }
 
 // Max bounds for image sizes (w, h)
-var IMGMAX = [][]int{
+var IMGMAX = [][]uint{
     {1920, 1080},               // 0: X Large
     {1920, 1080},               // 1: Landscape
     {1080, 1080},               // 2: Box-shaped
@@ -446,6 +448,19 @@ func Getimgtype(w int, h int) (int, bool) {
     }
 
     return 4, false
+}
+
+// Scales image down to max dimensions allowed, returns true if image was scaled
+func Scaleimage(i image.Image, t int) (image.Image, bool) {
+
+    b := i.Bounds()
+
+    if uint(b.Max.X) > IMGMAX[t][0] || uint(b.Max.Y) > IMGMAX[t][1] {
+        rsz := resize.Thumbnail(IMGMAX[t][0], IMGMAX[t][1], i, resize.Lanczos3)
+        return rsz, true
+    }
+
+    return i, false
 }
 
 func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,
