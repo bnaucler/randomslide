@@ -82,18 +82,18 @@ const IMG_PO = 3                // Portrait
 
 // Min bounds for image sizes (w, h)
 var IMGMIN = [][]int{
-    {150, 150},                 // 0: Small
-    {500, 500},                 // 1: Medium
-    {1000, 1000},               // 2: Large
-    {1920, 1080},               // 3: X Large
+    {1920, 1080},               // 0: X Large
+    {640, 360},                 // 1: Landscape
+    {360, 360},                 // 2: Box-shaped
+    {360, 480},                 // 3: Portrait
 }
 
 // Max bounds for image sizes (w, h)
 var IMGMAX = [][]int{
-    {499, 499},                 // 0: Small
-    {999, 799},                 // 1: Medium
-    {1919, 1079},               // 2: Large
-    {3000, 3000},               // 3: X Large
+    {1920, 1080},               // 0: X Large
+    {1920, 1080},               // 1: Landscape
+    {1080, 1080},               // 2: Box-shaped
+    {1080, 1920},               // 3: Portrait
 }
 
 var DBUC = []byte("dbuc")       // Deck bucket
@@ -346,17 +346,17 @@ func Addlog(ltype int, msg []byte, r *http.Request) {
     var lentry string
 
     switch ltype {
-        case L_REQ:
-            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+    case L_REQ:
+        lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
 
-        case L_RESP:
-            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+    case L_RESP:
+        lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
 
-        case L_SHUTDOWN:
-            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
+    case L_SHUTDOWN:
+        lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
 
-        default:
-            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
+    default:
+        lentry = fmt.Sprintf("Something went wrong, but I don't know how to log it!")
     }
 
     log.Println(lentry)
@@ -426,23 +426,23 @@ func Rmall(dir string) {
 }
 
 // Conditionally returns image size type & true if fitting classification
-func Getimgtype(x int, y int) (int, bool) {
+func Getimgtype(w int, h int) (int, bool) {
 
-    div := y / 10
-    nx := x / div
+    div := h / 10
+    nw := w / div
 
     switch {
-    case nx > 20:
+    case nw > 20:
         return 4, false
 
-    case nx > 12:
-        return 1
+    case nw > 12:
+        return 1, true
 
-    case nx > 8:
-        return 2
+    case nw > 8:
+        return 2, true
 
-    case nx > 5:
-        return 3
+    case nw > 5:
+        return 3, true
     }
 
     return 4, false
