@@ -1,3 +1,5 @@
+var i = 1;
+
 function slide0(resp){
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
@@ -129,7 +131,6 @@ function slide6(resp){
 }
 
 function slide7(resp){
-    let i = 1;
     console.log("Här ska jag trolla för er.")
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
