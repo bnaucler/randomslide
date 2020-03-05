@@ -15,6 +15,9 @@ import (
     "net"
     "time"
     "image"
+    "image/png"
+    "image/jpeg"
+    "image/gif"
     "regexp"
     "strings"
     "strconv"
@@ -427,27 +430,77 @@ func Rmall(dir string) {
     }
 }
 
-// Conditionally returns image size type & true if fitting classification
-func Getimgtype(w int, h int) (int, bool) {
+// Writes image object to file
+func Wrimagefile(i image.Image, fnp string) error {
 
-    div := h / 10
-    nw := w / div
+    var e error
+    ext := filepath.Ext(fnp)
+
+    f, e := os.Create(fnp)
+    Cherr(e)
+    defer f.Close()
+
+    switch {
+    case ext == ".jpg" || ext == ".jpeg":
+        jpeg.Encode(f, i, nil)
+
+    case ext == ".png":
+        png.Encode(f, i)
+
+    case ext == ".gif":
+        gif.Encode(f, i, nil)
+
+    }
+
+    return e
+}
+
+// Conditionally returns image size type & true if fitting classification
+func Getimgtype(iw int, ih int) (int, bool) {
+
+    var t int
+    var ok bool
+
+    w := uint(iw)
+    h := uint(ih)
+
+    div := ih / 10
+    nw := iw / div
 
     switch {
     case nw > 20:
         return 4, false
 
-    case nw > 12:
-        return 1, true
+    case nw > 12: // Landscape
+        if w > IMGMAX[0][0] || h > IMGMAX[0][1] {
+            t = 0
+            ok = true
 
-    case nw > 8:
-        return 2, true
+        } else if w < IMGMIN[0][0] || h < IMGMIN[0][1] {
+            ok = false
 
-    case nw > 5:
-        return 3, true
+        } else {
+            t = 1
+        }
+
+    case nw > 8: // Box-shaped
+        t = 2
+
+        if w < IMGMIN[2][0] || h < IMGMIN[2][1] { ok = false
+        } else { ok = true }
+
+    case nw > 5: // Portrait
+        t = 3
+
+        if w < IMGMIN[3][0] || h < IMGMIN[3][1] { ok = false
+        } else { ok = true }
+
+    default:
+        return 4, false
+
     }
 
-    return 4, false
+    return t, ok
 }
 
 // Scales image down to max dimensions allowed, returns true if image was scaled

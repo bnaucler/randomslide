@@ -24,13 +24,17 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO
-* Refactoring image handler
+* batchimport image scaling
+* Refactor image handler
+* Refactor getimgtype()
 * User account access levels
 * Security checks with session keys
 * Proper automated tests
+* Rebase rsserver
 * Check image repo size requirements
 * Verbosity levels
 * Image upload status reporting
+* Create image lib
 
 ## Text types
 Title (ttext): 1-35 characters  
