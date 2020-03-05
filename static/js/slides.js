@@ -139,11 +139,11 @@ function slide7(resp){
     outputEl.appendChild(div);
 
     let canvas = document.createElement("canvas");
-    canvas.setAttribute("id", "myChart" . i);
+    canvas.setAttribute("id", "myChart" + i);
 
     div.appendChild(canvas);
 
-    let ctx = document.getElementById('myChart' . i).getContext('2d');
+    let ctx = document.getElementById('myChart' + i).getContext('2d');
     let myChart = new Chart(ctx, {
         type: 'bar',
         data: {
