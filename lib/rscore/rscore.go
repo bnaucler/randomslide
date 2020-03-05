@@ -74,6 +74,12 @@ const C_NLOG = 6                // User not logged in
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}
 
+// Image type classifications
+const IMG_XL = 0                // X Large
+const IMG_LS = 1                // Landscape
+const IMG_BO = 2                // Box-shaped
+const IMG_PO = 3                // Portrait
+
 // Min bounds for image sizes (w, h)
 var IMGMIN = [][]int{
     {150, 150},                 // 0: Small
@@ -420,19 +426,26 @@ func Rmall(dir string) {
 }
 
 // Conditionally returns image size type & true if fitting classification
-func Getimgtype(w int, h int) (int, bool) {
+func Getimgtype(x int, y int) (int, bool) {
 
-    i := 3
+    div := y / 10
+    nx := x / div
 
-    for i >= 0 {
-        if w > IMGMIN[i][0] && h > IMGMIN[i][1] &&
-           w < IMGMAX[i][0] && h < IMGMAX[i][1] {
-               return i, true
-           }
-        i--
+    switch {
+    case nx > 20:
+        return 4, false
+
+    case nx > 12:
+        return 1
+
+    case nx > 8:
+        return 2
+
+    case nx > 5:
+        return 3
     }
 
-    return 0, false
+    return 4, false
 }
 
 func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,
