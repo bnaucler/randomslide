@@ -87,6 +87,9 @@ function createSlides(resp){
             case 6:
                 slide6(resp[i]);
                 break;
+            case 6:
+                slide7(resp[i]);
+                break;
         }
     }
     setTimeout(loadingSlides, 800);
@@ -159,15 +162,15 @@ function slideShow(n){
 
 }
 
-    document.onkeydown = function(e){
-        switch (e.keyCode){
-            case 37:
-                changeSlide(-1);
-                break;
-            case 39:
-                changeSlide(1);
-                break;
-        }
+document.onkeydown = function(e){
+    switch (e.keyCode){
+        case 37:
+            changeSlide(-1);
+            break;
+        case 39:
+            changeSlide(1);
+            break;
+    }
 }
 
 function changeSlide(n){
@@ -222,6 +225,9 @@ function changeCSS(slideToStyle) {
         case 'slide6':
             csslink.href='/css/slide6.css';
             break;
+        case 'slide7':
+            csslink.href='/css/slide7.css';
+            break;   
     }
 }
 
