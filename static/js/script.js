@@ -87,7 +87,7 @@ function createSlides(resp){
             case 6:
                 slide6(resp[i]);
                 break;
-            case 6:
+            case 7:
                 slide7(resp[i]);
                 break;
         }
