@@ -127,3 +127,38 @@ function slide6(resp){
     slideTxt.appendChild(slideContent);
     div.appendChild(slideTxt);
 }
+
+function slide7(resp){
+    console.log("Här ska jag trolla för er.")
+    let outputEl = document.getElementById("output");
+    var div = document.createElement("div");
+    div.setAttribute("class", "theSlides");
+    div.setAttribute("id", "slide7");
+    div.style.display = "none";
+    outputEl.appendChild(div);
+
+    let canvas = document.createElement("canvas");
+    canvas.setAttribute("id", "myChart");
+    div.appendChild(canvas);
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: resp.Dpts,
+            datasets: [{
+                label: resp.Title,
+                data: resp.Dpts,
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
