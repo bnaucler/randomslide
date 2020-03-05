@@ -10,7 +10,7 @@ Morgan Andersson (ma@randomslide.com)
 The code has been tested on Arch Linux 5.5 and FreeBSD 12, but should be fairly portable.
 
 ## Project purpose
-Slideshow karaokae or other pranks. Actual real world usefullness can be questioned.
+Slideshow karaokae or other pranks. Actual real world usefulness can be questioned.
 
 ## Installation
 ```
@@ -23,7 +23,7 @@ go get github.com/bnaucler/randomslide
 
 ## Usage
 Launch with `bin/rsserver`  
-You can also use `bin/rsmonitor.sh` to automatically restart the server.
+Or use `bin/rsmonitor.sh` to automatically restart the server after `/restart`.
 
 Output of `bin/rsserver -h`:  
 ```
@@ -33,6 +33,7 @@ Usage of bin/rsserver:
   -p int
     	port number to listen (default 6291)
   -v	verbose mode
+  -x	volatile mode
 ```
 
 Server log files can be accessed at `static/logs` or in the admin interface.
@@ -71,16 +72,22 @@ Endpoint:               Variables:              Comment:
                         tags        string      tags on which to base deck
 
 
-/addtext                                        Adds new text to database
+/addtext*                                       Adds new text to database
                         tags        string      Which tags to associate text with
                         ttext       string      Title text
                         btext       string      Body text
 
 
-/addimg                                         Adds new images to the database
+/addimg*                                        Adds new images to the database
                         file        file        The image file itself
                         tags        string      Which tags to associate the image with
+
+
+/feedback*                                      Give feedback on user experience
+                        fb          string      The feedback info itself
+
 ```
+Endpoints marked with `*` requires the user to be logged in.
 
 ## Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for best practices and information on how to get involved in the project.

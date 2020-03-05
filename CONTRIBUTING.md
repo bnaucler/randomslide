@@ -24,15 +24,13 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO
-* DB objects to store images by size
 * Refactoring image handler
 * User account access levels
 * Security checks with session keys
 * Proper automated tests
 * Check image repo size requirements
 * Verbosity levels
-* Slide type probability chart
-* Slide type repetition limits
+* Image upload status reporting
 
 ## Text types
 Title (ttext): 1-35 characters  
@@ -40,25 +38,19 @@ Body (btext): 5-80 characters
 
 ## Slide types
 ```
-Index   Type                            Description
-0       Big title                       Could be good to start a slide set with
-1       Full screen picture
-2       Big number                      A slide just saying things like '+12%'
-3       Bullet point list
-4       Title, pic, body text           What we already have in alpha
-5       'Inspirational quote'           Soo much potential here
-6       Picture with text               Theme can decide if text goes under, next to etc
-7       Graph                           No good slideshow is complete without a graph
+Index   Img sz    Type                        Description
+0       XL/16:9   Big title                   Could be good to start a slide set with
+1       XL/16:9   Full screen picture
+2       NULL      Big number                  A slide just saying things like '+12%'
+3       9:16/NULL Bullet point list
+4       16:9      Title, pic, body text       What we already have in alpha
+5       NULL      'Inspirational quote'       Soo much potential here
+6       16:9/9:16 Picture with text           Theme can decide if text goes under, next to etc
+7       NULL      Graph                       No good slideshow is complete without a graph
 ```
 
 # Image sizes
-Images used will be classified in the following sizes:
-```
-Size (px)   Min W       Min H       Max W       Max H
-0 (S):      150         150         499         499
-1 (M):      500         500         999         799
-2 (L):      1000        800         1919        1079
-3 (XL)      1920        1080        3000+       3000+
+Images will either be classified as XL (fullscreen), 16:9 (width:height) or 9:16 (width:height).
 ```
 
 ## IRC

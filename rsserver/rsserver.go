@@ -34,18 +34,55 @@ func init() {
     image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
 }
 
+// Updates slilde probabilities
+func setsprob(n int, sprob []int) []int {
+
+    if sprob[n] > 1 {
+        for i := range sprob {
+            if i == n {
+                sprob[i]--
+
+            } else {
+                if coin() { sprob[i]++ }
+
+            }
+        }
+    }
+
+    return sprob
+}
+
+// Sets a random slide type based on current probabilities
+func rndslidetype(i int, sprob []int) (int, []int) {
+
+    // We always start with a title slide
+    if i == 0 { return 0, sprob }
+
+    tot := 0
+    for _, v := range sprob { tot += v }
+
+    target := rand.Intn(tot)
+    p := 0
+    n := 0
+
+    for {
+        p += sprob[n]
+        if p >= target { break }
+        n++
+    }
+
+    sprob = setsprob(n, sprob)
+
+    return n, sprob
+}
+
 // Determines an appropriate slide type to generate
-func setslidetype(i int) rscore.Slidetype {
+func setslidetype(i int, sprob []int) (rscore.Slidetype, []int) {
 
     st := rscore.Slidetype{}
 
     // We always start with type 0 (big title)
-    if i == 0 {
-        st.Type = 0
-
-    } else {
-        st.Type = rand.Intn(rscore.STYPES)
-    }
+    st.Type, sprob = rndslidetype(i, sprob)
 
     // TODO: Make proper index objects
     switch st.Type {
@@ -91,7 +128,7 @@ func setslidetype(i int) rscore.Slidetype {
         st.IMG = false
     }
 
-    return st
+    return st, sprob
 }
 
 // Generate bullet point list for slide type 3
@@ -193,6 +230,14 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     switch st.Type {
 
+    case 1:
+        // TODO (temporary hack for testing)
+        ctr := 0
+        for slide.Img.Size != 3 && ctr < 100{
+            slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
+            ctr++
+        }
+
     case 2:
         slide.Title = numgen()
 
@@ -210,8 +255,11 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     settings rscore.Settings) (rscore.Deck, rscore.Settings) {
 
+    var st rscore.Slidetype
+    sprob := rscore.SPROB
+
     for i := 0; i < req.N; i++ {
-        st := setslidetype(i)
+        st, sprob = setslidetype(i, sprob)
         slide := getslide(db, st, settings, req)
         deck.Slides = append(deck.Slides, slide)
     }
@@ -452,6 +500,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     u := rscore.User{}
     u.Name = r.FormValue("user")
+    u.Email = r.FormValue("email") // TODO validate
     pass := r.FormValue("pass")
 
     // Username already taken - registration not possible
@@ -539,6 +588,49 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(li)
 }
 
+// Validates skey - returns true if user is logged in
+func valskey(db *bolt.DB, uname string, skey string) (bool, rscore.User) {
+
+    u := rsdb.Ruser(db, uname)
+
+    if skey == u.Skey { return true, u }
+    return false, rscore.User{}
+}
+
+// Appends str to file at fname
+func appendfile(fname string, str string) {
+
+    f, e := os.OpenFile(fname, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+    rscore.Cherr(e)
+    defer f.Close()
+
+    _, e = f.WriteString(str)
+    rscore.Cherr(e)
+}
+
+// Receives feedback data and saves to file
+func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+    str := r.FormValue("fb")
+
+    sok, u := valskey(db, uname, skey)
+
+    if !sok {
+        rscore.Sendstatus(rscore.C_NLOG, "User not logged in - no skey match", w)
+        return
+    }
+
+    d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, str)
+    appendfile(rscore.FBFILE, d)
+    rscore.Sendstatus(rscore.C_OK, "", w)
+}
+
 func main() {
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
@@ -588,8 +680,14 @@ func main() {
         settings = reghandler(w, r, db, settings)
     })
 
+    // User login
     http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
         loginhandler(w, r, db, settings)
+    })
+
+    // Feedback
+    http.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
+        feedbackhandler(w, r, db, settings)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)

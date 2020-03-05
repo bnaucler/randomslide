@@ -49,11 +49,31 @@ func retrtxt(db *bolt.DB, mxind int, buc []byte) []rscore.Textobj {
     return ret
 }
 
+func retrimg(db *bolt.DB, mxind int, buc []byte) []rscore.Imgobj {
+
+    var ret []rscore.Imgobj
+
+    for i := 0; i < mxind; i++ {
+
+        cobj := rscore.Imgobj{}
+
+        k := []byte(strconv.Itoa(i))
+        v, e := rsdb.Rdb(db, k, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(v, &cobj)
+        ret = append(ret, cobj)
+    }
+
+    return ret
+}
+
 func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
 
     var ret []string
     ctag := rscore.Iindex{}
 
+    tl = append(tl, rscore.IKEY...)
     for _, t := range tl {
 
         k := []byte(t)
@@ -106,6 +126,12 @@ func main() {
     if settings.Bmax > 0 {
         btext := retrtxt(db, settings.Bmax, rscore.BBUC)
         fmt.Printf("BTEXT: %+v\n", btext)
+    }
+
+    // DUMP IMAGES
+    if settings.Imax > 0 {
+        imgs := retrimg(db, settings.Bmax, rscore.IBUC)
+        fmt.Printf("IMAGES: %+v\n", imgs)
     }
 
     // DUMP DECKS
