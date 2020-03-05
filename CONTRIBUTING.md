@@ -54,9 +54,9 @@ See `Image sizes` section below for image reference sizes.
 ```
 Index   Type            Aspect ratio        Min size        Max size
 0       XL              20:10-13:10         1920x1080       1920x1080
-1       Landscape       20:10-13:10
-2       Box             12:10-9:10
-3       Portrait        8:10-5:10
+1       Landscape       20:10-13:10         640x360         1920x1080
+2       Box             12:10-9:10          360x360         1080x1080
+3       Portrait        8:10-5:10           360x640         1080x1920
 ```
 Images larger than the max size will be automatically scaled to this size. Please note that this might have undesirable effects for picture quality, but has been deemed necessary to improve loading times.
 
