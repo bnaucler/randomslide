@@ -47,7 +47,7 @@ function sendFeedback(){
     fbAjax.onreadystatechange = function(){
         if (this.readyState == 4 ) {
             let resp = JSON.parse(this.responseText);
-            console.log(resp);
+            console.log(user);
             if(resp.Code == 0){
                 window.alert("Thanks for your feedback, it might be used for something");
             }
@@ -57,6 +57,6 @@ function sendFeedback(){
         }
     }
 
-    fbAjax.open("POST", "/feedback?fb=" + feedback + "&user=" + user + "&key=" + key, false);
+    fbAjax.open("POST", "/feedback?fb=" + feedback + "&user=" + user + "&skey=" + key, false);
     fbAjax.send();
 }
