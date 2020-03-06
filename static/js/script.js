@@ -57,7 +57,11 @@ function fetchSlides(){
     }
 
     let amount = document.getElementById("amountOfSlides").value;
-    xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount, false);
+    if(document.getElementById("deckid").value != null){
+        var deckid = document.getElementById("deckid").value;
+    }
+    
+    xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid, false);
     xhttp.send();
     createSlides(resp.Slides);
 }
