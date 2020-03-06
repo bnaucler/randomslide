@@ -19,8 +19,6 @@ function registerUser(){
     registerAjax.send();
 }
 
-
-
 function loginUser(){
     let loginAjax = new XMLHttpRequest();
     let userName = document.getElementById("username").value;
@@ -39,8 +37,8 @@ function loginUser(){
     }
     loginAjax.open("POST", "/login?user=" + userName + "&pass=" + passWord, false);
     loginAjax.send();
-
 }
+
 /*
 
 let fbAjax = new XMLHttpRequest();
