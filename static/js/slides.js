@@ -186,6 +186,7 @@ function slide7(resp){
         data: {
             labels: resp.Dpts,
             datasets: [{
+                label: 'Siffrorna ljuger inte!',
                 data: resp.Dpts,
                 backgroundColor: colorsToUse,
                 borderColor: bordersToUse
