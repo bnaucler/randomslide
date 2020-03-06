@@ -16,6 +16,11 @@
         </header>
 <br />
     <div>
+        <form method="post">
+            <h3>login:</h3>
+        </form>
+
+
         <fieldset>
             <h2>Add text to db</h2>
                 <h3>Add title:</h3>
@@ -34,12 +39,7 @@
 
         <fieldset>
             <h2>Add img to gb</h2>
-            <!--
-            <form
-            enctype="multipart/form-data"
-            method="post"
-            id="imgForm">
-            -->
+
             <input type="file" name="file" id="file"/>
             <br />
             <br />
@@ -48,7 +48,7 @@
             <input type="text" name="imgTagInput" id="imgTagInput">
             <input type="submit" value="upload" />
             <button onclick="addImg()">Send img</button>
-           <!----> </form>-->
+          
         </fieldset>
     </div>
     <script src="js/upload.js"></script>
