@@ -427,6 +427,23 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// Image wrapper for rsdb.Countobj()
+func imgobjctr(db *bolt.DB, t string) int {
+
+    var tl []string
+    var ret int
+
+    tl = append(tl, t)
+    suf := rsimage.Getallsuf()
+    stl := rscore.Addtagsuf(tl, suf)
+
+    for _, st := range stl {
+        ret += rsdb.Countobj(db, st, rscore.IBUC)
+    }
+
+    return ret
+}
+
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -446,7 +463,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         }
 
         if settings.Imax > 0 {
-            ttag.IN = rsdb.Countobj(db, t, rscore.IBUC)
+            ttag.IN = imgobjctr(db, t)
         }
 
         resp.Tags = append(resp.Tags, ttag)

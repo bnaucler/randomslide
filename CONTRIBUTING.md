@@ -33,7 +33,6 @@ tools/          - Tools for maintenence etc.
 * Image upload status reporting
 * Handling of '-0' special case
 * Chart type to data object 0-2
-* Object counting with tag suffixes
 * Suffix naming convention
 
 ## Text types
