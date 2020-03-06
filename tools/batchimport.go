@@ -81,7 +81,6 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         rscore.Cherr(e)
 
         fszr := bytes.NewReader(ibuf)
-        // ic, _, e := image.DecodeConfig(fszr)
         i, _, e := image.Decode(fszr)
         if e != nil { continue }
 
@@ -106,10 +105,13 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         }
 
         // Append the appropriate size tag to slice
-        ttags := append(tags, rscore.IKEY[isz])
+        var suf []string
+        suf = append(suf, rscore.IKEY[isz])
+        ttags := rscore.Addtagsuf(tags, suf)
+
         img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, settings)
         id := []byte(strconv.Itoa(settings.Imax))
-        fmt.Printf("DEBUG: %+v\n", img)
+        fmt.Printf("IMPORTING: %+v\n", img)
 
         n++
         rsdb.Wrimage(db, id, img)
@@ -117,7 +119,7 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         settings.Imax++
     }
 
-    fmt.Printf("DEBUG: %+v\n", tags)
+    fmt.Printf("TAGS: %+v\n", tags)
     return n, settings
 }
 

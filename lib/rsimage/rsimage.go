@@ -143,3 +143,26 @@ func Scaleimage(i image.Image, t int) (image.Image, bool) {
     return i, false
 }
 
+// Returns all possible suffixes
+func Getallsuf() []string {
+
+    var ret []string
+
+    for _, itype := range rscore.ALLSUF {
+        ret = append(ret, rscore.IKEY[itype])
+    }
+
+    return ret
+}
+
+// Creates an image suffix slice based on slide type
+func Mkimgsuflist(t int) []string {
+
+    var ret []string
+
+    for _, itype := range rscore.ISZINDEX[t] {
+        ret = append(ret, rscore.IKEY[itype])
+    }
+
+    return ret
+}

@@ -105,6 +105,21 @@ var UBUC = []byte("ubuc")       // User bucket
 
 var INDEX = []byte(".index")    // Untouchable database index position
 
+// Image size per slide type reference chart TODO map with TT & BT bools
+var ISZINDEX = [][]int {
+    {0, 1},                     // Big title
+    {0},                        // Full screen image
+    {0},                        // Big number
+    {3},                        // Bullet point list
+    {1},                        // Title, img & body
+    {},                         // Inspirational quote
+    {1, 2, 3},                  // Image with text
+    {},                         // Graph
+}
+
+// Data object including references to all IKEYs
+var ALLSUF = []int{0, 1, 2, 3}
+
 // Index keys to be used for image size indexes
 var IKEY = []string {
     ".s0",
@@ -206,18 +221,6 @@ type Slidetype struct {
     TT bool                     // Includes title text
     BT bool                     // Includes body text
     IMG []int                   // Image size preferences
-}
-
-// Image size per slide type reference chart TODO map with TT & BT bools
-var ISZINDEX = [][]int {
-    {0, 1},                     // Big title
-    {0},                        // Full screen image
-    {0},                        // Big number
-    {3},                        // Bullet point list
-    {1},                        // Title, img & body
-    {},                         // Inspirational quote
-    {1, 2, 3},                  // Image with text
-    {},                         // Graph
 }
 
 type Slide struct {
@@ -468,3 +471,33 @@ func Sendtagstatus(r int, w http.ResponseWriter) {
     if r != 0 { sstr = fmt.Sprintf("%d new tag(s) added", r) }
     Sendstatus(C_OK, sstr, w)
 }
+
+// Adds tag suffixes and returns new tag list
+func Addtagsuf(tags []string, suf []string) []string {
+
+    var ret []string
+
+    for _, t := range tags {
+        for _, s := range suf {
+            tmp := t + s
+            ret = append(ret, tmp)
+        }
+    }
+
+    return ret
+}
+
+// Removes all tag suffixes and returns 'clean' list
+func Striptagsuf(stags []string) []string {
+
+    var ret []string
+
+    for _, t := range stags {
+        suf := filepath.Ext(t)
+        ct := t[0:len(t) - len(suf)]
+        ret = append(ret, ct)
+    }
+
+    return ret
+}
+

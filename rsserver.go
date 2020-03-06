@@ -207,17 +207,13 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     if st.TT { slide.Title = rsdb.Getrndtxt(db, settings.Tmax, req.Tags, rscore.TBUC) }
     if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
-    if len(st.IMG) > 0 { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+    if len(st.IMG) > 0 {
+        suf := rsimage.Mkimgsuflist(st.Type)
+        stags := rscore.Addtagsuf(req.Tags, suf)
+        slide.Img = rsdb.Getrndimg(db, settings.Imax, stags, rscore.IBUC)
+    }
 
     switch st.Type {
-
-    case 1:
-        // TODO (temporary hack for testing)
-        ctr := 0
-        for slide.Img.Size != 0 && ctr < 100{
-            slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
-            ctr++
-        }
 
     case 2:
         slide.Title = numgen()
