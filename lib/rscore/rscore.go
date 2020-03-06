@@ -229,6 +229,7 @@ type Slide struct {
     Btext string                // Body text
     Bpts []string               // Bullet points
     Dpts []int                  // Graph data points
+    Ctype int                   // Chart type
     Img Imgobj                  // Image object
 }
 
