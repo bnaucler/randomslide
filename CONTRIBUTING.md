@@ -29,11 +29,12 @@ tools/          - Tools for maintenence etc.
 * User account access levels
 * Security checks with session keys
 * Proper automated tests
-* Redo image size tagging
-* Check image repo size requirements
 * Verbosity levels
 * Image upload status reporting
 * Handling of '-0' special case
+* Chart type to data object 0-2
+* Object counting with tag suffixes
+* Suffix naming convention
 
 ## Text types
 Title (ttext): 1-35 characters  
