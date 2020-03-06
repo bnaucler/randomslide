@@ -28,7 +28,7 @@ function loginUser(){
 
     if (this.readyState == 4 ) {
         let resp = JSON.parse(this.responseText);
-        if (resp.Skey != ""){
+        if (resp.Skey.length >= 1){
             window.alert("Logged in!")
             sessionStorage.setItem('key', resp.Skey);
             sessionStorage.setItem('user', resp.Name);
