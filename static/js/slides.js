@@ -144,8 +144,23 @@ function slide7(resp){
 
     div.appendChild(canvas);
 
-    var colors = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'];
+    var colors = [
+        'rgba(255, 99, 132, 0.2)', 
+        'rgba(54, 162, 235, 0.2)', 
+        'rgba(255, 206, 86, 0.2)', 
+        'rgba(75, 192, 192, 0.2)', 
+        'rgba(153, 102, 255, 0.2)', 
+        'rgba(255, 159, 64, 0.2)'
+    ];
 
+    var bordercolors = [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+    ];
     
     let randint = Math.floor(Math.random() * 4);
 
@@ -153,6 +168,7 @@ function slide7(resp){
         case 0:
             var chartType = 'bar';
             var colorsToUse = colors.slice(0, resp.Dpts.length);
+            var bordersToUse = bordercolors.slice(0, resp.Dpts.length);
             break;
         case 1:
             var chartType = 'line';
@@ -163,6 +179,7 @@ function slide7(resp){
         case 3:
             var chartType = 'pie';
             var colorsToUse = colors.slice(0, resp.Dpts.length);
+            var bordersToUse = bordercolors.slice(0, resp.Dpts.length);
             break;
     }
 
@@ -174,7 +191,8 @@ function slide7(resp){
             datasets: [{
                 label: resp.Title,
                 data: resp.Dpts,
-                backgroundColor: colorsToUse
+                backgroundColor: colorsToUse,
+                borderColor: bordersToUse
             }]
         },
         options: {
