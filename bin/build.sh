@@ -4,7 +4,7 @@ TOOLS=("dbdump batchimport imgclass")
 TPATH="tools"
 
 echo "Building rsserver"
-go build -o bin/rsserver rsserver/rsserver.go
+go build -o bin/rsserver rsserver.go
 
 if [ "$1" = "all" ]; then
     for FN in $TOOLS; do

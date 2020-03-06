@@ -24,13 +24,11 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO
-* batchimport image scaling
 * Refactor image handler
 * Refactor getimgtype()
 * User account access levels
 * Security checks with session keys
 * Proper automated tests
-* Rebase rsserver
 * Redo image size tagging
 * Check image repo size requirements
 * Verbosity levels
