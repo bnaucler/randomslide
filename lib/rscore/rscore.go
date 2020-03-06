@@ -205,7 +205,19 @@ type Slidetype struct {
     Type int                    // The type ID number
     TT bool                     // Includes title text
     BT bool                     // Includes body text
-    IMG bool                    // Includes image
+    IMG []int                   // Image size preferences
+}
+
+// Image size per slide type reference chart TODO map with TT & BT bools
+var ISZINDEX = [][]int {
+    {0, 1},                     // Big title
+    {0},                        // Full screen image
+    {0},                        // Big number
+    {3},                        // Bullet point list
+    {1},                        // Title, img & body
+    {},                         // Inspirational quote
+    {1, 2, 3},                  // Image with text
+    {},                         // Graph
 }
 
 type Slide struct {

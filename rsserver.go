@@ -77,43 +77,37 @@ func setslidetype(i int, sprob []int) (rscore.Slidetype, []int) {
     case 0: // Big title
         st.TT = true
         st.BT = false
-        st.IMG = true
 
     case 1: // Full screen picture
         st.TT = false
         st.BT = false
-        st.IMG = true
 
     case 2: // Big number
         st.TT = false
         st.BT = false
-        st.IMG = false
 
     case 3: // Bullet point list
         st.TT = false
         st.BT = false
-        st.IMG = true
 
     case 4: // Title, body & img
         st.TT = true
         st.BT = true
-        st.IMG = true
 
     case 5: // Inspirational quote
         st.TT = true
         st.BT = false
-        st.IMG = false
 
     case 6: // Picture with text
         st.TT = false
         st.BT = true
-        st.IMG = true
 
     case 7: // Graph
         st.TT = true
         st.BT = false
-        st.IMG = false
     }
+
+    st.IMG = rscore.ISZINDEX[st.Type]
 
     return st, sprob
 }
@@ -213,7 +207,7 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     if st.TT { slide.Title = rsdb.Getrndtxt(db, settings.Tmax, req.Tags, rscore.TBUC) }
     if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
-    if st.IMG { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+    if len(st.IMG) > 0 { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
 
     switch st.Type {
 
