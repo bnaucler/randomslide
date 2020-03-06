@@ -28,13 +28,7 @@ function loginUser(){
 
     if (this.readyState == 4 ) {
         let resp = JSON.parse(this.responseText);
-        if (resp.Skey.length >= 1){
-            window.alert("Logged in!")
-            sessionStorage.setItem('key', resp.Skey);
-            sessionStorage.setItem('user', resp.Name);
-        } else {
-            window.alert(resp.Text + "Wrong password or username!");
-        }
+        console.log(resp);
     }
 
     loginAjax.open("POST", "/login?user=" + userName + "&pass=" + passWord, false);
