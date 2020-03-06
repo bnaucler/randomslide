@@ -6,6 +6,7 @@ function registerUser(){
     registerAjax.onreadystatechange = function () {
         if (this.readyState == 4 ) {
             let resp = JSON.parse(this.responseText);
+            console.log(resp);
             if (this.responseText.Code === 3){
                 window.alert(resp.Text + ". Try again with another username.");
             } else {
