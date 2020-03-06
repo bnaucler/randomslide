@@ -20,6 +20,7 @@ import (
 
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
+    "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
 func init() {
@@ -80,22 +81,33 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         rscore.Cherr(e)
 
         fszr := bytes.NewReader(ibuf)
-        ic, _, e := image.DecodeConfig(fszr)
+        // ic, _, e := image.DecodeConfig(fszr)
+        i, _, e := image.Decode(fszr)
         if e != nil { continue }
 
-        isz, szok := rscore.Getimgtype(ic.Width, ic.Height)
+        b := i.Bounds()
+
+        isz, szok := rsimage.Getimgtype(b.Max.X, b.Max.Y)
         if !szok { continue }
 
         nfn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
         nfnp := fmt.Sprintf("%s%s", rscore.IMGDIR, nfn)
 
+        ni, rsz := rsimage.Scaleimage(i, isz)
 
-        _, e = rscore.Cp(fnp, nfnp)
-        rscore.Cherr(e)
+        if rsz {
+            b = ni.Bounds()
+            e = rsimage.Wrimagefile(ni, nfnp)
+            rscore.Cherr(e)
+
+        } else {
+            _, e = rscore.Cp(fnp, nfnp)
+            rscore.Cherr(e)
+        }
 
         // Append the appropriate size tag to slice
         ttags := append(tags, rscore.IKEY[isz])
-        img := rscore.Mkimgobj(nfn, ttags, ic.Width, ic.Height, isz, settings)
+        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, settings)
         id := []byte(strconv.Itoa(settings.Imax))
         fmt.Printf("DEBUG: %+v\n", img)
 
