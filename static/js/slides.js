@@ -186,13 +186,17 @@ function slide7(resp){
         data: {
             labels: resp.Dpts,
             datasets: [{
-                label: resp.Title,
                 data: resp.Dpts,
                 backgroundColor: colorsToUse,
                 borderColor: bordersToUse
             }]
         },
         options: {
+            title:{
+                display: true,
+                fontSize: 20,
+                text: resp.Title
+            },
             scales: {
                 yAxes: [{
                     ticks: {
