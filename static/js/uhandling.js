@@ -25,7 +25,7 @@ function loginUser(){
     let loginAjax = new XMLHttpRequest();
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
-    registerAjax.onreadystatechange = function () {
+    loginAjax.onreadystatechange = function () {
         if (this.readyState == 4 ) {
             let resp = JSON.parse(this.responseText);
             if (resp.Skey != ""){
