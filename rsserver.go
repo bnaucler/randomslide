@@ -77,43 +77,37 @@ func setslidetype(i int, sprob []int) (rscore.Slidetype, []int) {
     case 0: // Big title
         st.TT = true
         st.BT = false
-        st.IMG = true
 
     case 1: // Full screen picture
         st.TT = false
         st.BT = false
-        st.IMG = true
 
     case 2: // Big number
         st.TT = false
         st.BT = false
-        st.IMG = false
 
     case 3: // Bullet point list
         st.TT = false
         st.BT = false
-        st.IMG = true
 
     case 4: // Title, body & img
         st.TT = true
         st.BT = true
-        st.IMG = true
 
     case 5: // Inspirational quote
         st.TT = true
         st.BT = false
-        st.IMG = false
 
     case 6: // Picture with text
         st.TT = false
         st.BT = true
-        st.IMG = true
 
     case 7: // Graph
         st.TT = true
         st.BT = false
-        st.IMG = false
     }
+
+    st.IMG = rscore.ISZINDEX[st.Type]
 
     return st, sprob
 }
@@ -213,17 +207,13 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     if st.TT { slide.Title = rsdb.Getrndtxt(db, settings.Tmax, req.Tags, rscore.TBUC) }
     if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
-    if st.IMG { slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC) }
+    if len(st.IMG) > 0 {
+        suf := rsimage.Mkimgsuflist(st.Type)
+        stags := rscore.Addtagsuf(req.Tags, suf)
+        slide.Img = rsdb.Getrndimg(db, settings.Imax, stags, rscore.IBUC)
+    }
 
     switch st.Type {
-
-    case 1:
-        // TODO (temporary hack for testing)
-        ctr := 0
-        for slide.Img.Size != 0 && ctr < 100{
-            slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
-            ctr++
-        }
 
     case 2:
         slide.Title = numgen()
@@ -437,6 +427,23 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// Image wrapper for rsdb.Countobj()
+func imgobjctr(db *bolt.DB, t string) int {
+
+    var tl []string
+    var ret int
+
+    tl = append(tl, t)
+    suf := rsimage.Getallsuf()
+    stl := rscore.Addtagsuf(tl, suf)
+
+    for _, st := range stl {
+        ret += rsdb.Countobj(db, st, rscore.IBUC)
+    }
+
+    return ret
+}
+
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -456,7 +463,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         }
 
         if settings.Imax > 0 {
-            ttag.IN = rsdb.Countobj(db, t, rscore.IBUC)
+            ttag.IN = imgobjctr(db, t)
         }
 
         resp.Tags = append(resp.Tags, ttag)

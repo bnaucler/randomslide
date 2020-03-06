@@ -29,10 +29,11 @@ tools/          - Tools for maintenence etc.
 * User account access levels
 * Security checks with session keys
 * Proper automated tests
-* Redo image size tagging
-* Check image repo size requirements
 * Verbosity levels
 * Image upload status reporting
+* Handling of '-0' special case
+* Chart type to data object 0-2
+* Suffix naming convention
 
 ## Text types
 Title (ttext): 1-35 characters  
@@ -41,8 +42,8 @@ Body (btext): 5-80 characters
 ## Slide types
 ```
 Index   Img sz    Type                        Description
-0       XL/16:9   Big title                   Could be good to start a slide set with
-1       XL        Full screen picture
+0       0/1       Big title                   Could be good to start a slide set with
+1       0         Full screen image
 2       NULL      Big number                  A slide just saying things like '+12%'
 3       3/NULL    Bullet point list
 4       1         Title, pic, body text       What we already have in alpha

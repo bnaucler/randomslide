@@ -7,8 +7,10 @@ import (
     "encoding/json"
 
     "github.com/boltdb/bolt"
+
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
+    "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
 func retrdeck(db *bolt.DB, mxind int, buc []byte) []rscore.Deck {
@@ -73,8 +75,10 @@ func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
     var ret []string
     ctag := rscore.Iindex{}
 
-    tl = append(tl, rscore.IKEY...)
-    for _, t := range tl {
+    suf := rsimage.Getallsuf()
+    stl := rscore.Addtagsuf(tl, suf)
+    // tl = append(tl, rscore.IKEY...)
+    for _, t := range stl {
 
         k := []byte(t)
         v, e := rsdb.Rdb(db, k, buc)
