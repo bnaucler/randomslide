@@ -45,12 +45,14 @@ function sendFeedback(){
     let key = sessionStorage.getItem('key');
     let feedback = document.getElementById("feedbackform").value;
     fbAjax.onreadystatechange = function(){
-        let resp = JSON.parse(this.responseText);
-        if(resp.Code == 0){
-            window.alert("Thanks for your feedback, it might be used for something");
-        }
-        if(resp.Code == 6){
-            window.alert(resp.Text);
+        if (this.readyState == 4 ) {
+            let resp = JSON.parse(this.responseText);
+            if(resp.Code == 0){
+                window.alert("Thanks for your feedback, it might be used for something");
+            }
+            if(resp.Code == 6){
+                window.alert(resp.Text);
+            }
         }
     }
 
