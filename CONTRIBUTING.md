@@ -32,7 +32,6 @@ tools/          - Tools for maintenence etc.
 * Verbosity levels
 * Image upload status reporting
 * Handling of '-0' special case
-* Chart type to data object 0-2
 * Suffix naming convention
 
 ## Text types

@@ -223,6 +223,7 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 
     case 7:
         slide.Dpts = dpgen()
+        slide.Ctype = rand.Intn(3)
     }
 
     return slide
