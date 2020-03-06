@@ -54,6 +54,6 @@ function sendFeedback(){
         }
     }
 
-    fbAjax.open("POST", "/feedback?fb=" + feedback + "user=" + user + "key=" + key, false);
+    fbAjax.open("POST", "/feedback?fb=" + feedback + "&user=" + user + "&key=" + key, false);
     fbAjax.send();
 }
