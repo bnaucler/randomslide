@@ -325,8 +325,6 @@ func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, isz int, tags []string,
     Wrimage(db, k, img)
 
     // Update relevant tags
-    nt, settings := Tagstoindex(tags, settings)
-    rscore.Sendtagstatus(nt, w)
     Uilists(db, ttags, settings.Imax, rscore.IBUC)
     settings.Imax++
 

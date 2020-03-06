@@ -383,7 +383,15 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     tags := rscore.Formattags(r.FormValue("tags"))
-    settings = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, tags, w, settings)
+
+    nt, settings := rsdb.Tagstoindex(tags, settings)
+    rscore.Sendtagstatus(nt, w)
+
+    var suf []string
+    suf = append(suf, rscore.IKEY[isz])
+    stags := rscore.Addtagsuf(tags, suf)
+
+    settings = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, stags, w, settings)
     rsdb.Wrsettings(db, settings)
 
     rscore.Sendstatus(rscore.C_OK, "", w)
