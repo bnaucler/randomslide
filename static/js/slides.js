@@ -145,8 +145,25 @@ function slide7(resp){
     div.appendChild(canvas);
 
     let ctx = document.getElementById('myChart' + i).getContext('2d');
+    let randint = Math.floor(Math.random() * 4);
+    switch(randint){
+        case 0:
+            var chartType = 'bar';
+            break;
+        case 1:
+            var chartType = 'line';
+            break;
+        case 2:
+            var chartType = 'radar';
+            break;
+        case 3:
+            var chartType = 'pie';
+            break;
+    }
+
+
     let myChart = new Chart(ctx, {
-        type: 'bar',
+        type: chartType,
         data: {
             labels: resp.Dpts,
             datasets: [{
