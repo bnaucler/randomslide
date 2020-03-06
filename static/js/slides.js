@@ -144,11 +144,15 @@ function slide7(resp){
 
     div.appendChild(canvas);
 
-    let ctx = document.getElementById('myChart' + i).getContext('2d');
+    var colors = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'];
+
+    
     let randint = Math.floor(Math.random() * 4);
+
     switch(randint){
         case 0:
             var chartType = 'bar';
+            var colorsToUse = colors.slice(0, resp.Dpts.length);
             break;
         case 1:
             var chartType = 'line';
@@ -158,10 +162,11 @@ function slide7(resp){
             break;
         case 3:
             var chartType = 'pie';
+            var colorsToUse = colors.slice(0, resp.Dpts.length);
             break;
     }
 
-
+    let ctx = document.getElementById('myChart' + i).getContext('2d');
     let myChart = new Chart(ctx, {
         type: chartType,
         data: {
@@ -169,6 +174,7 @@ function slide7(resp){
             datasets: [{
                 label: resp.Title,
                 data: resp.Dpts,
+                backgroundColor: colorsToUse
             }]
         },
         options: {
