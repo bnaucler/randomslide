@@ -14,9 +14,6 @@ Slideshow karaokae or other pranks. Actual real world usefulness can be question
 
 ## Installation
 ```
-go get github.com/boltdb/bolt
-go get golang.org/x/crypto/bcrypt
-go get github.com/nfnt/resize
 go get github.com/bnaucler/randomslide
 ```
 
