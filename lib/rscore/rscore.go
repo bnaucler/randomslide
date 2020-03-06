@@ -14,7 +14,6 @@ import (
     "log"
     "net"
     "time"
-    "image"
     "regexp"
     "strings"
     "strconv"
@@ -25,7 +24,6 @@ import (
     "encoding/json"
     "path/filepath"
 
-    "github.com/nfnt/resize"
     "golang.org/x/crypto/bcrypt"
 )
 
@@ -438,19 +436,6 @@ func Wrdatafile(fnp string, sf io.Reader) error {
     _, e = io.Copy(f, sf)
 
     return e
-}
-
-// Scales image down to max dimensions allowed, returns true if image was scaled
-func Scaleimage(i image.Image, t int) (image.Image, bool) {
-
-    b := i.Bounds()
-
-    if uint(b.Max.X) > IMGMAX[t][0] || uint(b.Max.Y) > IMGMAX[t][1] {
-        rsz := resize.Thumbnail(IMGMAX[t][0], IMGMAX[t][1], i, resize.Lanczos3)
-        return rsz, true
-    }
-
-    return i, false
 }
 
 // Sends a status code response as JSON object
