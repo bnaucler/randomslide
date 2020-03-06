@@ -3,7 +3,7 @@ var timer;
 var resp;
 var slideIndex = 1;
 var slideshow = true;
-
+var deckId;
 window.onload = getTags();
 
 function getTags(){
@@ -60,9 +60,10 @@ function fetchSlides(){
     if(document.getElementById("deckid").value != null){
         var deckid = document.getElementById("deckid").value;
     }
-    
+
     xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid, false);
     xhttp.send();
+    deckId = resp.Id;
     createSlides(resp.Slides);
 }
 
@@ -241,7 +242,8 @@ function endScreen(){
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><br /><h2>Thanks for using randomslide</h2></div>";
+    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>You just hade deckid: " + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
+
 }
 /* 
 todo:
