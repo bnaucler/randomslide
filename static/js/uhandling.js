@@ -39,10 +39,21 @@ function loginUser(){
     loginAjax.send();
 }
 
-/*
+function sendFeedback(){
+    let fbAjax = new XMLHttpRequest();
+    let user = sessionStorage.getItem('user');
+    let key = sessionStorage.getItem('key');
+    let feedback = document.getElementById("feedbackform").value;
+    fbAjax.onreadystatechange = function(){
+        let resp = JSON.parse(this.responseText);
+        if(resp.Code == 0){
+            window.alert("Thanks for your feedback, it might be used for something");
+        }
+        if(resp.Code == 6){
+            window.alert(resp.Text);
+        }
+    }
 
-let fbAjax = new XMLHttpRequest();
-
-fbAjax.open("POST", "/feedback?fb=" + feedback, false);
-fbAjax.send();
-*/
+    fbAjax.open("POST", "/feedback?fb=" + feedback + "user=" + user + "key=" + key, false);
+    fbAjax.send();
+}
