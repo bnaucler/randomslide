@@ -162,7 +162,7 @@ function slide7(resp){
         'rgba(255, 159, 64, 1)'
     ];
     
-    let randint = Math.floor(Math.random() * 4);
+    let randint = Math.floor(Math.random() * 3);
 
     switch(randint){
         case 0:
@@ -174,9 +174,6 @@ function slide7(resp){
             var chartType = 'line';
             break;
         case 2:
-            var chartType = 'radar';
-            break;
-        case 3:
             var chartType = 'pie';
             var colorsToUse = colors.slice(0, resp.Dpts.length);
             var bordersToUse = bordercolors.slice(0, resp.Dpts.length);
