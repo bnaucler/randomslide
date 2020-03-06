@@ -22,7 +22,7 @@ function registerUser(){
 
 
 
-
+/*
 let loginAjax = new XMLHttpRequest();
 
 loginAjax.open("POST", "/login?user=" + userName + "&pass=" + passWord, false);
@@ -33,3 +33,4 @@ let fbAjax = new XMLHttpRequest();
 
 fbAjax.open("POST", "/feedback?fb=" + feedback, false);
 fbAjax.send();
+*/
