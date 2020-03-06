@@ -13,11 +13,12 @@ The code has been tested on Arch Linux 5.5 and FreeBSD 12, but should be fairly 
 Slideshow karaokae or other pranks. Actual real world usefulness can be questioned.
 
 ## Installation
+To build server and tools:  
 ```
 go get github.com/bnaucler/randomslide
+cd $GOPATH/src/github.com/bnaucler/randomslide
+bin/build.sh all
 ```
-
-`bin/build.sh all` to build server and tools.  
 
 ## Usage
 Launch with `bin/rsserver`  
@@ -85,7 +86,7 @@ Endpoint:               Variables:              Comment:
                         fb          string      The feedback info itself
 
 ```
-Endpoints marked with `*` requires the user to be logged in.
+Endpoints marked with `*` requires the user to be logged in, authenticated by `user` & `skey` being included with the request.
 
 ## Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for best practices and information on how to get involved in the project.
