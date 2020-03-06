@@ -20,6 +20,7 @@ import (
 
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
+    "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
 func init() {
@@ -83,19 +84,18 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         ic, _, e := image.DecodeConfig(fszr)
         if e != nil { continue }
 
-        isz, szok := rscore.Getimgtype(ic.Width, ic.Height)
+        isz, szok := rsimage.Getimgtype(ic.Width, ic.Height)
         if !szok { continue }
 
         nfn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
         nfnp := fmt.Sprintf("%s%s", rscore.IMGDIR, nfn)
-
 
         _, e = rscore.Cp(fnp, nfnp)
         rscore.Cherr(e)
 
         // Append the appropriate size tag to slice
         ttags := append(tags, rscore.IKEY[isz])
-        img := rscore.Mkimgobj(nfn, ttags, ic.Width, ic.Height, isz, settings)
+        img := rsimage.Mkimgobj(nfn, ttags, ic.Width, ic.Height, isz, settings)
         id := []byte(strconv.Itoa(settings.Imax))
         fmt.Printf("DEBUG: %+v\n", img)
 

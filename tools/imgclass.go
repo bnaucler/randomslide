@@ -10,6 +10,7 @@ import (
     "io/ioutil"
 
     "github.com/bnaucler/randomslide/lib/rscore"
+    "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
 func init() {
@@ -35,8 +36,8 @@ func main() {
 
         rscore.Cherr(e)
         b := i.Bounds()
-        c, szok := rscore.Getimgtype(b.Max.X, b.Max.Y)
-        ni, rsz := rscore.Scaleimage(i, c)
+        c, szok := rsimage.Getimgtype(b.Max.X, b.Max.Y)
+        ni, rsz := rsimage.Scaleimage(i, c)
         b = ni.Bounds()
 
         if szok {

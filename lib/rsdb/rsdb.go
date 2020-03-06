@@ -15,8 +15,11 @@ import (
     "math/rand"
     "encoding/json"
     "path/filepath"
+
     "github.com/boltdb/bolt"
+
     "github.com/bnaucler/randomslide/lib/rscore"
+    "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
 // Opens the database
@@ -316,7 +319,7 @@ func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, isz int, tags []string,
     ofn := filepath.Base(fn)
 
     // Write image object to database
-    img := rscore.Mkimgobj(ofn, append(tags, rscore.IKEY[isz]),
+    img := rsimage.Mkimgobj(ofn, append(tags, rscore.IKEY[isz]),
         iw, ih, isz, settings)
     k := []byte(strconv.Itoa(img.Id))
     Wrimage(db, k, img)

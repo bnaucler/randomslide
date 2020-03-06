@@ -15,9 +15,6 @@ import (
     "net"
     "time"
     "image"
-    "image/png"
-    "image/jpeg"
-    "image/gif"
     "regexp"
     "strings"
     "strconv"
@@ -430,77 +427,17 @@ func Rmall(dir string) {
     }
 }
 
-// Writes image object to file
-func Wrimagefile(i image.Image, fnp string) error {
-
-    var e error
-    ext := filepath.Ext(fnp)
+// Writes raw data to file
+func Wrdatafile(fnp string, sf io.Reader) error {
 
     f, e := os.Create(fnp)
     Cherr(e)
     defer f.Close()
 
-    switch {
-    case ext == ".jpg" || ext == ".jpeg":
-        jpeg.Encode(f, i, nil)
-
-    case ext == ".png":
-        png.Encode(f, i)
-
-    case ext == ".gif":
-        gif.Encode(f, i, nil)
-
-    }
+    Cherr(e)
+    _, e = io.Copy(f, sf)
 
     return e
-}
-
-// Conditionally returns image size type & true if fitting classification
-func Getimgtype(iw int, ih int) (int, bool) {
-
-    var t int
-    var ok bool
-
-    w := uint(iw)
-    h := uint(ih)
-
-    div := ih / 10
-    nw := iw / div
-
-    switch {
-    case nw > 20:
-        return 4, false
-
-    case nw > 12: // Landscape
-        if w > IMGMAX[0][0] || h > IMGMAX[0][1] {
-            t = 0
-            ok = true
-
-        } else if w < IMGMIN[0][0] || h < IMGMIN[0][1] {
-            ok = false
-
-        } else {
-            t = 1
-        }
-
-    case nw > 8: // Box-shaped
-        t = 2
-
-        if w < IMGMIN[2][0] || h < IMGMIN[2][1] { ok = false
-        } else { ok = true }
-
-    case nw > 5: // Portrait
-        t = 3
-
-        if w < IMGMIN[3][0] || h < IMGMIN[3][1] { ok = false
-        } else { ok = true }
-
-    default:
-        return 4, false
-
-    }
-
-    return t, ok
 }
 
 // Scales image down to max dimensions allowed, returns true if image was scaled
@@ -514,21 +451,6 @@ func Scaleimage(i image.Image, t int) (image.Image, bool) {
     }
 
     return i, false
-}
-
-func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,
-    settings Settings) Imgobj {
-
-    img := Imgobj{
-        Id: settings.Imax,
-        Fname: fn,
-        Tags: tags,
-        W: iw,
-        H: ih,
-        Size: szt,
-    }
-
-    return img
 }
 
 // Sends a status code response as JSON object

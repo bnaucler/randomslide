@@ -2,7 +2,6 @@ package main
 
 import (
     "os"
-    "io"
     "fmt"
     "time"
     "flag"
@@ -16,7 +15,6 @@ import (
     "net/http"
     "math/rand"
     "io/ioutil"
-    "path/filepath"
     "encoding/json"
 
     "github.com/boltdb/bolt"
@@ -24,6 +22,7 @@ import (
 
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
+    "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
 func init() {
@@ -376,16 +375,10 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         hlr.Filename, rscore.Prettyfsize(hlr.Size), mt)
     rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
 
-    ext := filepath.Ext(hlr.Filename)
-    fn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
-    fnp := fmt.Sprintf("%s%s", rscore.IMGDIR, fn)
+    fn, fnp := rsimage.Newimagepath(hlr.Filename)
 
-    df, e := os.Create(fnp)
+    e = rscore.Wrdatafile(fnp, sf)
     rscore.Cherr(e)
-    defer df.Close()
-
-    rscore.Cherr(e)
-    _, e = io.Copy(df, sf)
 
     ibuf, e := ioutil.ReadFile(fnp)
     rscore.Cherr(e)
@@ -394,7 +387,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     i, _, e := image.Decode(fszr)
     b := i.Bounds()
 
-    isz, szok := rscore.Getimgtype(b.Max.X, b.Max.Y)
+    isz, szok := rsimage.Getimgtype(b.Max.X, b.Max.Y)
 
     if szok == false {
         rscore.Sendstatus(rscore.C_WRSZ,
@@ -402,12 +395,12 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         return settings
     }
 
-    ni, rsz := rscore.Scaleimage(i, isz)
+    ni, rsz := rsimage.Scaleimage(i, isz)
 
     if rsz {
         b = ni.Bounds()
         os.RemoveAll(fnp)
-        e = rscore.Wrimagefile(ni, fnp)
+        e = rsimage.Wrimagefile(ni, fnp)
         rscore.Cherr(e)
     }
 
