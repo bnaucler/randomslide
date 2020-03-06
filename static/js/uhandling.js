@@ -5,13 +5,15 @@ function registerUser(){
 
     registerAjax.onreadystatechange = function () {
         if (this.readyState == 4 ) {
+            let resp = JSON.parse(this.responseText);
             if (this.responseText.Code === 3){
-                window.alert(this.responseText.Text + ". Try again with another username.");
+                window.alert(resp.Text + ". Try again with another username.");
             } else {
                 window.alert("User created, you are now logged in.")
-                sessionStorage.setItem('key', this.responseText.Text.Skey);
+                sessionStorage.setItem('key', resp.Skey);
                 sessionStorage.setItem('user', userName);
             }
+
         }
         console.log(sessionStorage.getItem("key"));
         console.log(sessionStorage.getItem("user"));
