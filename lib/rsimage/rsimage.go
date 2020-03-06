@@ -10,15 +10,25 @@ package rsimage
 import (
     "os"
     "fmt"
+    "time"
     "image"
     "image/png"
     "image/jpeg"
     "image/gif"
+    "math/rand"
     "path/filepath"
 
     "github.com/nfnt/resize"
     "github.com/bnaucler/randomslide/lib/rscore"
 )
+
+func init() {
+    rand.Seed(time.Now().UnixNano())
+
+    image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
+    image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
+    image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
+}
 
 // Returns path of new image file
 func Newimagepath(ofn string) (string, string) {

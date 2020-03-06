@@ -3,13 +3,9 @@ package main
 import (
     "os"
     "fmt"
-    "time"
     "flag"
     "bytes"
     "image"
-    "image/png"
-    "image/jpeg"
-    "image/gif"
     "strings"
     "strconv"
     "net/http"
@@ -24,14 +20,6 @@ import (
     "github.com/bnaucler/randomslide/lib/rsdb"
     "github.com/bnaucler/randomslide/lib/rsimage"
 )
-
-func init() {
-    rand.Seed(time.Now().UnixNano())
-
-    image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
-    image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
-    image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
-}
 
 // Updates slilde probabilities
 func setsprob(n int, sprob []int) []int {
