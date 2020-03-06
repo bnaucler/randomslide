@@ -16,9 +16,10 @@ function registerUser(){
         console.log(sessionStorage.getItem("key"));
         console.log(sessionStorage.getItem("user"));
     }
+    registerAjax.open("POST", "/register?user=" + userName + "&pass=" + passWord, false);
+    registerAjax.send();
 }
-registerAjax.open("POST", "/register?user=" + userName + "&pass=" + passWord, false);
-registerAjax.send();
+
 
 
 
