@@ -310,18 +310,10 @@ func Addtextwtags(text string, tags []string, db *bolt.DB,
 }
 
 // Stores image object in database TODO make work for batchimport
-func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, tags []string,
+func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, isz int, tags []string,
     w http.ResponseWriter, settings rscore.Settings) rscore.Settings {
 
     ofn := filepath.Base(fn)
-
-    isz, szok := rscore.Getimgtype(iw, ih)
-
-    if szok == false {
-        rscore.Sendstatus(rscore.C_WRSZ,
-            "Could not classify size - file not uploaded", w)
-        return settings
-    }
 
     // Write image object to database
     img := rscore.Mkimgobj(ofn, append(tags, rscore.IKEY[isz]),

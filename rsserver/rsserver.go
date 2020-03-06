@@ -233,7 +233,7 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
     case 1:
         // TODO (temporary hack for testing)
         ctr := 0
-        for slide.Img.Size != 3 && ctr < 100{
+        for slide.Img.Size != 0 && ctr < 100{
             slide.Img = rsdb.Getrndimg(db, settings.Imax, req.Tags, rscore.IBUC)
             ctr++
         }
@@ -389,12 +389,30 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     ibuf, e := ioutil.ReadFile(fnp)
     rscore.Cherr(e)
+
     fszr := bytes.NewReader(ibuf)
-    ic, _, e := image.DecodeConfig(fszr)
-    rscore.Cherr(e)
+    i, _, e := image.Decode(fszr)
+    b := i.Bounds()
+
+    isz, szok := rscore.Getimgtype(b.Max.X, b.Max.Y)
+
+    if szok == false {
+        rscore.Sendstatus(rscore.C_WRSZ,
+            "Image size to small or aspect ratio out of bounds", w)
+        return settings
+    }
+
+    ni, rsz := rscore.Scaleimage(i, isz)
+
+    if rsz {
+        b = ni.Bounds()
+        os.RemoveAll(fnp)
+        e = rscore.Wrimagefile(ni, fnp)
+        rscore.Cherr(e)
+    }
 
     tags := rscore.Formattags(r.FormValue("tags"))
-    settings = rsdb.Addimgwtags(db, fn, ic.Width, ic.Height, tags, w, settings)
+    settings = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, tags, w, settings)
     rsdb.Wrsettings(db, settings)
 
     rscore.Sendstatus(rscore.C_OK, "", w)
@@ -622,7 +640,7 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     sok, u := valskey(db, uname, skey)
 
     if !sok {
-        rscore.Sendstatus(rscore.C_NLOG, "User not logged in - no skey match", w)
+        rscore.Sendstatus(rscore.C_NLOG, "User not logged in - skey mismatch", w)
         return
     }
 

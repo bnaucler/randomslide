@@ -14,6 +14,10 @@ import (
     "log"
     "net"
     "time"
+    "image"
+    "image/png"
+    "image/jpeg"
+    "image/gif"
     "regexp"
     "strings"
     "strconv"
@@ -24,6 +28,7 @@ import (
     "encoding/json"
     "path/filepath"
 
+    "github.com/nfnt/resize"
     "golang.org/x/crypto/bcrypt"
 )
 
@@ -74,20 +79,26 @@ const C_NLOG = 6                // User not logged in
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}
 
+// Image type classifications
+const IMG_XL = 0                // X Large
+const IMG_LS = 1                // Landscape
+const IMG_BO = 2                // Box-shaped
+const IMG_PO = 3                // Portrait
+
 // Min bounds for image sizes (w, h)
-var IMGMIN = [][]int{
-    {150, 150},                 // 0: Small
-    {500, 500},                 // 1: Medium
-    {1000, 1000},               // 2: Large
-    {1920, 1080},               // 3: X Large
+var IMGMIN = [][]uint{
+    {1920, 1080},               // 0: X Large
+    {640, 360},                 // 1: Landscape
+    {360, 360},                 // 2: Box-shaped
+    {360, 480},                 // 3: Portrait
 }
 
 // Max bounds for image sizes (w, h)
-var IMGMAX = [][]int{
-    {499, 499},                 // 0: Small
-    {999, 799},                 // 1: Medium
-    {1919, 1079},               // 2: Large
-    {3000, 3000},               // 3: X Large
+var IMGMAX = [][]uint{
+    {1920, 1080},               // 0: X Large
+    {1920, 1080},               // 1: Landscape
+    {1080, 1080},               // 2: Box-shaped
+    {1080, 1920},               // 3: Portrait
 }
 
 var DBUC = []byte("dbuc")       // Deck bucket
@@ -340,17 +351,17 @@ func Addlog(ltype int, msg []byte, r *http.Request) {
     var lentry string
 
     switch ltype {
-        case L_REQ:
-            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+    case L_REQ:
+        lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
 
-        case L_RESP:
-            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+    case L_RESP:
+        lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
 
-        case L_SHUTDOWN:
-            lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
+    case L_SHUTDOWN:
+        lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
 
-        default:
-            lentry = fmt.Sprintf("Something happened, but I don't know how to log it!")
+    default:
+        lentry = fmt.Sprintf("Something went wrong, but I don't know how to log it!")
     }
 
     log.Println(lentry)
@@ -419,20 +430,90 @@ func Rmall(dir string) {
     }
 }
 
-// Conditionally returns image size type & true if fitting classification
-func Getimgtype(w int, h int) (int, bool) {
+// Writes image object to file
+func Wrimagefile(i image.Image, fnp string) error {
 
-    i := 3
+    var e error
+    ext := filepath.Ext(fnp)
 
-    for i >= 0 {
-        if w > IMGMIN[i][0] && h > IMGMIN[i][1] &&
-           w < IMGMAX[i][0] && h < IMGMAX[i][1] {
-               return i, true
-           }
-        i--
+    f, e := os.Create(fnp)
+    Cherr(e)
+    defer f.Close()
+
+    switch {
+    case ext == ".jpg" || ext == ".jpeg":
+        jpeg.Encode(f, i, nil)
+
+    case ext == ".png":
+        png.Encode(f, i)
+
+    case ext == ".gif":
+        gif.Encode(f, i, nil)
+
     }
 
-    return 0, false
+    return e
+}
+
+// Conditionally returns image size type & true if fitting classification
+func Getimgtype(iw int, ih int) (int, bool) {
+
+    var t int
+    var ok bool
+
+    w := uint(iw)
+    h := uint(ih)
+
+    div := ih / 10
+    nw := iw / div
+
+    switch {
+    case nw > 20:
+        return 4, false
+
+    case nw > 12: // Landscape
+        if w > IMGMAX[0][0] || h > IMGMAX[0][1] {
+            t = 0
+            ok = true
+
+        } else if w < IMGMIN[0][0] || h < IMGMIN[0][1] {
+            ok = false
+
+        } else {
+            t = 1
+        }
+
+    case nw > 8: // Box-shaped
+        t = 2
+
+        if w < IMGMIN[2][0] || h < IMGMIN[2][1] { ok = false
+        } else { ok = true }
+
+    case nw > 5: // Portrait
+        t = 3
+
+        if w < IMGMIN[3][0] || h < IMGMIN[3][1] { ok = false
+        } else { ok = true }
+
+    default:
+        return 4, false
+
+    }
+
+    return t, ok
+}
+
+// Scales image down to max dimensions allowed, returns true if image was scaled
+func Scaleimage(i image.Image, t int) (image.Image, bool) {
+
+    b := i.Bounds()
+
+    if uint(b.Max.X) > IMGMAX[t][0] || uint(b.Max.Y) > IMGMAX[t][1] {
+        rsz := resize.Thumbnail(IMGMAX[t][0], IMGMAX[t][1], i, resize.Lanczos3)
+        return rsz, true
+    }
+
+    return i, false
 }
 
 func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,

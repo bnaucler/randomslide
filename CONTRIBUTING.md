@@ -24,13 +24,17 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO
-* Refactoring image handler
+* batchimport image scaling
+* Refactor image handler
+* Refactor getimgtype()
 * User account access levels
 * Security checks with session keys
 * Proper automated tests
+* Rebase rsserver
 * Check image repo size requirements
 * Verbosity levels
 * Image upload status reporting
+* Create image lib
 
 ## Text types
 Title (ttext): 1-35 characters  
@@ -40,18 +44,25 @@ Body (btext): 5-80 characters
 ```
 Index   Img sz    Type                        Description
 0       XL/16:9   Big title                   Could be good to start a slide set with
-1       XL/16:9   Full screen picture
+1       XL        Full screen picture
 2       NULL      Big number                  A slide just saying things like '+12%'
-3       9:16/NULL Bullet point list
-4       16:9      Title, pic, body text       What we already have in alpha
+3       3/NULL    Bullet point list
+4       1         Title, pic, body text       What we already have in alpha
 5       NULL      'Inspirational quote'       Soo much potential here
-6       16:9/9:16 Picture with text           Theme can decide if text goes under, next to etc
+6       1/2/3     Picture with text           Theme can decide if text goes under, next to etc
 7       NULL      Graph                       No good slideshow is complete without a graph
 ```
+See `Image sizes` section below for image reference sizes.
 
 # Image sizes
-Images will either be classified as XL (fullscreen), 16:9 (width:height) or 9:16 (width:height).
 ```
+Index   Type            Aspect ratio        Min size        Max size
+0       XL              20:10-13:10         1920x1080       1920x1080
+1       Landscape       20:10-13:10         640x360         1920x1080
+2       Box             12:10-9:10          360x360         1080x1080
+3       Portrait        8:10-5:10           360x640         1080x1920
+```
+Images larger than the max size will be automatically scaled to this size. Please note that this might have undesirable effects for picture quality, but has been deemed necessary to improve loading times.
 
 ## IRC
 The main developers can be found in the channel #ljusdal at EFNet.
