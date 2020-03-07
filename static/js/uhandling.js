@@ -7,9 +7,13 @@ function registerUser(){
         if (this.readyState == 4 ) {
             let resp = JSON.parse(this.responseText);
             if (resp.Code === 3){
-                window.alert(resp.Text + ". Try again with another username.");
+                var alertHTML = '<div class="alert">' + resp.Text + '. Try again with another username.</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
             } else {
-                window.alert("User created, you are now logged in.")
+                var alertHTML = '<div class="alert">User created, you are now logged in.</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
                 sessionStorage.setItem('key', resp.Skey);
                 sessionStorage.setItem('user', resp.Name);
             }
@@ -27,11 +31,15 @@ function loginUser(){
         if (this.readyState == 4 ) {
             let resp = JSON.parse(this.responseText);
             if (resp.Skey != ""){
-                window.alert("Logged in!")
+                var alertHTML = '<div class="alert">Logged in!</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
                 sessionStorage.setItem('key', resp.Skey);
                 sessionStorage.setItem('user', resp.Name);
             } else {
-                window.alert(resp.Text + "Wrong password or username!");
+                var alertHTML = '<div class="alert">Bad username or password. Try again.</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
             }
         }
     }
@@ -48,10 +56,15 @@ function sendFeedback(){
         if (this.readyState == 4 ) {
             let resp = JSON.parse(this.responseText);
             if(resp.Code == 0){
-                window.alert("Thanks for your feedback, it might be used for something");
+                var alertHTML = '<div class="alert">Thanks for your feedback, it might be used for something</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
             }
             if(resp.Code == 6){
-                window.alert(resp.Text);
+                var alertHTML = '<div class="alert">' + resp.Text + '</div>';
+                document.body.insertAdjacentHTML("beforeend", alertHTML);
+                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+                window.alert();
             }
         }
     }
