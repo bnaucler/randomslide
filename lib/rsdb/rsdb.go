@@ -149,22 +149,14 @@ func Wruindex(db *bolt.DB, uname string,
 }
 
 // Returns deck from database
-func Getdeckfdb(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
+func Rdeck(db *bolt.DB, deck rscore.Deck, id int,
     settings rscore.Settings) rscore.Deck {
 
-    var k int
-
-    if req.Id >= settings.Dmax {
+    if id >= settings.Dmax || settings.Dmax < 1 {
         return rscore.Deck{}
-
-    } else if settings.Dmax < 1 {
-        return rscore.Deck{}
-
-    } else {
-        k = req.Id
     }
 
-    bk := []byte(strconv.Itoa(k))
+    bk := []byte(strconv.Itoa(id))
     mdeck, e := Rdb(db, bk, rscore.DBUC)
     rscore.Cherr(e)
 

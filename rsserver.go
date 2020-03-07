@@ -261,7 +261,7 @@ func getdeck(req rscore.Deckreq, db *bolt.DB,
             Lang: req.Lang }
 
     if req.Isidreq {
-        deck = rsdb.Getdeckfdb(db, deck, req, settings)
+        deck = rsdb.Rdeck(db, deck, req.Id, settings)
 
     } else {
         deck, settings = mkdeck(db, deck, req, settings)
