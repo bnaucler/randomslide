@@ -689,7 +689,6 @@ func main() {
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
     dbptr := flag.String("d", rscore.DBNAME, "specify database to open")
     vptr := flag.Bool("v", rscore.VERBDEF, "verbose mode")
-    xptr := flag.Bool("x", rscore.VOLATILEDEF, "volatile mode")
     flag.Parse()
 
     db := rsdb.Open(*dbptr)
@@ -702,11 +701,10 @@ func main() {
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
-    if *xptr {
-        http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-            shutdownhandler(w, r, db, settings)
-        })
-    }
+    // Requests to shut down server
+    http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
+        shutdownhandler(w, r, db, settings)
+    })
 
     // Slide deck requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {

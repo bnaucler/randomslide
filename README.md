@@ -32,21 +32,22 @@ Usage of bin/rsserver:
   -p int
     	port number to listen (default 6291)
   -v	verbose mode
-  -x	volatile mode
 ```
 
+The first user who registers will automatically be provided with admin rights.  
 Server log files can be accessed at `static/logs` or in the admin interface.
 
 ## CLI tools
 `dbdump` will, perhaps unsurprisingly, dump the database to console. Not recommended with large data sets, but useful when troubleshooting.  
-`batchimport` can import a UTF-8-encoded text file as text objects directly into the database.
+`batchimport` can import a UTF-8-encoded text file as text objects directly into the database.  
+`imgclass` iterates through a directory and checks for classes and final dimensions of images.
 
 ### API reference
 
 ```
 Endpoint:               Variables:              Comment:
-/restart                                        Graceful server shutdown.
-                                                Requires launching with -x
+/restart*                                       Graceful server shutdown.
+                                                Requires admin rights
                         wipe        string      Wipes database and images if "yes"
 
 

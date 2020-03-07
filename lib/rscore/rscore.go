@@ -36,7 +36,6 @@ const PIDFILEPATH = "./data/"   // Base directory for storage of PID file
 const FBFILE = "./data/fb.txt"  // Storage of feedback data
 
 const VERBDEF = false           // Verbose mode defaults to false
-const VOLATILEDEF = false       // Volatile mode defaults to false
 
 const TTEXTMAX = 35             // Max length for title text
 const BTEXTMAX = 80             // Max length for body text
