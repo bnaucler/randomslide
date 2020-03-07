@@ -11,25 +11,27 @@
 
     <div class="wrapper">
     <header>
-        <img src="randomSlide02.svg" class="logo" />
+        <h1>randomSlide</h1>
         <nav>
-        <a href="admin.html">adminpage</a><br />
+        <a href="admin.html">adminpage</a>
         <a href="upload.html">upload content</a>
         </nav>
     </header>
 
     <div class="formwrapper" id="formwrapper">
-        <h3>Choose things:</h3>
+        <h2 class="choice">Make your choices!</h2>
         <br />
-            
+                <div class="category">
                 <label for="category">Category(CTRL + CLICK to select more than one):</label>
                     <br />
      
                 <select id="category" name="category" class="item" multiple>
 
                 </select>  
+            </div>
                     <br />
                     <br />
+                    <div class="right">
                 <label for="amountOfSlides">Amount of slides to be generated? (min 5, max 25):</label>
                     <br />
                 <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
@@ -43,27 +45,29 @@
                     <br />
                     <br />
 
-                    <br />
-                    <br />
+
                 <label for="timerOrNot">Change slide yourself or on a timer?</label>
                     <br />
                 <select name="timerOrNot" id="timerOrNot" class="item">
                     <option value="change" selected="selected">Change myself</option>
                     <option value="timer">Timer!</option>
                 </select> 
+            </div>
                     <br />
                     <br />
-
+                    <div class="placeholder"></div>
                 <div id="slideTimer" class="item">
                     <label for="time">Time between slide changes? (30-240 sec):</label>
                     <br />
                     <br />
                     <input type="number" name="time" id="time" min="30" max="240" value="60">
                 </div>
+
                     <br />
                     <br />
+
                 <div id="specId" class="item">
-                    <label for="deckid">Or specify a deck with its id: (only numbers)</label>
+                    <label for="deckid">Got a deck ID from a friend? Insert here!</label>
                     <br />
                     <br />
                     <input type="text" pattern="[0-9]{1,}" name="deckid" id="deckid">
