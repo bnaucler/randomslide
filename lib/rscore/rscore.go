@@ -435,6 +435,17 @@ func Cp(s string, d string) (int64, error) {
     return b, e
 }
 
+// Appends str to file at fname
+func Appendfile(fname string, str string) {
+
+    f, e := os.OpenFile(fname, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+    Cherr(e)
+    defer f.Close()
+
+    _, e = f.WriteString(str)
+    Cherr(e)
+}
+
 // Removes all files residing in dir (except .gitkeep)
 func Rmall(dir string) {
 

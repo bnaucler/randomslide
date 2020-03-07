@@ -162,7 +162,7 @@ func setexp(n int, e int) int {
     return n
 }
 
-// Generate numbers of slide type 2
+// Generate numbers of slide type 2 (big number)
 func numgen() string {
 
     p := byte(' ')
@@ -182,6 +182,7 @@ func numgen() string {
     return strings.TrimSpace(ret)
 }
 
+// Generate data points for slide type 7 (graph)
 func dpgen() []int {
 
     var ret []int
@@ -720,17 +721,6 @@ func valskey(db *bolt.DB, uname string, skey string,
     return false, rscore.User{}
 }
 
-// Appends str to file at fname
-func appendfile(fname string, str string) {
-
-    f, e := os.OpenFile(fname, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-    rscore.Cherr(e)
-    defer f.Close()
-
-    _, e = f.WriteString(str)
-    rscore.Cherr(e)
-}
-
 // Receives feedback data and saves to file
 func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -746,7 +736,7 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     if !ok { return }
 
     d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, str)
-    appendfile(rscore.FBFILE, d)
+    rscore.Appendfile(rscore.FBFILE, d)
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
 
