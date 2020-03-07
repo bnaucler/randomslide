@@ -6,7 +6,7 @@ Björn W Naucler (bwn@randomslide.com)
 Morgan Andersson (ma@randomslide.com)
 
 ## Dependencies
-[BoltDB](https://github.com/boltdb/bolt) & [bcrypt](https://golang.org/x/crypto/bcrypt)  
+[BoltDB](https://github.com/boltdb/bolt), [bcrypt](https://golang.org/x/crypto/bcrypt) & [nfnt/resize](https://github.com/nfnt/resize)  
 The code has been tested on Arch Linux 5.5 and FreeBSD 12, but should be fairly portable.
 
 ## Project purpose
@@ -34,12 +34,13 @@ Usage of bin/rsserver:
   -v	verbose mode
 ```
 
-The first user who registers will automatically be provided with admin rights.  
+The first user who registers an account will automatically be provided with admin rights.  
 Server log files can be accessed at `static/logs` or in the admin interface.
 
 ## CLI tools
-`dbdump` will, perhaps unsurprisingly, dump the database to console. Not recommended with large data sets, but useful when troubleshooting.  
-`batchimport` can import a UTF-8-encoded text file as text objects directly into the database.  
+There are a few CLI helper tools bundled with randomslide:  
+`dbdump` dumps the database to console. Not recommended with large data sets.  
+`batchimport` can import a UTF-8-encoded text file or image directory directly into the database.  
 `imgclass` iterates through a directory and checks for classes and final dimensions of images.
 
 ### API reference
@@ -81,6 +82,12 @@ Endpoint:               Variables:              Comment:
 /addimg*                                        Adds new images to the database
                         file        file        The image file itself
                         tags        string      Which tags to associate the image with
+
+
+/chuser*                                        Change user settings
+                                                Requires admin rights
+                        tuser       string      User to edit
+                        op          int         Operation (see rscore.go for reference)
 
 
 /feedback*                                      Give feedback on user experience
