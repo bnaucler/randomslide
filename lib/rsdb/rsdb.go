@@ -105,6 +105,15 @@ func Ruser(db *bolt.DB, uname string) rscore.User {
     return rscore.User{}
 }
 
+// Writes deck to database
+func Wrdeck(db *bolt.DB, deck rscore.Deck) {
+
+    k := []byte(strconv.Itoa(deck.Id))
+    mdeck, e := json.Marshal(deck)
+    rscore.Cherr(e)
+    e = Wrdb(db, k, mdeck, rscore.DBUC)
+}
+
 // Writes image to database
 func Wrimage(db *bolt.DB, k []byte, img rscore.Imgobj) {
 

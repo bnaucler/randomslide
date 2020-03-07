@@ -243,11 +243,7 @@ func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
     }
 
     deck.Id = settings.Dmax
-
-    k := []byte(strconv.Itoa(deck.Id))
-    mdeck, e := json.Marshal(deck)
-    rscore.Cherr(e)
-    e = rsdb.Wrdb(db, k, mdeck, rscore.DBUC)
+    rsdb.Wrdeck(db, deck)
 
     settings.Dmax++
     rsdb.Wrsettings(db, settings)
