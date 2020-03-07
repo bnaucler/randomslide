@@ -1,4 +1,4 @@
-# randomslide v0.2A
+# randomslide v0.3A
 Generate random slides for online presentation.
 
 ## Created by
