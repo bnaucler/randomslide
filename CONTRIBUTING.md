@@ -35,6 +35,8 @@ tools/          - Tools for maintenence etc.
 * Suffix naming convention
 * Logout handler
 * Usernames in log
+* Admin remove of user accounts
+* Password reset function
 
 ## Text types
 Title (ttext): 1-35 characters  

@@ -541,7 +541,7 @@ func userv(db *bolt.DB, w http.ResponseWriter, umax int, uname string,
 }
 
 // Handles incoming requests for shutdowns
-func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
+func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
     wipe := r.FormValue("wipe")
@@ -563,6 +563,53 @@ func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     rscore.Shutdown(settings)
+}
+
+// Changes user settings TODO make more generic
+func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+    rop := r.FormValue("op")
+    tuser := r.FormValue("tuser")
+
+    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
+    if !ok { return }
+
+    if len(rop) < 1 {
+        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
+        return
+    }
+
+    op, e := strconv.Atoi(rop)
+
+    if e != nil {
+        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
+        return
+    }
+
+    tu := rsdb.Ruser(db, tuser)
+
+    if tu.Name != tuser {
+        rscore.Sendstatus(rscore.C_NOSU, "No such target user", w)
+        return
+    }
+
+    switch {
+    case op == rscore.CU_MKADM:
+        tu.Alev = rscore.ALEV_ADMIN
+
+    case op == rscore.CU_RMADM:
+        tu.Alev = rscore.ALEV_CONTRIB
+
+    default:
+        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
+        return
+    }
+
+    rscore.Sendstatus(rscore.C_OK, "", w)
+    rsdb.Wruser(db, tu)
 }
 
 // Handles incoming requests for user registrations
@@ -757,6 +804,11 @@ func main() {
     // User login
     http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
         loginhandler(w, r, db, settings)
+    })
+
+    // Change user settings
+    http.HandleFunc("/chuser", func(w http.ResponseWriter, r *http.Request) {
+        cuhandler(w, r, db, settings)
     })
 
     // Feedback
