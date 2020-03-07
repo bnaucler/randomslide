@@ -342,6 +342,11 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     if e != nil { return settings }
     defer sf.Close()
 
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    if !ok { return settings }
+
     mt := hlr.Header["Content-Type"][0]
 
     if rscore.Findstrinslice(mt, rscore.IMGMIME) == false {
@@ -385,6 +390,12 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     tags := rscore.Formattags(r.FormValue("tags"))
 
+    if len(tags) < 1  || tags[0] == "" {
+        rscore.Sendstatus(rscore.C_NTAG,
+            "No tags provided - cannot add data", w)
+        return settings
+    }
+
     nt, settings := rsdb.Tagstoindex(tags, settings)
     rscore.Sendtagstatus(nt, w)
 
@@ -407,7 +418,18 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     rscore.Cherr(e)
 
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    if !ok { return settings }
+
     tags := rscore.Formattags(r.FormValue("tags"))
+
+    if len(tags) < 1  || tags[0] == "" {
+        rscore.Sendstatus(rscore.C_NTAG,
+            "No tags provided - cannot add data", w)
+        return settings
+    }
 
     tr := rscore.Textreq{
             Ttext: r.FormValue("ttext"),
@@ -493,6 +515,7 @@ func userv(db *bolt.DB, w http.ResponseWriter, umax int, uname string,
     if uname == "" {
         rscore.Sendstatus(rscore.C_NLOG,
             "User not logged in - no username provided", w)
+        return false, rscore.User{}
     }
 
     if !rsdb.Isindb(db, []byte(uname), rscore.UBUC) {

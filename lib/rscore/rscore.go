@@ -70,6 +70,7 @@ const C_UICH = 4                // Username includes illegal characters
 const C_NOSU = 5                // No such user
 const C_NLOG = 6                // User not logged in
 const C_ALEV = 7                // User does not have sufficient access level
+const C_NTAG = 8                // No tags provided
 
 // User level definitions
 const ALEV_USER = 0             // Regular user
