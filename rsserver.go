@@ -122,9 +122,14 @@ func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
     n := rand.Intn(rnd)
     n += rscore.BPMIN
 
+    var ctr int
+
     for i := 0 ; i < n ; i ++ {
+        ctr = 0
         for len(bp) == 0 || len(bp) > rscore.BPOINTMAX {
             bp = rsdb.Getrndtxt(db, settings.Tmax, tags, rscore.TBUC)
+            if ctr > 50 { return bps } // TODO
+            ctr++
         }
         bps = append(bps, bp)
         bp = ""
