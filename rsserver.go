@@ -486,11 +486,47 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(resp)
 }
 
+// Retrieves and validates user object
+func userv(db *bolt.DB, w http.ResponseWriter, umax int, uname string,
+    skey string, alevreq int) (bool, rscore.User) {
+
+    if uname == "" {
+        rscore.Sendstatus(rscore.C_NLOG,
+            "User not logged in - no username provided", w)
+    }
+
+    if !rsdb.Isindb(db, []byte(uname), rscore.UBUC) {
+        rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
+        return false, rscore.User{}
+    }
+
+    sok, u := valskey(db, uname, skey, umax)
+
+    if !sok {
+        rscore.Sendstatus(rscore.C_NLOG,
+            "User not logged in - skey mismatch", w)
+        return false, rscore.User{}
+    }
+
+    if u.Alev < alevreq {
+        rscore.Sendstatus(rscore.C_ALEV,
+            "User does not have sufficient access level", w)
+        return false, u
+    }
+
+    return true, u
+}
+
 // Handles incoming requests for shutdowns
 func shutdownhandler (w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
     wipe := r.FormValue("wipe")
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+
+    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
+    if !ok { return }
 
     rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), r)
     rscore.Sendstatus(rscore.C_OK, "", w)
@@ -518,15 +554,18 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     u.Email = r.FormValue("email") // TODO validate
     pass := r.FormValue("pass")
 
-    // Username already taken - registration not possible
-    if settings.Umax > 0 {
+    if settings.Umax ==  0 {
+        u.Alev = rscore.ALEV_ADMIN // Auto admin for first user to register
+
+    } else {
         if rsdb.Isindb(db, []byte(u.Name), rscore.UBUC) {
             rscore.Sendstatus(rscore.C_UIDB, "Username already in db", w)
             return settings
         }
+
+        u.Alev = rscore.ALEV_CONTRIB
     }
 
-    // Username includes illegal characters
     if u.Name != rscore.Cleanstring(u.Name, rscore.RXUSER) {
             rscore.Sendstatus(rscore.C_UICH,
                 "Username includes illegal characters", w)
@@ -604,7 +643,10 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 }
 
 // Validates skey - returns true if user is logged in
-func valskey(db *bolt.DB, uname string, skey string) (bool, rscore.User) {
+func valskey(db *bolt.DB, uname string, skey string,
+    umax int) (bool, rscore.User) {
+
+    if umax < 1 { return false, rscore.User{} }
 
     u := rsdb.Ruser(db, uname)
 
@@ -634,12 +676,8 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     skey := r.FormValue("skey")
     str := r.FormValue("fb")
 
-    sok, u := valskey(db, uname, skey)
-
-    if !sok {
-        rscore.Sendstatus(rscore.C_NLOG, "User not logged in - skey mismatch", w)
-        return
-    }
+    ok, u := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    if !ok { return }
 
     d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, str)
     appendfile(rscore.FBFILE, d)

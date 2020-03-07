@@ -70,6 +70,12 @@ const C_UIDB = 3                // User already exists in database
 const C_UICH = 4                // Username includes illegal characters
 const C_NOSU = 5                // No such user
 const C_NLOG = 6                // User not logged in
+const C_ALEV = 7                // User does not have sufficient access level
+
+// User level definitions
+const ALEV_USER = 0             // Regular user
+const ALEV_CONTRIB = 1          // Contributor
+const ALEV_ADMIN = 2            // BOFH
 
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}

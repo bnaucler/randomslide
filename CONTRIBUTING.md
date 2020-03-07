@@ -33,6 +33,8 @@ tools/          - Tools for maintenence etc.
 * Image upload status reporting
 * Handling of '-0' special case
 * Suffix naming convention
+* Logout handler
+* Usernames in log
 
 ## Text types
 Title (ttext): 1-35 characters  
@@ -44,7 +46,7 @@ Index   Img sz    Type                        Description
 0       0/1       Big title                   Could be good to start a slide set with
 1       0         Full screen image
 2       NULL      Big number                  A slide just saying things like '+12%'
-3       3/NULL    Bullet point list
+3       3         Bullet point list
 4       1         Title, pic, body text       What we already have in alpha
 5       NULL      'Inspirational quote'       Soo much potential here
 6       1/2/3     Picture with text           Theme can decide if text goes under, next to etc
