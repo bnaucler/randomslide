@@ -26,17 +26,15 @@ tools/          - Tools for maintenence etc.
 ## TODO
 * Refactor image handler
 * Refactor getimgtype()
-* User account access levels
-* Security checks with session keys
 * Proper automated tests
 * Verbosity levels
-* Image upload status reporting
 * Handling of '-0' special case
 * Suffix naming convention
 * Logout handler
 * Usernames in log
 * Admin remove of user accounts
 * Password reset function
+* Improved bullet point handling
 
 ## Text types
 Title (ttext): 1-35 characters  
