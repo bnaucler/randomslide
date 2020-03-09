@@ -147,7 +147,7 @@ var IMGMIME = []string{
 }
 
 type Settings struct {
-    Verb bool                   // Verbosity level
+    Llev int                    // Log level
     Dmax int                    // Max id of decks
     Tmax int                    // Max id of title objects
     Bmax int                    // Max id of body objects
@@ -367,16 +367,18 @@ func Valuser(u User, pass []byte) bool {
 }
 
 // Log file wrapper
-func Addlog(ltype int, msg []byte, r *http.Request) {
+func Addlog(ltype int, msg []byte, llev int, r *http.Request) {
 
     ip := getclientip(r)
     var lentry string
 
     switch ltype {
     case L_REQ:
+        if llev < 1 { return }
         lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
 
     case L_RESP:
+        if llev < 1 { return }
         lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
 
     case L_SHUTDOWN:

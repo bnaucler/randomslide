@@ -321,12 +321,12 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_REQ, mreq, r)
+    rscore.Addlog(rscore.L_REQ, mreq, settings.Llev, r)
 
     deck, settings := getdeck(req, db, settings)
 
     mdeck, e := json.Marshal(deck)
-    rscore.Addlog(rscore.L_RESP, mdeck, r)
+    rscore.Addlog(rscore.L_RESP, mdeck, settings.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(deck)
@@ -359,7 +359,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
         hlr.Filename, rscore.Prettyfsize(hlr.Size), mt)
-    rscore.Addlog(rscore.L_REQ, []byte(lmsg), r)
+    rscore.Addlog(rscore.L_REQ, []byte(lmsg), settings.Llev, r)
 
     fn, fnp := rsimage.Newimagepath(hlr.Filename)
 
@@ -440,7 +440,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             Tags: tags }
 
     ltxt, e := json.Marshal(tr)
-    rscore.Addlog(rscore.L_REQ, ltxt, r)
+    rscore.Addlog(rscore.L_REQ, ltxt, settings.Llev, r)
 
     nt, settings := rsdb.Tagstoindex(tags, settings)
     rscore.Sendtagstatus(nt, w)
@@ -504,7 +504,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, mresp, r)
+    rscore.Addlog(rscore.L_RESP, mresp, settings.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
@@ -553,7 +553,7 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
     if !ok { return }
 
-    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), r)
+    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), settings.Llev, r)
     rscore.Sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, settings)
@@ -655,7 +655,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     ml, e := json.Marshal(li)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, r)
+    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(li)
@@ -708,7 +708,7 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     ml, e := json.Marshal(li)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, r)
+    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(li)
@@ -749,14 +749,14 @@ func main() {
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
     dbptr := flag.String("d", rscore.DBNAME, "specify database to open")
-    vptr := flag.Bool("v", rscore.VERBDEF, "verbose mode")
+    vptr := flag.Bool("v", rscore.VERBDEF, "increase log level")
     flag.Parse()
 
     db := rsdb.Open(*dbptr)
     defer db.Close()
 
     settings := rsdb.Rsettings(db)
-    settings.Verb = *vptr
+    if *vptr { settings.Llev = 1 }
     settings = rscore.Rsinit(settings)
 
     // Static content
