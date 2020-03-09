@@ -30,6 +30,7 @@ tools/          - Tools for maintenence etc.
 * Suffix naming convention
 * Logout handler
 * Usernames in log
+* Implement index of users
 * Admin remove of user accounts
 * Password reset function
 * Improved bullet point handling

@@ -72,6 +72,7 @@ const C_NLOG = 6                // User not logged in
 const C_ALEV = 7                // User does not have sufficient access level
 const C_NTAG = 8                // No tags provided
 const C_NSOP = 9                // No such operation
+const C_UNKN = 10               // Unknown error
 
 // User level definitions
 const ALEV_USER = 0             // Regular user
@@ -81,6 +82,7 @@ const ALEV_ADMIN = 2            // BOFH
 // Operation codes for user handling
 const CU_MKADM = 0              // Makes specified user admin
 const CU_RMADM = 1              // Removes admin status from user
+const CU_CPASS = 2              // Password change request
 
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}

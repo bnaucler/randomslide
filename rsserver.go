@@ -570,36 +570,46 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Shutdown(settings)
 }
 
-// Changes user settings TODO make more generic
-func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+// Changes user password
+func chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
+    pass string, tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
+
+    var ok bool
+
+    if tu.Name == uname {
+        ok, _ = userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    } else {
+        ok, _ = userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
+    }
+
+    if !ok { return false, tu }
+
+    tu = setpass(tu, pass)
+
+    return true, tu
+}
+
+// Wrapper for sending user object to frontend
+func senduser(u rscore.User, r *http.Request, w http.ResponseWriter,
     settings rscore.Settings) {
 
-    uname := r.FormValue("user")
-    skey := r.FormValue("skey")
-    rop := r.FormValue("op")
-    tuser := r.FormValue("tuser")
+    li := getloginobj(u)
+    ml, e := json.Marshal(li)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
 
-    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
-    if !ok { return }
+    enc := json.NewEncoder(w)
+    enc.Encode(li)
+}
 
-    if len(rop) < 1 {
-        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
-        return
-    }
+// Changes user admin status
+func chadminstatus(db *bolt.DB, op int, umax int, uname string, skey string,
+    tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
 
-    op, e := strconv.Atoi(rop)
+    var ok bool
 
-    if e != nil {
-        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
-        return
-    }
-
-    tu := rsdb.Ruser(db, tuser)
-
-    if tu.Name != tuser {
-        rscore.Sendstatus(rscore.C_NOSU, "No such target user", w)
-        return
-    }
+    ok, _ = userv(db, w, umax, uname, skey, rscore.ALEV_ADMIN)
+    if !ok { return false, tu }
 
     switch {
     case op == rscore.CU_MKADM:
@@ -609,12 +619,84 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         tu.Alev = rscore.ALEV_CONTRIB
 
     default:
+        return false, tu
+    }
+
+    return true, tu
+}
+
+// Wrapper for basic checks of valid operations
+func getop(rop string, w http.ResponseWriter) (bool, int) {
+
+    if len(rop) < 1 {
+        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
+        return false, 0
+    }
+
+    op, e := strconv.Atoi(rop)
+
+    if e != nil {
+        rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
+        return false, 0
+    }
+
+    return true, op
+}
+
+// Changes user settings
+func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    uname := r.FormValue("user")
+    skey := r.FormValue("skey")
+    rop := r.FormValue("op")
+    tuser := r.FormValue("tuser")
+    pass := r.FormValue("pass")
+
+    ok, op := getop(rop, w)
+    tu := rsdb.Ruser(db, tuser)
+
+    if tu.Name != tuser {
+        rscore.Sendstatus(rscore.C_NOSU, "No such target user", w)
+        return
+    }
+
+    switch {
+    case op == rscore.CU_MKADM || op == rscore.CU_RMADM:
+        ok, tu = chadminstatus(db, op, settings.Umax, uname, skey, tu, w)
+
+    case op == rscore.CU_CPASS:
+        ok, tu = chpass(db, settings, uname, skey, pass, tu, w)
+
+    default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
         return
     }
 
-    rscore.Sendstatus(rscore.C_OK, "", w)
-    rsdb.Wruser(db, tu)
+    if ok && op == rscore.CU_CPASS {
+        senduser(tu, r, w, settings)
+        rsdb.Wruser(db, tu)
+
+    } else if ok {
+        rscore.Sendstatus(rscore.C_OK, "", w)
+        rsdb.Wruser(db, tu)
+
+    } else {
+        rscore.Sendstatus(rscore.C_UNKN, "Unknown error", w)
+    }
+
+}
+
+// Sets user password
+func setpass(u rscore.User, pass string) rscore.User {
+
+    var e error
+
+    u.Skey = rscore.Randstr(rscore.SKEYLEN)
+    u.Pass, e = bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+    rscore.Cherr(e)
+
+    return u
 }
 
 // Handles incoming requests for user registrations
@@ -647,10 +729,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             return settings
     }
 
-    u.Skey = rscore.Randstr(rscore.SKEYLEN)
-    u.Pass, e = bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
-    rscore.Cherr(e)
-
+    u = setpass(u, pass)
     li := getloginobj(u)
 
     settings = rsdb.Wruindex(db, u.Name, settings)
