@@ -730,17 +730,10 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     u = setpass(u, pass)
-    li := getloginobj(u)
 
     settings = rsdb.Wruindex(db, u.Name, settings)
     rsdb.Wruser(db, u)
-
-    ml, e := json.Marshal(li)
-    rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
-
-    enc := json.NewEncoder(w)
-    enc.Encode(li)
+    senduser(u, r, w, settings)
 
     rsdb.Wrsettings(db, settings)
     return settings
