@@ -28,13 +28,13 @@ tools/          - Tools for maintenence etc.
 * Refactor getimgtype()
 * Proper automated tests
 * Suffix naming convention
+* Password min length
 * Logout handler
 * User handling lib
 * Usernames in log
 * Implement index of users
 * Contribution tracking
 * Admin remove of user accounts
-* Password reset function
 * Improved bullet point handling
 
 ## Text types
