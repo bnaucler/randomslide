@@ -29,8 +29,10 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * Suffix naming convention
 * Logout handler
+* User handling lib
 * Usernames in log
 * Implement index of users
+* Contribution tracking
 * Admin remove of user accounts
 * Password reset function
 * Improved bullet point handling
