@@ -27,8 +27,6 @@ tools/          - Tools for maintenence etc.
 * Refactor image handler
 * Refactor getimgtype()
 * Proper automated tests
-* Verbosity levels
-* Handling of '-0' special case
 * Suffix naming convention
 * Logout handler
 * Usernames in log

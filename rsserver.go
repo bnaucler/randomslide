@@ -182,6 +182,9 @@ func numgen() string {
     slen := len(rscore.NUMSUFF)
     if coin() { s = rscore.NUMSUFF[rand.Intn(slen)] }
 
+    if n == 0 && p == '-' { p = ' ' }       // '-0' looks a bit stupid
+    if p == '$' && s == '%' { s = ' ' }     // and so does '$5%'
+
     ret := fmt.Sprintf("%s%d%s", string(p), n, string(s))
 
     return strings.TrimSpace(ret)
