@@ -28,17 +28,14 @@ tools/          - Tools for maintenence etc.
 * Refactor getimgtype()
 * Proper automated tests
 * Suffix naming convention
-* Automated database backups
 * Password min length
 * Email validation
 * Email password reset
 * Object for storing api calls
 * User handling lib
 * Usernames in log
-* Implement index of users
 * User index handler
 * Contribution tracking
-* Admin remove of user accounts
 * Improved bullet point handling
 
 ## Text types
