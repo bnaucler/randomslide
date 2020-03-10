@@ -87,8 +87,12 @@ Endpoint:               Variables:              Comment:
 /chuser*                                        Change user settings
                                                 Some ops requires admin rights
                         tuser       string      User to edit
-                        op          int         Operation (see rscore.go for reference)
-
+                        pass        string      New password (if applicable)
+                        op          int         Operation:
+                                                    0: Make admin
+                                                    1: Remove admin rights
+                                                    2: Change password
+                                                    3: Remove user account
 
 /feedback*                                      Give feedback on user experience
                         fb          string      The feedback info itself
