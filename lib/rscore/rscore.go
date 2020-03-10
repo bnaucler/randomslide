@@ -351,6 +351,18 @@ func Findstrinslice(v string, list []string) bool {
     return false
 }
 
+// Compares two byte slices, returs true if identical
+func Identicalbs(s1 []byte, s2 []byte) bool {
+
+    if len(s1) != len(s2) { return false }
+
+    for i := 0; i < len(s1); i++ {
+        if s1[i] != s2[i] { return false }
+    }
+
+    return true
+}
+
 // Removes duplicate strings from slice
 func Rmdupstrfslice(list []string) []string {
 
@@ -542,4 +554,3 @@ func Striptagsuf(stags []string) []string {
 
     return ret
 }
-

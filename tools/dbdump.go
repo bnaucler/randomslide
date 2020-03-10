@@ -1,8 +1,8 @@
 package main
 
 import (
-    "os"
     "fmt"
+    "flag"
     "strconv"
     "encoding/json"
 
@@ -13,6 +13,7 @@ import (
     "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
+// Retrieves all decks from database
 func retrdeck(db *bolt.DB, mxind int, buc []byte) []rscore.Deck {
 
     var ret []rscore.Deck
@@ -32,6 +33,7 @@ func retrdeck(db *bolt.DB, mxind int, buc []byte) []rscore.Deck {
     return ret
 }
 
+// Retrieves text objects from database
 func retrtxt(db *bolt.DB, mxind int, buc []byte) []rscore.Textobj {
 
     var ret []rscore.Textobj
@@ -51,6 +53,7 @@ func retrtxt(db *bolt.DB, mxind int, buc []byte) []rscore.Textobj {
     return ret
 }
 
+// Retrieves image objects from database
 func retrimg(db *bolt.DB, mxind int, buc []byte) []rscore.Imgobj {
 
     var ret []rscore.Imgobj
@@ -70,15 +73,18 @@ func retrimg(db *bolt.DB, mxind int, buc []byte) []rscore.Imgobj {
     return ret
 }
 
+// Retrieves tag lists from database
 func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
 
     var ret []string
     ctag := rscore.Iindex{}
 
-    suf := rsimage.Getallsuf()
-    stl := rscore.Addtagsuf(tl, suf)
-    // tl = append(tl, rscore.IKEY...)
-    for _, t := range stl {
+    if rscore.Identicalbs(buc, rscore.IBUC) {
+        suf := rsimage.Getallsuf()
+        tl = rscore.Addtagsuf(tl, suf)
+    }
+
+    for _, t := range tl {
 
         k := []byte(t)
         v, e := rsdb.Rdb(db, k, buc)
@@ -93,6 +99,7 @@ func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
     return ret
 }
 
+// Retrieves user objects from database
 func retrusers(db *bolt.DB, settings rscore.Settings, buc []byte) []rscore.User {
 
     var ret []rscore.User
@@ -109,59 +116,72 @@ func retrusers(db *bolt.DB, settings rscore.Settings, buc []byte) []rscore.User 
 
 func main() {
 
-    if len(os.Args) < 2 { os.Exit(1) }
+    dbptr := flag.String("d", rscore.DBNAME, "specify database to open")
+    tlptr := flag.Bool("l", false, "tag lists")
+    ttptr := flag.Bool("t", false, "title objects")
+    btptr := flag.Bool("b", false, "body text objects")
+    imptr := flag.Bool("i", false, "image objects")
+    sptr := flag.Bool("s", false, "settings")
+    dptr := flag.Bool("k", false, "decks")
+    uptr := flag.Bool("u", false, "users")
+    flag.Parse()
 
-    db := rsdb.Open(os.Args[1])
+    db := rsdb.Open(*dbptr)
+
+    if !*tlptr && !*ttptr && !*btptr && !*imptr &&
+       !*sptr && !*dptr && !*uptr {
+       fmt.Println("Exiting: No operation selected.")
+        return
+    }
 
     settings := rsdb.Rsettings(db)
 
     // DUMP SETTINGS
-    fmt.Printf("SETTINGS: %+v\n", settings)
+    if *sptr { fmt.Printf("SETTINGS: %+v\n", settings) }
 
     // DUMP TAG LISTS
-    if settings.Tmax > 0 {
+    if settings.Tmax > 0 && *tlptr {
         ttl := gettaglist(db, settings.Taglist, rscore.TBUC)
         fmt.Printf("TTEXT TAG LIST: %+v\n", ttl)
     }
 
-    if settings.Bmax > 0 {
+    if settings.Bmax > 0 && *tlptr {
         btl := gettaglist(db, settings.Taglist, rscore.BBUC)
         fmt.Printf("BTEXT TAG LIST: %+v\n", btl)
     }
 
-    if settings.Imax > 0 {
+    if settings.Imax > 0 && *tlptr {
         il := gettaglist(db, settings.Taglist, rscore.IBUC)
         fmt.Printf("IMAGE TAG LIST: %+v\n", il)
     }
 
     // DUMP TTEXT
-    if settings.Tmax > 0 {
+    if settings.Tmax > 0 && *ttptr {
         ttext := retrtxt(db, settings.Tmax, rscore.TBUC)
         fmt.Printf("TTEXT: %+v\n", ttext)
     }
 
     // DUMP BTEXT
-    if settings.Bmax > 0 {
+    if settings.Bmax > 0 && *btptr {
         btext := retrtxt(db, settings.Bmax, rscore.BBUC)
         fmt.Printf("BTEXT: %+v\n", btext)
     }
 
     // DUMP IMAGES
-    if settings.Imax > 0 {
+    if settings.Imax > 0 && *imptr {
         imgs := retrimg(db, settings.Bmax, rscore.IBUC)
         fmt.Printf("IMAGES: %+v\n", imgs)
     }
 
     // DUMP DECKS
-    if settings.Dmax > 0 {
+    if settings.Dmax > 0 && *dptr {
         decks := retrtxt(db, settings.Dmax, rscore.DBUC)
         fmt.Printf("DECKS: %+v\n", decks)
     }
 
     // DUMP USERS
-    if settings.Umax > 0 {
+    if settings.Umax > 0 && *uptr {
         users := retrusers(db, settings, rscore.UBUC)
         fmt.Printf("USERS: %+v\n", users)
     }
-
 }
