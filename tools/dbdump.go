@@ -93,6 +93,20 @@ func gettaglist(db *bolt.DB, tl []string, buc []byte) []string {
     return ret
 }
 
+func retrusers(db *bolt.DB, settings rscore.Settings, buc []byte) []rscore.User {
+
+    var ret []rscore.User
+
+    index := rsdb.Ruindex(db, settings)
+
+    for _, v := range index.Names {
+        u := rsdb.Ruser(db, v)
+        ret = append(ret, u)
+    }
+
+    return ret
+}
+
 func main() {
 
     if len(os.Args) < 2 { os.Exit(1) }
@@ -142,6 +156,12 @@ func main() {
     if settings.Dmax > 0 {
         decks := retrtxt(db, settings.Dmax, rscore.DBUC)
         fmt.Printf("DECKS: %+v\n", decks)
+    }
+
+    // DUMP USERS
+    if settings.Umax > 0 {
+        users := retrusers(db, settings, rscore.UBUC)
+        fmt.Printf("USERS: %+v\n", users)
     }
 
 }
