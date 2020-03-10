@@ -29,7 +29,7 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * Suffix naming convention
 * Password min length
-* Logout handler
+* Object for storing api calls
 * User handling lib
 * Usernames in log
 * Implement index of users
@@ -48,7 +48,7 @@ Index   Img sz    Type                        Description
 1       0         Full screen image
 2       NULL      Big number                  A slide just saying things like '+12%'
 3       3         Bullet point list
-4       1         Title, pic, body text       What we already have in alpha
+4       1         Title, image & subtitle
 5       NULL      'Inspirational quote'       Soo much potential here
 6       1/2/3     Picture with text           Theme can decide if text goes under, next to etc
 7       NULL      Graph                       No good slideshow is complete without a graph
