@@ -570,9 +570,9 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Shutdown(settings)
 }
 
-// Changes user password
-func chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
-    pass string, tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
+// Returns true if initiated by admin or operation applied to initiating user
+func isadminorme(db *bolt.DB, settings rscore.Settings, uname string, skey string,
+    tu rscore.User, w http.ResponseWriter) bool {
 
     var ok bool
 
@@ -582,10 +582,18 @@ func chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
         ok, _ = userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
     }
 
+    return ok
+}
+
+// Changes user password
+func chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
+    pass string, tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
+
+
+    ok := isadminorme(db, settings, uname, skey, tu, w)
     if !ok { return false, tu }
 
     tu = setpass(tu, pass)
-
     return true, tu
 }
 
@@ -623,6 +631,22 @@ func chadminstatus(db *bolt.DB, op int, umax int, uname string, skey string,
     }
 
     return true, tu
+}
+
+// Removes user account from db
+func rmuser(db *bolt.DB, settings rscore.Settings, uname string, skey string,
+    tu rscore.User, w http.ResponseWriter) (bool, rscore.Settings) {
+
+    ok := isadminorme(db, settings, uname, skey, tu, w)
+
+    if ok && settings.Umax > 1 {
+        e := rsdb.Rmkv(db, []byte(tu.Name), rscore.UBUC)
+        rscore.Cherr(e)
+        settings = rsdb.Rmufrindex(db, tu.Name, settings)
+        return ok, settings
+    }
+
+    return ok, settings
 }
 
 // Wrapper for basic checks of valid operations
@@ -668,6 +692,9 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     case op == rscore.CU_CPASS:
         ok, tu = chpass(db, settings, uname, skey, pass, tu, w)
 
+    case op == rscore.CU_RMUSR:
+        ok, settings = rmuser(db, settings, uname, skey, tu, w)
+
     default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
         return
@@ -684,7 +711,6 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     } else {
         rscore.Sendstatus(rscore.C_UNKN, "Unknown error", w)
     }
-
 }
 
 // Sets user password
@@ -731,7 +757,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     u = setpass(u, pass)
 
-    settings = rsdb.Wruindex(db, u.Name, settings)
+    settings = rsdb.Addutoindex(db, u.Name, settings)
     rsdb.Wruser(db, u)
     senduser(u, r, w, settings)
 
@@ -757,22 +783,27 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     e := r.ParseForm()
     rscore.Cherr(e)
 
-    user := r.FormValue("user")
+    uname := r.FormValue("user")
     pass := r.FormValue("pass")
 
     if settings.Umax < 1 {
         rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
         return
-
     }
-    // TODO refactor to new func
-    if user != rscore.Cleanstring(user, rscore.RXUSER) {
+
+    if uname != rscore.Cleanstring(uname, rscore.RXUSER) {
             rscore.Sendstatus(rscore.C_UICH,
                 "Username includes illegal characters", w)
             return
     }
 
-    u := rsdb.Ruser(db, user)
+    uindex := rsdb.Ruindex(db, settings)
+    if !rscore.Findstrinslice(uname, uindex.Names) {
+        rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
+        return
+    }
+
+    u := rsdb.Ruser(db, uname)
     li := rscore.Login{}
 
     if rscore.Valuser(u, []byte(pass)) {

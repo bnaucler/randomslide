@@ -83,6 +83,7 @@ const ALEV_ADMIN = 2            // BOFH
 const CU_MKADM = 0              // Makes specified user admin
 const CU_RMADM = 1              // Removes admin status from user
 const CU_CPASS = 2              // Password change request
+const CU_RMUSR = 3              // Removes user account
 
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}
@@ -348,6 +349,20 @@ func Findstrinslice(v string, list []string) bool {
     }
 
     return false
+}
+
+// Removes duplicate strings from slice
+func Rmdupstrfslice(list []string) []string {
+
+    var nlist []string
+
+    for _, v := range list {
+        if !Findstrinslice(v, nlist) {
+            nlist = append(nlist, v)
+        }
+    }
+
+    return nlist
 }
 
 // Retrieves client IP address from http request

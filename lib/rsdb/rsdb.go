@@ -59,6 +59,21 @@ func Rdb(db *bolt.DB, k []byte, cbuc []byte) (v []byte, e error) {
     return
 }
 
+// Unconditionaly removes k/v pair from database
+func Rmkv(db *bolt.DB, k []byte, cbuc []byte) (e error) {
+
+    e = db.Update(func(tx *bolt.Tx) error {
+        b := tx.Bucket(cbuc)
+        if b == nil { return fmt.Errorf("No bucket!") }
+
+        e = b.Delete(k)
+        if e != nil { return e }
+
+        return nil
+    })
+    return
+}
+
 // Wrapper for writing settings to database
 func Wrsettings(db *bolt.DB, settings rscore.Settings) {
 
@@ -122,12 +137,10 @@ func Wrimage(db *bolt.DB, k []byte, img rscore.Imgobj) {
     rscore.Cherr(e)
 }
 
-// Write user index to database
-func Wruindex(db *bolt.DB, uname string,
-    settings rscore.Settings) rscore.Settings {
+// Returns user index
+func Ruindex(db *bolt.DB, settings rscore.Settings) rscore.Uindex {
 
     users := rscore.Uindex{}
-    var mindex []byte
 
     if settings.Umax > 0 {
         mindex, e := Rdb(db, rscore.INDEX, rscore.UBUC)
@@ -136,15 +149,51 @@ func Wruindex(db *bolt.DB, uname string,
         rscore.Cherr(e)
     }
 
-    users.Names = append(users.Names, uname)
-    sort.Strings(users.Names)
+    return users
+}
+
+// Write user index to database
+func Wruindex(db *bolt.DB, users rscore.Uindex,
+    settings rscore.Settings) rscore.Settings {
 
     mindex, e := json.Marshal(users)
-
     e = Wrdb(db, rscore.INDEX, mindex, rscore.UBUC)
     rscore.Cherr(e)
 
-    settings.Umax++
+    settings.Umax = len(users.Names)
+    return settings
+}
+
+// Append uname to database index
+func Addutoindex(db *bolt.DB, uname string,
+    settings rscore.Settings) rscore.Settings {
+
+    users := Ruindex(db, settings)
+
+    users.Names = append(users.Names, uname)
+    users.Names = rscore.Rmdupstrfslice(users.Names)
+    sort.Strings(users.Names)
+
+    settings = Wruindex(db, users, settings)
+
+    return settings
+}
+
+// Removes user name from index
+func Rmufrindex(db *bolt.DB, uname string,
+    settings rscore.Settings) rscore.Settings {
+
+    users := Ruindex(db, settings)
+    nusers := rscore.Uindex{}
+
+    for _, v := range users.Names {
+        if !rscore.Findstrinslice(v, nusers.Names) && v != uname {
+            nusers.Names = append(nusers.Names, v)
+        }
+    }
+
+    settings = Wruindex(db, nusers, settings)
+
     return settings
 }
 
