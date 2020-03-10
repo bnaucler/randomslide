@@ -31,7 +31,7 @@ Usage of bin/rsserver:
     	specify database to open (default "./data/rs.db")
   -p int
     	port number to listen (default 6291)
-  -v	verbose mode
+  -v	increase log level
 ```
 
 The first user who registers an account will automatically be provided with admin rights.  
@@ -85,7 +85,7 @@ Endpoint:               Variables:              Comment:
 
 
 /chuser*                                        Change user settings
-                                                Requires admin rights
+                                                Some ops requires admin rights
                         tuser       string      User to edit
                         op          int         Operation (see rscore.go for reference)
 
