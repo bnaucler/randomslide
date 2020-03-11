@@ -37,7 +37,7 @@ func main() {
         rscore.Cherr(e)
         b := i.Bounds()
         c, szok := rsimage.Getimgtype(b.Max.X, b.Max.Y)
-        ni, rsz := rsimage.Scaleimage(i, c)
+        ni, rsz := rsimage.Transform(i, c)
         b = ni.Bounds()
 
         if szok {

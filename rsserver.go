@@ -12,6 +12,7 @@ import (
     "math/rand"
     "io/ioutil"
     "encoding/json"
+    "mime/multipart"
 
     "github.com/boltdb/bolt"
 
@@ -337,6 +338,43 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// addlog() wrapper for file requests
+func logfreq(hlr *multipart.FileHeader, mt string, llev int, r *http.Request) {
+
+    lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
+        hlr.Filename, rscore.Prettyfsize(hlr.Size), mt)
+    rscore.Addlog(rscore.L_REQ, []byte(lmsg), llev, r)
+}
+
+// Wrapper for file mime type check
+func chkimgmime(hlr *multipart.FileHeader, settings rscore.Settings,
+    w http.ResponseWriter) (bool, string) {
+
+    mt := hlr.Header["Content-Type"][0]
+
+    if rscore.Findstrinslice(mt, rscore.IMGMIME) == false {
+        rscore.Sendstatus(rscore.C_WRFF,
+            "Unknown image format - file not uploaded", w)
+        return false, mt
+    }
+
+    return true, mt
+}
+
+// Retrieves and checks tags from request
+func gettags(r *http.Request, w http.ResponseWriter) (bool, []string) {
+
+    tags := rscore.Formattags(r.FormValue("tags"))
+
+    if len(tags) < 1  || tags[0] == "" {
+        rscore.Sendstatus(rscore.C_NTAG,
+            "No tags provided - cannot add data", w)
+        return false, tags
+    }
+
+    return true, tags
+}
+
 // Handles incoming requests to add images
 func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
@@ -349,20 +387,13 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     uname := r.FormValue("user")
     skey := r.FormValue("skey")
+
     ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
     if !ok { return settings }
 
-    mt := hlr.Header["Content-Type"][0]
-
-    if rscore.Findstrinslice(mt, rscore.IMGMIME) == false {
-        rscore.Sendstatus(rscore.C_WRFF,
-            "Unknown image format - file not uploaded", w)
-        return settings
-    }
-
-    lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
-        hlr.Filename, rscore.Prettyfsize(hlr.Size), mt)
-    rscore.Addlog(rscore.L_REQ, []byte(lmsg), settings.Llev, r)
+    ok, mt := chkimgmime(hlr, settings, w)
+    if !ok { return settings }
+    logfreq(hlr, mt, settings.Llev, r)
 
     fn, fnp := rsimage.Newimagepath(hlr.Filename)
 
@@ -384,22 +415,10 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         return settings
     }
 
-    ni, rsz := rsimage.Scaleimage(i, isz)
+    _, b = rsimage.Scaleimage(i, isz, fnp)
 
-    if rsz {
-        b = ni.Bounds()
-        os.RemoveAll(fnp)
-        e = rsimage.Wrimagefile(ni, fnp)
-        rscore.Cherr(e)
-    }
-
-    tags := rscore.Formattags(r.FormValue("tags"))
-
-    if len(tags) < 1  || tags[0] == "" {
-        rscore.Sendstatus(rscore.C_NTAG,
-            "No tags provided - cannot add data", w)
-        return settings
-    }
+    ok, tags := gettags(r, w)
+    if !ok { return settings }
 
     nt, settings := rsdb.Tagstoindex(tags, settings)
     rscore.Sendtagstatus(nt, w)

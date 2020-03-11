@@ -131,7 +131,7 @@ func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,
 }
 
 // Scales image down to max dimensions allowed, returns true if image was scaled
-func Scaleimage(i image.Image, t int) (image.Image, bool) {
+func Transform(i image.Image, t int) (image.Image, bool) {
 
     b := i.Bounds()
 
@@ -142,6 +142,23 @@ func Scaleimage(i image.Image, t int) (image.Image, bool) {
     }
 
     return i, false
+}
+
+// Scaling wrapper for transform()
+func Scaleimage(i image.Image, isz int, fnp string) (bool, image.Rectangle) {
+
+    var b image.Rectangle
+
+    ni, rsz := Transform(i, isz)
+
+    if rsz {
+        b = ni.Bounds()
+        os.RemoveAll(fnp)
+        e := Wrimagefile(ni, fnp)
+        rscore.Cherr(e)
+    }
+
+    return rsz, b
 }
 
 // Returns all possible suffixes

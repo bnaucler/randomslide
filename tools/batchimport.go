@@ -92,7 +92,7 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         nfn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
         nfnp := fmt.Sprintf("%s%s", rscore.IMGDIR, nfn)
 
-        ni, rsz := rsimage.Scaleimage(i, isz)
+        ni, rsz := rsimage.Transform(i, isz)
 
         if rsz {
             b = ni.Bounds()

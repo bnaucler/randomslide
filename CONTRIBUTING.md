@@ -24,8 +24,8 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO
-* Refactor image handler
 * Refactor getimgtype()
+* Make tools use scaleimage()
 * Proper automated tests
 * Suffix naming convention
 * Storage of tag indexes in db
@@ -37,6 +37,7 @@ tools/          - Tools for maintenence etc.
 * User index handler
 * Contribution tracking
 * Improved bullet point handling
+* Put untagged data in 'random' tag
 
 ## Text types
 Title (ttext): 1-35 characters  
