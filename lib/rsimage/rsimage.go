@@ -19,6 +19,7 @@ import (
     "path/filepath"
 
     "github.com/nfnt/resize"
+
     "github.com/bnaucler/randomslide/lib/rscore"
 )
 
@@ -166,3 +167,4 @@ func Mkimgsuflist(t int) []string {
 
     return ret
 }
+

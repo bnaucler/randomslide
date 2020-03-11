@@ -380,3 +380,20 @@ func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, isz int, tags []string,
 
     return settings
 }
+
+// Image wrapper for rsdb.Countobj()
+func Imgobjctr(db *bolt.DB, t string) int {
+
+    var tl []string
+    var ret int
+
+    tl = append(tl, t)
+    suf := rsimage.Getallsuf()
+    stl := rscore.Addtagsuf(tl, suf)
+
+    for _, st := range stl {
+        ret += Countobj(db, st, rscore.IBUC)
+    }
+
+    return ret
+}
