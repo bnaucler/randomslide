@@ -14,11 +14,11 @@ import (
     "encoding/json"
 
     "github.com/boltdb/bolt"
-    "golang.org/x/crypto/bcrypt"
 
     "github.com/bnaucler/randomslide/lib/rscore"
     "github.com/bnaucler/randomslide/lib/rsdb"
     "github.com/bnaucler/randomslide/lib/rsimage"
+    "github.com/bnaucler/randomslide/lib/rsuser"
 )
 
 // Updates slilde probabilities
@@ -349,7 +349,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     uname := r.FormValue("user")
     skey := r.FormValue("skey")
-    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
     if !ok { return settings }
 
     mt := hlr.Header["Content-Type"][0]
@@ -425,7 +425,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     uname := r.FormValue("user")
     skey := r.FormValue("skey")
-    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
     if !ok { return settings }
 
     tags := rscore.Formattags(r.FormValue("tags"))
@@ -496,38 +496,6 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     enc.Encode(resp)
 }
 
-// Retrieves and validates user object
-func userv(db *bolt.DB, w http.ResponseWriter, umax int, uname string,
-    skey string, alevreq int) (bool, rscore.User) {
-
-    if uname == "" {
-        rscore.Sendstatus(rscore.C_NLOG,
-            "User not logged in - no username provided", w)
-        return false, rscore.User{}
-    }
-
-    if !rsdb.Isindb(db, []byte(uname), rscore.UBUC) {
-        rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
-        return false, rscore.User{}
-    }
-
-    sok, u := valskey(db, uname, skey, umax)
-
-    if !sok {
-        rscore.Sendstatus(rscore.C_NLOG,
-            "User not logged in - skey mismatch", w)
-        return false, rscore.User{}
-    }
-
-    if u.Alev < alevreq {
-        rscore.Sendstatus(rscore.C_ALEV,
-            "User does not have sufficient access level", w)
-        return false, u
-    }
-
-    return true, u
-}
-
 // Handles incoming requests for shutdowns
 func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -536,7 +504,7 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     uname := r.FormValue("user")
     skey := r.FormValue("skey")
 
-    ok, _ := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
+    ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
     if !ok { return }
 
     rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), settings.Llev, r)
@@ -551,85 +519,6 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     rscore.Shutdown(settings)
-}
-
-// Returns true if initiated by admin or operation applied to initiating user
-func isadminorme(db *bolt.DB, settings rscore.Settings, uname string, skey string,
-    tu rscore.User, w http.ResponseWriter) bool {
-
-    var ok bool
-
-    if tu.Name == uname {
-        ok, _ = userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
-    } else {
-        ok, _ = userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
-    }
-
-    return ok
-}
-
-// Changes user password
-func chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
-    pass string, tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
-
-
-    ok := isadminorme(db, settings, uname, skey, tu, w)
-    if !ok { return false, tu }
-
-    ok, tu = setpass(tu, pass)
-    return ok, tu
-}
-
-// Wrapper for sending user object to frontend
-func senduser(u rscore.User, r *http.Request, w http.ResponseWriter,
-    settings rscore.Settings) {
-
-    li := getloginobj(u)
-    ml, e := json.Marshal(li)
-    rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
-
-    enc := json.NewEncoder(w)
-    enc.Encode(li)
-}
-
-// Changes user admin status
-func chadminstatus(db *bolt.DB, op int, umax int, uname string, skey string,
-    tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
-
-    var ok bool
-
-    ok, _ = userv(db, w, umax, uname, skey, rscore.ALEV_ADMIN)
-    if !ok { return false, tu }
-
-    switch {
-    case op == rscore.CU_MKADM:
-        tu.Alev = rscore.ALEV_ADMIN
-
-    case op == rscore.CU_RMADM:
-        tu.Alev = rscore.ALEV_CONTRIB
-
-    default:
-        return false, tu
-    }
-
-    return true, tu
-}
-
-// Removes user account from db
-func rmuser(db *bolt.DB, settings rscore.Settings, uname string, skey string,
-    tu rscore.User, w http.ResponseWriter) (bool, rscore.Settings) {
-
-    ok := isadminorme(db, settings, uname, skey, tu, w)
-
-    if ok && settings.Umax > 1 {
-        e := rsdb.Rmkv(db, []byte(tu.Name), rscore.UBUC)
-        rscore.Cherr(e)
-        settings = rsdb.Rmufrindex(db, tu.Name, settings)
-        return ok, settings
-    }
-
-    return ok, settings
 }
 
 // Wrapper for basic checks of valid operations
@@ -670,13 +559,13 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     switch {
     case op == rscore.CU_MKADM || op == rscore.CU_RMADM:
-        ok, tu = chadminstatus(db, op, settings.Umax, uname, skey, tu, w)
+        ok, tu = rsuser.Chadminstatus(db, op, settings.Umax, uname, skey, tu, w)
 
     case op == rscore.CU_CPASS:
-        ok, tu = chpass(db, settings, uname, skey, pass, tu, w)
+        ok, tu = rsuser.Chpass(db, settings, uname, skey, pass, tu, w)
 
     case op == rscore.CU_RMUSR:
-        ok, settings = rmuser(db, settings, uname, skey, tu, w)
+        ok, settings = rsuser.Rmuser(db, settings, uname, skey, tu, w)
 
     default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
@@ -684,7 +573,7 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     if ok && op == rscore.CU_CPASS {
-        senduser(tu, r, w, settings)
+        rsuser.Senduser(tu, r, w, settings)
         rsdb.Wruser(db, tu)
 
     } else if ok {
@@ -694,20 +583,6 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     } else if !ok && op == rscore.CU_CPASS {
         rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
     }
-}
-
-// Sets user password
-func setpass(u rscore.User, pass string) (bool, rscore.User) {
-
-    var e error
-
-    if len(pass) < rscore.PWMINLEN { return false, u }
-
-    u.Skey = rscore.Randstr(rscore.SKEYLEN)
-    u.Pass, e = bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
-    rscore.Cherr(e)
-
-    return true, u
 }
 
 // Handles incoming requests for user registrations
@@ -740,7 +615,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             return settings
     }
 
-    ok, u := setpass(u, pass)
+    ok, u := rsuser.Setpass(u, pass)
     if !ok {
         rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
         return settings
@@ -748,21 +623,10 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     settings = rsdb.Addutoindex(db, u.Name, settings)
     rsdb.Wruser(db, u)
-    senduser(u, r, w, settings)
+    rsuser.Senduser(u, r, w, settings)
 
     rsdb.Wrsettings(db, settings)
     return settings
-}
-
-// Creates login object
-func getloginobj(u rscore.User) rscore.Login {
-
-    ur := rscore.Login{}
-    ur.Name = u.Name
-    ur.Skey = u.Skey
-    ur.Alev = u.Alev
-
-    return ur
 }
 
 // Handles incoming login requests
@@ -797,7 +661,7 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     if rscore.Valuser(u, []byte(pass)) {
         u.Skey = rscore.Randstr(rscore.SKEYLEN)
-        li = getloginobj(u)
+        li = rsuser.Getloginobj(u)
         rsdb.Wruser(db, u)
     }
 
@@ -807,18 +671,6 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     enc := json.NewEncoder(w)
     enc.Encode(li)
-}
-
-// Validates skey - returns true if user is logged in
-func valskey(db *bolt.DB, uname string, skey string,
-    umax int) (bool, rscore.User) {
-
-    if umax < 1 { return false, rscore.User{} }
-
-    u := rsdb.Ruser(db, uname)
-
-    if skey == u.Skey { return true, u }
-    return false, rscore.User{}
 }
 
 // Receives feedback data and saves to file
@@ -832,7 +684,7 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     skey := r.FormValue("skey")
     str := r.FormValue("fb")
 
-    ok, u := userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, str)

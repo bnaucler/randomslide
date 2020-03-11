@@ -31,8 +31,8 @@ tools/          - Tools for maintenence etc.
 * Storage of tag indexes in db
 * Email validation
 * Email password reset
-* Object for storing api calls
-* User handling lib
+* Object for storing API calls
+* Improve API call logging
 * Usernames in log
 * User index handler
 * Contribution tracking
