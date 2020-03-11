@@ -43,6 +43,8 @@ const BPOINTMAX = 20            // Max length for bullet point
 const RNUMBMAX = 30             // Random number base max
 const RNUMEMAX = 3              // Random number exponent max
 
+const PWMINLEN = 6              // Minimum accepted lendth of password
+
 const SKEYLEN = 40              // # of characters in a session key
 const RFNLEN = 20               // Length of random file names (w/o .ext)
 
@@ -73,6 +75,7 @@ const C_ALEV = 7                // User does not have sufficient access level
 const C_NTAG = 8                // No tags provided
 const C_NSOP = 9                // No such operation
 const C_UNKN = 10               // Unknown error
+const C_USPW = 11               // Unsafe password
 
 // User level definitions
 const ALEV_USER = 0             // Regular user

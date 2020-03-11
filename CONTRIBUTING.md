@@ -28,7 +28,7 @@ tools/          - Tools for maintenence etc.
 * Refactor getimgtype()
 * Proper automated tests
 * Suffix naming convention
-* Password min length
+* Storage of tag indexes in db
 * Email validation
 * Email password reset
 * Object for storing api calls

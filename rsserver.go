@@ -593,8 +593,8 @@ func chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
     ok := isadminorme(db, settings, uname, skey, tu, w)
     if !ok { return false, tu }
 
-    tu = setpass(tu, pass)
-    return true, tu
+    ok, tu = setpass(tu, pass)
+    return ok, tu
 }
 
 // Wrapper for sending user object to frontend
@@ -708,21 +708,23 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         rscore.Sendstatus(rscore.C_OK, "", w)
         rsdb.Wruser(db, tu)
 
-    } else {
-        rscore.Sendstatus(rscore.C_UNKN, "Unknown error", w)
+    } else if !ok && op == rscore.CU_CPASS {
+        rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
     }
 }
 
 // Sets user password
-func setpass(u rscore.User, pass string) rscore.User {
+func setpass(u rscore.User, pass string) (bool, rscore.User) {
 
     var e error
+
+    if len(pass) < rscore.PWMINLEN { return false, u }
 
     u.Skey = rscore.Randstr(rscore.SKEYLEN)
     u.Pass, e = bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
     rscore.Cherr(e)
 
-    return u
+    return true, u
 }
 
 // Handles incoming requests for user registrations
@@ -755,7 +757,11 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             return settings
     }
 
-    u = setpass(u, pass)
+    ok, u := setpass(u, pass)
+    if !ok {
+        rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
+        return settings
+    }
 
     settings = rsdb.Addutoindex(db, u.Name, settings)
     rsdb.Wruser(db, u)
