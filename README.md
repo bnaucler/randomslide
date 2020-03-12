@@ -62,6 +62,10 @@ Endpoint:               Variables:              Comment:
                         pass        string      Password
 
 
+/getusers               <null>                  Retrieves list of all users
+                                                in database
+
+
 /gettags                <null>                  Retrieves list of all tags
                                                 in database
 
