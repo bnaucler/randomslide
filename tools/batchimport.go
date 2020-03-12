@@ -3,16 +3,11 @@ package main
 import (
     "os"
     "fmt"
-    "time"
     "flag"
     "bufio"
     "image"
     "bytes"
     "strconv"
-    "image/png"
-    "image/jpeg"
-    "image/gif"
-    "math/rand"
     "io/ioutil"
     "path/filepath"
 
@@ -22,15 +17,6 @@ import (
     "github.com/bnaucler/randomslide/lib/rsdb"
     "github.com/bnaucler/randomslide/lib/rsimage"
 )
-
-func init() {
-    rand.Seed(time.Now().UnixNano())
-
-    image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
-    image.RegisterFormat("png", "png", png.Decode, png.DecodeConfig)
-    image.RegisterFormat("gif", "gif", gif.Decode, gif.DecodeConfig)
-}
-
 
 func readtxtfile(db *bolt.DB, fn string, tags []string,
     settings rscore.Settings) (rscore.Settings, int) {
