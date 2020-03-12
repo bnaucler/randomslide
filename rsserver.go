@@ -482,6 +482,20 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     return settings
 }
 
+// Handles incoming requests for user index
+func userreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
+    settings rscore.Settings) {
+
+    resp := rsdb.Ruindex(db, settings)
+
+    mresp, e := json.Marshal(resp)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, mresp, settings.Llev, r)
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
+}
+
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -741,6 +755,11 @@ func main() {
     // Tags requests
     http.HandleFunc("/gettags", func(w http.ResponseWriter, r *http.Request) {
         tagreqhandler(w, r, db, settings)
+    })
+
+    // Tags requests
+    http.HandleFunc("/getusers", func(w http.ResponseWriter, r *http.Request) {
+        userreqhandler(w, r, db, settings)
     })
 
     // Add text to db
