@@ -76,7 +76,7 @@ const C_NTAG = 8                // No tags provided
 const C_NSOP = 9                // No such operation
 const C_UNKN = 10               // Unknown error
 const C_USPW = 11               // Unsafe password
-const C_IEMA = 12               // Unsafe password
+const C_IEMA = 12               // Invalid email address
 
 // User level definitions
 const ALEV_USER = 0             // Regular user
@@ -161,7 +161,7 @@ type Settings struct {
     Imax int                    // Max id of image objects
     Umax int                    // Max user ID in database
     Pidfile string              // Location of pidfile
-    Taglist []string            // List of all existing tags TODO: Make map w ID
+    Taglist []string            // List of all existing tags
 }
 
 type User struct {
