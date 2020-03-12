@@ -6,6 +6,7 @@ import (
     "flag"
     "bytes"
     "image"
+    "regexp"
     "strings"
     "strconv"
     "net/http"
@@ -632,14 +633,29 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 }
 
+// Returns true if email address looks valid
+func valemail(addr string) bool {
+
+    rx := regexp.MustCompile("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")
+
+    if rx.MatchString(addr) { return true }
+    return false
+}
+
 // Handles incoming requests for user registrations
 func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
 
     c := getcall(r)
     u := rscore.User{}
+
+    if !valemail(c.Email) {
+        rscore.Sendstatus(rscore.C_IEMA, "Invalid email address", w)
+        return settings
+    }
+
     u.Name = c.User
-    u.Email = c.Email // TODO validate
+    u.Email = c.Email
 
     if settings.Umax ==  0 {
         u.Alev = rscore.ALEV_ADMIN // Auto admin for first user to register

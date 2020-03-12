@@ -76,6 +76,7 @@ const C_NTAG = 8                // No tags provided
 const C_NSOP = 9                // No such operation
 const C_UNKN = 10               // Unknown error
 const C_USPW = 11               // Unsafe password
+const C_IEMA = 12               // Unsafe password
 
 // User level definitions
 const ALEV_USER = 0             // Regular user
