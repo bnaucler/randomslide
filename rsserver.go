@@ -299,28 +299,24 @@ func isidreq(r *http.Request) (int, bool) {
 func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
 
-    e := r.ParseForm()
-    rscore.Cherr(e)
-    var n int
+    c := getcall(r)
 
-    fvam := r.FormValue("amount")
+    var e error
+    n := 0
 
-    if len(fvam) < 1 {
-        n = 0
-
-    } else {
-        n, e = strconv.Atoi(fvam)
+    if len(c.Amount) > 0 {
+        n, e = strconv.Atoi(c.Amount)
         rscore.Cherr(e)
     }
 
     id, isidr := isidreq(r)
-    tags := rscore.Formattags(r.FormValue("tags"))
+    tags := rscore.Formattags(c.Tags)
 
     req := rscore.Deckreq{
             Id: id,
             Isidreq: isidr,
             N: n,
-            Lang: r.FormValue("lang"),
+            Lang: c.Lang,
             Tags: tags }
 
     mreq, e := json.Marshal(req)
@@ -439,15 +435,12 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
 
-    e := r.ParseForm()
-    rscore.Cherr(e)
+    c := getcall(r)
 
-    uname := r.FormValue("user")
-    skey := r.FormValue("skey")
-    ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    ok, _ := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
     if !ok { return settings }
 
-    tags := rscore.Formattags(r.FormValue("tags"))
+    tags := rscore.Formattags(c.Tags)
 
     if len(tags) < 1  || tags[0] == "" {
         rscore.Sendstatus(rscore.C_NTAG,
@@ -456,12 +449,13 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     tr := rscore.Textreq{
-            Ttext: r.FormValue("ttext"),
-            Btext: r.FormValue("btext"),
-            Bpoint: r.FormValue("bpoint"),
+            Ttext: c.Ttext,
+            Btext: c.Btext,
+            Bpoint: c.Bpoint,
             Tags: tags }
 
     ltxt, e := json.Marshal(tr)
+    rscore.Cherr(e)
     rscore.Addlog(rscore.L_REQ, ltxt, settings.Llev, r)
 
     nt, settings := rsdb.Tagstoindex(tags, settings)
@@ -533,11 +527,9 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    wipe := r.FormValue("wipe")
-    uname := r.FormValue("user")
-    skey := r.FormValue("skey")
+    c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
+    ok, _ := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_ADMIN)
     if !ok { return }
 
     rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), settings.Llev, r)
@@ -545,7 +537,7 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     rsdb.Wrsettings(db, settings)
 
-    if wipe == "yes" {
+    if c.Wipe == "yes" {
         db.Close()
         os.Remove(rscore.DBNAME)
         rscore.Rmall(rscore.IMGDIR)
@@ -572,33 +564,55 @@ func getop(rop string, w http.ResponseWriter) (bool, int) {
     return true, op
 }
 
+// Parses API call and returns object
+func getcall(r *http.Request) rscore.Apicall {
+
+    e := r.ParseForm()
+    rscore.Cherr(e)
+
+    ret := rscore.Apicall{
+        User: r.FormValue("user"),
+        Pass: r.FormValue("pass"),
+        Email: r.FormValue("email"),
+        Skey: r.FormValue("skey"),
+        Tuser: r.FormValue("tuser"),
+        Tags: r.FormValue("tags"),
+        Lang: r.FormValue("lang"),
+        Id: r.FormValue("id"),
+        Amount: r.FormValue("amount"),
+        Ttext: r.FormValue("ttext"),
+        Btext: r.FormValue("btext"),
+        Fb: r.FormValue("fb"),
+        Bpoint: r.FormValue("bpoint"),
+        Rop: r.FormValue("op"),
+        Wipe: r.FormValue("wipe"),
+    }
+
+    return ret
+}
+
 // Changes user settings
 func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    uname := r.FormValue("user")
-    skey := r.FormValue("skey")
-    rop := r.FormValue("op")
-    tuser := r.FormValue("tuser")
-    pass := r.FormValue("pass")
+    c := getcall(r)
+    ok, op := getop(c.Rop, w)
+    tu := rsdb.Ruser(db, c.Tuser)
 
-    ok, op := getop(rop, w)
-    tu := rsdb.Ruser(db, tuser)
-
-    if tu.Name != tuser {
+    if tu.Name != c.Tuser {
         rscore.Sendstatus(rscore.C_NOSU, "No such target user", w)
         return
     }
 
     switch {
     case op == rscore.CU_MKADM || op == rscore.CU_RMADM:
-        ok, tu = rsuser.Chadminstatus(db, op, settings.Umax, uname, skey, tu, w)
+        ok, tu = rsuser.Chadminstatus(db, op, settings.Umax, c.User, c.Skey, tu, w)
 
     case op == rscore.CU_CPASS:
-        ok, tu = rsuser.Chpass(db, settings, uname, skey, pass, tu, w)
+        ok, tu = rsuser.Chpass(db, settings, c.User, c.Skey, c.Pass, tu, w)
 
     case op == rscore.CU_RMUSR:
-        ok, settings = rsuser.Rmuser(db, settings, uname, skey, tu, w)
+        ok, settings = rsuser.Rmuser(db, settings, c.User, c.Skey, tu, w)
 
     default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
@@ -622,13 +636,10 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) rscore.Settings {
 
-    e := r.ParseForm()
-    rscore.Cherr(e)
-
+    c := getcall(r)
     u := rscore.User{}
-    u.Name = r.FormValue("user")
-    u.Email = r.FormValue("email") // TODO validate
-    pass := r.FormValue("pass")
+    u.Name = c.User
+    u.Email = c.Email // TODO validate
 
     if settings.Umax ==  0 {
         u.Alev = rscore.ALEV_ADMIN // Auto admin for first user to register
@@ -648,7 +659,7 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             return settings
     }
 
-    ok, u := rsuser.Setpass(u, pass)
+    ok, u := rsuser.Setpass(u, c.Pass)
     if !ok {
         rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
         return settings
@@ -666,33 +677,29 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    e := r.ParseForm()
-    rscore.Cherr(e)
-
-    uname := r.FormValue("user")
-    pass := r.FormValue("pass")
+    c := getcall(r)
 
     if settings.Umax < 1 {
         rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
         return
     }
 
-    if uname != rscore.Cleanstring(uname, rscore.RXUSER) {
+    if c.User != rscore.Cleanstring(c.User, rscore.RXUSER) {
             rscore.Sendstatus(rscore.C_UICH,
                 "Username includes illegal characters", w)
             return
     }
 
     uindex := rsdb.Ruindex(db, settings)
-    if !rscore.Findstrinslice(uname, uindex.Names) {
+    if !rscore.Findstrinslice(c.User, uindex.Names) {
         rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
         return
     }
 
-    u := rsdb.Ruser(db, uname)
+    u := rsdb.Ruser(db, c.User)
     li := rscore.Login{}
 
-    if rscore.Valuser(u, []byte(pass)) {
+    if rscore.Valuser(u, []byte(c.Pass)) {
         u.Skey = rscore.Randstr(rscore.SKEYLEN)
         li = rsuser.Getloginobj(u)
         rsdb.Wruser(db, u)
@@ -710,17 +717,12 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
 
-    e := r.ParseForm()
-    rscore.Cherr(e)
+    c := getcall(r)
 
-    uname := r.FormValue("user")
-    skey := r.FormValue("skey")
-    str := r.FormValue("fb")
-
-    ok, u := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
     if !ok { return }
 
-    d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, str)
+    d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, c.Fb)
     rscore.Appendfile(rscore.FBFILE, d)
     rscore.Sendstatus(rscore.C_OK, "", w)
 }

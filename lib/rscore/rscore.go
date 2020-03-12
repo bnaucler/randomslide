@@ -177,6 +177,24 @@ type Login struct {
     Alev int                    // Access level
 }
 
+type Apicall struct {
+    User string                 // User name
+    Pass string                 // Password
+    Email string                // Email address
+    Skey string                 // Session key
+    Tuser string                // Target user
+    Tags string                 // Tags
+    Lang string                 // Languge code, 'en', 'de', 'se', etc
+    Id string                   // Deck ID request
+    Amount string               // Amount of slides requested
+    Ttext string                // Title test
+    Btext string                // Body test
+    Fb string                   // Feedback text
+    Bpoint string               // Bullet point
+    Rop string                  // Raw (unprocessed) operation
+    Wipe string                 // Request to wipe database
+}
+
 type Deckreq struct {
     Id int                      // Deck ID for db
     N int                       // Number of slides to generate
