@@ -441,13 +441,8 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ok, _ := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
     if !ok { return settings }
 
-    tags := rscore.Formattags(c.Tags)
-
-    if len(tags) < 1  || tags[0] == "" {
-        rscore.Sendstatus(rscore.C_NTAG,
-            "No tags provided - cannot add data", w)
-        return settings
-    }
+    ok, tags := gettags(r, w)
+    if !ok { return settings }
 
     tr := rscore.Textreq{
             Ttext: c.Ttext,
