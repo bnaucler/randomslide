@@ -312,6 +312,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     id, isidr := isidreq(r)
     tags := rscore.Formattags(c.Tags)
+    if len(tags) < 1 || tags[0] == "" { tags = settings.Taglist }
 
     req := rscore.Deckreq{
             Id: id,
