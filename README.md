@@ -55,6 +55,7 @@ Endpoint:               Variables:              Comment:
 /register                                       Register a user account
                         user        string      Username
                         pass        string      Password
+                        email       string      Email address
 
 
 /login                                          Login to get higher access level
