@@ -44,6 +44,7 @@ const RNUMBMAX = 30             // Random number base max
 const RNUMEMAX = 3              // Random number exponent max
 
 const PWMINLEN = 6              // Minimum accepted lendth of password
+const RPWDLEN = 15              // Length of random generated passwords
 
 const SKEYLEN = 40              // # of characters in a session key
 const RFNLEN = 20               // Length of random file names (w/o .ext)
@@ -77,6 +78,7 @@ const C_NSOP = 9                // No such operation
 const C_UNKN = 10               // Unknown error
 const C_USPW = 11               // Unsafe password
 const C_IEMA = 12               // Invalid email address
+const C_WEMA = 13               // Incorrect email address
 
 // User level definitions
 const ALEV_USER = 0             // Regular user
@@ -88,6 +90,7 @@ const CU_MKADM = 0              // Makes specified user admin
 const CU_RMADM = 1              // Removes admin status from user
 const CU_CPASS = 2              // Password change request
 const CU_RMUSR = 3              // Removes user account
+const CU_PWDRS = 4              // Requests password reset email
 
 // Probability chart for slide occurance. Higher number = higher probability.
 var SPROB = []int{2, 6, 3, 4, 9, 6, 5, 4}

@@ -95,11 +95,11 @@ func Setpass(u rscore.User, pass string) (bool, rscore.User) {
 func Chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
     pass string, tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
 
-
     ok := Isadminorme(db, settings, uname, skey, tu, w)
     if !ok { return false, tu }
 
     ok, tu = Setpass(tu, pass)
+    if !ok { rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w) }
     return ok, tu
 }
 

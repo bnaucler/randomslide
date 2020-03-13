@@ -10,6 +10,7 @@ import (
     "strings"
     "strconv"
     "net/http"
+    "net/smtp"
     "math/rand"
     "io/ioutil"
     "encoding/json"
@@ -22,6 +23,24 @@ import (
     "github.com/bnaucler/randomslide/lib/rsimage"
     "github.com/bnaucler/randomslide/lib/rsuser"
 )
+
+// Sends simple plaintext email
+func sendmail(addr string, subj string, body string, s rscore.Smtp) {
+
+    var to []string
+    to = append(to, addr)
+
+    a := smtp.PlainAuth("", s.User, s.Pass, s.Server)
+
+    m := fmt.Sprintf("To: %s\r\n" +
+                      "Subject: %s\r\n\r\n" +
+                      "%s\r\n", addr, subj, body)
+
+    swp := fmt.Sprintf("%s:%d", s.Server, s.Port)
+
+    e := smtp.SendMail(swp, a, s.From, to, []byte(m))
+    rscore.Cherr(e)
+}
 
 // Updates slilde probabilities
 func setsprob(n int, sprob []int) []int {
@@ -588,6 +607,27 @@ func getcall(r *http.Request) rscore.Apicall {
     return ret
 }
 
+// Sets new password and sends by email
+func pwdreset(db *bolt.DB, settings rscore.Settings, uname string,
+    email string, w http.ResponseWriter) (bool, rscore.User) {
+
+    u := rsdb.Ruser(db, uname)
+
+    if u.Email != email {
+        rscore.Sendstatus(rscore.C_WEMA, "Incorrect email address for user", w)
+        return false, u
+    }
+
+    np := rscore.Randstr(rscore.RPWDLEN)
+    ok, u := rsuser.Setpass(u, np)
+    if !ok { return false, u }
+
+    msg := fmt.Sprintf("Your new randomslide password: %s", np)
+    go sendmail(u.Email, "randomslide password reset", msg, settings.Smtp)
+
+    return ok, u
+}
+
 // Changes user settings
 func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     settings rscore.Settings) {
@@ -596,7 +636,7 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     ok, op := getop(c.Rop, w)
     tu := rsdb.Ruser(db, c.Tuser)
 
-    if tu.Name != c.Tuser {
+    if tu.Name != c.Tuser || c.Tuser == "" {
         rscore.Sendstatus(rscore.C_NOSU, "No such target user", w)
         return
     }
@@ -611,6 +651,9 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     case op == rscore.CU_RMUSR:
         ok, settings = rsuser.Rmuser(db, settings, c.User, c.Skey, tu, w)
 
+    case op == rscore.CU_PWDRS:
+        ok, tu = pwdreset(db, settings, c.User, c.Email, w)
+
     default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
         return
@@ -623,9 +666,6 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     } else if ok {
         rscore.Sendstatus(rscore.C_OK, "", w)
         rsdb.Wruser(db, tu)
-
-    } else if !ok && op == rscore.CU_CPASS {
-        rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
     }
 }
 

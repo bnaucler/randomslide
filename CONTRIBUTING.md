@@ -27,9 +27,9 @@ tools/          - Tools for maintenence etc.
 * Refactor getimgtype()
 * Make tools use scaleimage()
 * Implement mutex locks
+* Handler for SMTP setup
 * Proper automated tests
 * Storage of tag indexes in db
-* Email password reset
 * Improve API call logging
 * Propagate API call object
 * Usernames in log
