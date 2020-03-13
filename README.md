@@ -1,16 +1,13 @@
 # randomslide v0.3A
-Generate random slides for online presentation.
+Generate random slides for slideshow karaokae or other pranks. Actual real world usefulness can be questioned.
 
 ## Created by
-Björn W Naucler (bwn@randomslide.com)  
+Björn W Nauclér (bwn@randomslide.com)  
 Morgan Andersson (ma@randomslide.com)
 
 ## Dependencies
 [BoltDB](https://github.com/boltdb/bolt), [bcrypt](https://golang.org/x/crypto/bcrypt) & [nfnt/resize](https://github.com/nfnt/resize)  
 The code has been tested on Arch Linux 5.5 and FreeBSD 12, but should be fairly portable.
-
-## Project purpose
-Slideshow karaokae or other pranks. Actual real world usefulness can be questioned.
 
 ## Installation
 To build server and tools:  
