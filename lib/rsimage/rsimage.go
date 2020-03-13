@@ -167,7 +167,7 @@ func Getallsuf() []string {
     var ret []string
 
     for _, itype := range rscore.ALLSUF {
-        ret = append(ret, rscore.IKEY[itype])
+        ret = append(ret, rscore.SUFINDEX[itype])
     }
 
     return ret
@@ -179,7 +179,7 @@ func Mkimgsuflist(t int) []string {
     var ret []string
 
     for _, itype := range rscore.ISZINDEX[t] {
-        ret = append(ret, rscore.IKEY[itype])
+        ret = append(ret, rscore.SUFINDEX[itype])
     }
 
     return ret

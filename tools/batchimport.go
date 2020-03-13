@@ -92,7 +92,7 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
 
         // Append the appropriate size tag to slice
         var suf []string
-        suf = append(suf, rscore.IKEY[isz])
+        suf = append(suf, rscore.SUFINDEX[isz])
         ttags := rscore.Addtagsuf(tags, suf)
 
         img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, settings)

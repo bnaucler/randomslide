@@ -422,7 +422,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     rscore.Sendtagstatus(nt, w)
 
     var suf []string
-    suf = append(suf, rscore.IKEY[isz])
+    suf = append(suf, rscore.SUFINDEX[isz])
     stags := rscore.Addtagsuf(tags, suf)
 
     settings = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, stags, w, settings)
@@ -568,21 +568,21 @@ func getcall(r *http.Request) rscore.Apicall {
     rscore.Cherr(e)
 
     ret := rscore.Apicall{
-        User: r.FormValue("user"),
-        Pass: r.FormValue("pass"),
-        Email: r.FormValue("email"),
-        Skey: r.FormValue("skey"),
-        Tuser: r.FormValue("tuser"),
-        Tags: r.FormValue("tags"),
-        Lang: r.FormValue("lang"),
-        Id: r.FormValue("id"),
-        Amount: r.FormValue("amount"),
-        Ttext: r.FormValue("ttext"),
-        Btext: r.FormValue("btext"),
-        Fb: r.FormValue("fb"),
-        Bpoint: r.FormValue("bpoint"),
-        Rop: r.FormValue("op"),
-        Wipe: r.FormValue("wipe"),
+        User:       r.FormValue("user"),
+        Pass:       r.FormValue("pass"),
+        Email:      r.FormValue("email"),
+        Skey:       r.FormValue("skey"),
+        Tuser:      r.FormValue("tuser"),
+        Tags:       r.FormValue("tags"),
+        Lang:       r.FormValue("lang"),
+        Id:         r.FormValue("id"),
+        Amount:     r.FormValue("amount"),
+        Ttext:      r.FormValue("ttext"),
+        Btext:      r.FormValue("btext"),
+        Fb:         r.FormValue("fb"),
+        Bpoint:     r.FormValue("bpoint"),
+        Rop:        r.FormValue("op"),
+        Wipe:       r.FormValue("wipe"),
     }
 
     return ret

@@ -26,10 +26,9 @@ tools/          - Tools for maintenence etc.
 ## TODO
 * Refactor getimgtype()
 * Make tools use scaleimage()
+* Implement mutex locks
 * Proper automated tests
-* Suffix naming convention
 * Storage of tag indexes in db
-* Email validation
 * Email password reset
 * Improve API call logging
 * Propagate API call object

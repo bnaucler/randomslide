@@ -139,7 +139,7 @@ var ISZINDEX = [][]int {
 var ALLSUF = []int{0, 1, 2, 3}
 
 // Index keys to be used for image size indexes
-var IKEY = []string {
+var SUFINDEX = []string {
     ".s0",
     ".s1",
     ".s2",

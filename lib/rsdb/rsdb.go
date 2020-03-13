@@ -369,7 +369,7 @@ func Addimgwtags(db *bolt.DB, fn string, iw int, ih int, isz int, tags []string,
     ofn := filepath.Base(fn)
 
     // Write image object to database
-    ttags := append(tags, rscore.IKEY[isz])
+    ttags := append(tags, rscore.SUFINDEX[isz])
     img := rsimage.Mkimgobj(ofn, ttags, iw, ih, isz, settings)
     k := []byte(strconv.Itoa(img.Id))
     Wrimage(db, k, img)
