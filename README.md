@@ -36,6 +36,7 @@ Server log files can be accessed at `static/logs` or in the admin interface.
 
 ## CLI tools
 There are a few CLI helper tools bundled with randomslide:  
+`emailset` configures the SMTP settings (will be removed once better solution is deployed)  
 `dbdump` dumps the database to console. Not recommended with large data sets.  
 `batchimport` can import a UTF-8-encoded text file or image directory directly into the database.  
 `imgclass` iterates through a directory and checks for classes and final dimensions of images.
@@ -95,6 +96,7 @@ Endpoint:               Variables:              Comment:
                                                     1: Remove admin rights
                                                     2: Change password
                                                     3: Remove user account
+                                                    4: Email new password
 
 /feedback*                                      Give feedback on user experience
                         fb          string      The feedback info itself
