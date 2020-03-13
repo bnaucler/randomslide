@@ -162,6 +162,7 @@ type Settings struct {
     Umax int                    // Max user ID in database
     Pidfile string              // Location of pidfile
     Taglist []string            // List of all existing tags
+    Smtp Smtp                   // Settings for sending email
 }
 
 type User struct {
@@ -194,6 +195,14 @@ type Apicall struct {
     Bpoint string               // Bullet point
     Rop string                  // Raw (unprocessed) operation
     Wipe string                 // Request to wipe database
+}
+
+type Smtp struct {
+    From string                 // Name of email sender
+    Server string               // Which server to connect to
+    User string                 // User account for logging in
+    Pass string                 // Password for user auth
+    Port int                    // Server port
 }
 
 type Deckreq struct {

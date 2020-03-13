@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TOOLS=("dbdump batchimport imgclass")
+TOOLS=("dbdump batchimport imgclass emailset")
 TPATH="tools"
 
 echo "Building rsserver"
