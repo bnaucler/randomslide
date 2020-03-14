@@ -27,12 +27,14 @@ tools/          - Tools for maintenence etc.
 * Refactor getimgtype()
 * Make tools use scaleimage()
 * Implement mutex locks
+* Handler for text file batch processing
 * Handler for SMTP setup
 * Proper automated tests
 * Storage of tag indexes in db
 * Improve API call logging
 * Propagate API call object
 * Usernames in log
+* Web scraper - generate data from url
 * Contribution tracking
 * Improved bullet point handling
 * Put untagged data in 'random' tag
