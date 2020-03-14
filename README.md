@@ -15,6 +15,7 @@ To build server and tools:
 go get github.com/bnaucler/randomslide
 cd $GOPATH/src/github.com/bnaucler/randomslide
 bin/build.sh all
+bin/emailset
 ```
 
 ## Usage
