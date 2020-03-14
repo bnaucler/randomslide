@@ -27,8 +27,10 @@ function slide1(resp){
     div.style.display = "none";
     outputEl.appendChild(div);
 
-    let slideImg = document.createElement("img");
-    slideImg.setAttribute("src", "img/" + resp.Img.Fname);
+    let slideImg = document.createElement("div");
+    slideImg.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
+    // let slideImg = document.createElement("img");
+    // slideImg.setAttribute("src", "img/" + resp.Img.Fname);
     slideImg.classList.add("slideimg");
     div.appendChild(slideImg);
 }
