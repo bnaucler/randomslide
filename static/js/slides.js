@@ -101,13 +101,15 @@ function slide5(resp){
     let imgNo = Math.floor(Math.random() * 4);
     let slideImg = document.createElement("div");
     slideImg.classList.add("slideimg");
-
+    let textdiv = document.createElement("div");
     let inspoP = document.createElement("p");
     slideImg.style.backgroundImage = 'url(inspoimg/inspo' + imgNo + '.jpg)';
     let inspotext = document.createTextNode('"' + resp.Title + '"');
     inspoP.appendChild(inspotext);
-    slideImg.appendChild(inspoP);
+    textdiv.appendChild(inspoP);
+    textdiv.classList.add("textdiv");
     div.appendChild(slideImg);
+    div.appendChild(textdiv);
     
 }
 

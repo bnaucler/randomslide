@@ -72,15 +72,17 @@ header{
     filter: blur(2px);
 }
 
-p{
-    filter: none;
-    background-color: rgba(128, 128, 128, 0.562);
+.textdiv{
     z-index: 999;
-    font-size: 2em;
-    font-weight: bold;
-    margin: 0;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    margin: 0;
+}
+
+p{
+    background-color: rgba(128, 128, 128, 0.562);
+    font-size: 2em;
+    font-weight: bold;
 }
