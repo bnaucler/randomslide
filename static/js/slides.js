@@ -29,8 +29,7 @@ function slide1(resp){
 
     let slideImg = document.createElement("div");
     slideImg.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
-    // let slideImg = document.createElement("img");
-    // slideImg.setAttribute("src", "img/" + resp.Img.Fname);
+
     slideImg.classList.add("slideimg");
     div.appendChild(slideImg);
 }
@@ -100,17 +99,16 @@ function slide5(resp){
     outputEl.appendChild(div);
 
     let imgNo = Math.floor(Math.random() * 4);
-
-    let figure = document.createElement("figure");
-    let slideImg = document.createElement("img");
-    let caption = document.createElement("figcaption");
-    slideImg.setAttribute("src", "inspoimg/inspo" + imgNo + ".jpg");
+    let slideImg = document.createElement("div");
     slideImg.classList.add("slideimg");
-    let captionText = document.createTextNode('"' + resp.Title + '"');
-    caption.appendChild(captionText);
-    figure.appendChild(slideImg);
-    figure.appendChild(caption);
-    div.appendChild(figure);
+
+    let inspoP = document.createElementNS("p");
+    slideImg.style.backgroundImage = 'url(inspoimg/inspo' + imgNo + '.jpg)';
+    let inspotext = document.createTextNode('"' + resp.Title + '"');
+    inspoP.appendChild(inspotext);
+    slideImg.appendChild(inspoP);
+    div.appendChild(slideImg);
+
 }
 
 function slide6(resp){
