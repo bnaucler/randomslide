@@ -145,11 +145,11 @@ function slide7(resp){
     div.appendChild(canvas);
 
     var colors = [
-        'rgba(255, 99, 132, 0.5)', 
-        'rgba(54, 162, 235, 0.5)', 
-        'rgba(255, 206, 86, 0.5)', 
-        'rgba(75, 192, 192, 0.5)', 
-        'rgba(153, 102, 255, 0.5)', 
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
         'rgba(255, 159, 64, 0.5)'
     ];
 
@@ -161,10 +161,8 @@ function slide7(resp){
         'rgba(153, 102, 255, 1)',
         'rgba(255, 159, 64, 1)'
     ];
-    
-    let randint = Math.floor(Math.random() * 3);
 
-    switch(randint){
+    switch(resp.Ctype){
         case 0:
             var chartType = 'bar';
             var colorsToUse = colors.slice(0, resp.Dpts.length);
