@@ -73,6 +73,8 @@ header{
 }
 
 p{
+    filter: none;
+    background-color: rgba(128, 128, 128, 0.562);
     z-index: 999;
     font-size: 2em;
     font-weight: bold;

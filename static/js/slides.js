@@ -106,8 +106,9 @@ function slide5(resp){
     slideImg.style.backgroundImage = 'url(inspoimg/inspo' + imgNo + '.jpg)';
     let inspotext = document.createTextNode('"' + resp.Title + '"');
     inspoP.appendChild(inspotext);
+    slideImg.appendChild(inspoP);
     div.appendChild(slideImg);
-    div.appendChild(inspoP);
+    
 }
 
 function slide6(resp){
