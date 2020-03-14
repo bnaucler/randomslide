@@ -73,6 +73,12 @@ header{
 }
 
 p{
-    margin: auto;
-    text-align: center;
+    z-index: 999;
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
