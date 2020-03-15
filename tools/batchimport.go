@@ -158,5 +158,6 @@ func main() {
         readtextdir(db, fn, tags, *vptr)
     }
 
+    rsdb.Updatetindex(db)
     rsdb.Wrsettings(db, rscore.Set)
 }
