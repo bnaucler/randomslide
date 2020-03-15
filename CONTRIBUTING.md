@@ -26,7 +26,6 @@ tools/          - Tools for maintenence etc.
 ## TODO
 * Refactor getimgtype()
 * Make tools use scaleimage()
-* Implement mutex locks
 * Handler for text file batch processing
 * Handler for SMTP setup
 * Proper automated tests

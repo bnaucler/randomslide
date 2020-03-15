@@ -25,9 +25,11 @@ import (
 )
 
 // Sends simple plaintext email
-func sendmail(addr string, subj string, body string, s rscore.Smtp) {
+func sendmail(addr string, subj string, body string) {
 
     var to []string
+    var s = rscore.Set.Smtp
+
     to = append(to, addr)
 
     a := smtp.PlainAuth("", s.User, s.Pass, s.Server)
@@ -134,7 +136,7 @@ func setslidetype(i int, sprob []int) (rscore.Slidetype, []int) {
 }
 
 // Generate bullet point list for slide type 3
-func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
+func bpgen(db *bolt.DB, tags []string) []string {
 
     var bps []string
     var bp string
@@ -145,10 +147,10 @@ func bpgen(db *bolt.DB, tags []string, settings rscore.Settings) []string {
 
     var ctr int
 
-    for i := 0 ; i < n ; i ++ {
+    for i := 0 ; i < n ; i++ {
         ctr = 0
         for len(bp) == 0 || len(bp) > rscore.BPOINTMAX {
-            bp = rsdb.Getrndtxt(db, settings.Tmax, tags, rscore.TBUC)
+            bp = rsdb.Getrndtxt(db, rscore.Set.Tmax, tags, rscore.TBUC)
             if ctr > 50 { return bps } // TODO
             ctr++
         }
@@ -230,17 +232,16 @@ func dpgen() []int {
 }
 
 // Retrieves relevant data based on slide type
-func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
-    req rscore.Deckreq) rscore.Slide {
+func getslide(db *bolt.DB, st rscore.Slidetype, req rscore.Deckreq) rscore.Slide {
 
     slide := rscore.Slide{Type: st.Type}
 
-    if st.TT { slide.Title = rsdb.Getrndtxt(db, settings.Tmax, req.Tags, rscore.TBUC) }
-    if st.BT { slide.Btext = rsdb.Getrndtxt(db, settings.Bmax, req.Tags, rscore.BBUC) }
+    if st.TT { slide.Title = rsdb.Getrndtxt(db, rscore.Set.Tmax, req.Tags, rscore.TBUC) }
+    if st.BT { slide.Btext = rsdb.Getrndtxt(db, rscore.Set.Bmax, req.Tags, rscore.BBUC) }
     if len(st.IMG) > 0 {
         suf := rsimage.Mkimgsuflist(st.Type)
         stags := rscore.Addtagsuf(req.Tags, suf)
-        slide.Img = rsdb.Getrndimg(db, settings.Imax, stags, rscore.IBUC)
+        slide.Img = rsdb.Getrndimg(db, rscore.Set.Imax, stags, rscore.IBUC)
     }
 
     switch st.Type {
@@ -249,7 +250,7 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
         slide.Title = numgen()
 
     case 3:
-        slide.Bpts = bpgen(db, req.Tags, settings)
+        slide.Bpts = bpgen(db, req.Tags)
 
     case 7:
         slide.Dpts = dpgen()
@@ -260,30 +261,31 @@ func getslide(db *bolt.DB, st rscore.Slidetype, settings rscore.Settings,
 }
 
 // Returns a new slide deck according to request
-func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq,
-    settings rscore.Settings) (rscore.Deck, rscore.Settings) {
+func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq) rscore.Deck {
 
     var st rscore.Slidetype
     sprob := rscore.SPROB
 
     for i := 0; i < req.N; i++ {
         st, sprob = setslidetype(i, sprob)
-        slide := getslide(db, st, settings, req)
+        slide := getslide(db, st, req)
         deck.Slides = append(deck.Slides, slide)
     }
 
-    deck.Id = settings.Dmax
+    deck.Id = rscore.Set.Dmax
     rsdb.Wrdeck(db, deck)
 
-    settings.Dmax++
-    rsdb.Wrsettings(db, settings)
+    // Mutex test
+    rscore.Smut.Lock()
+    rscore.Set.Dmax++
+    rsdb.Wrsettings(db, rscore.Set)
+    rscore.Smut.Unlock()
 
-    return deck, settings
+    return deck
 }
 
 // Sets basic params & determines if new deck should be built
-func getdeck(req rscore.Deckreq, db *bolt.DB,
-    settings rscore.Settings) (rscore.Deck, rscore.Settings) {
+func getdeck(req rscore.Deckreq, db *bolt.DB) rscore.Deck {
 
     deck := rscore.Deck{
             Id: req.Id,
@@ -291,14 +293,14 @@ func getdeck(req rscore.Deckreq, db *bolt.DB,
             Lang: req.Lang }
 
     if req.Isidreq {
-        deck = rsdb.Rdeck(db, deck, req.Id, settings)
+        deck = rsdb.Rdeck(db, deck, req.Id, rscore.Set)
 
     } else {
-        deck, settings = mkdeck(db, deck, req, settings)
+        deck = mkdeck(db, deck, req)
 
     }
 
-    return deck, settings
+    return deck
 }
 
 // Determines if deck requests specific id
@@ -316,8 +318,7 @@ func isidreq(r *http.Request) (int, bool) {
 }
 
 // Handles incoming requests for decks
-func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) rscore.Settings {
+func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
@@ -331,7 +332,7 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     id, isidr := isidreq(r)
     tags := rscore.Formattags(c.Tags)
-    if len(tags) < 1 || tags[0] == "" { tags = settings.Taglist }
+    if len(tags) < 1 || tags[0] == "" { tags = rscore.Set.Taglist }
 
     req := rscore.Deckreq{
             Id: id,
@@ -342,17 +343,15 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_REQ, mreq, settings.Llev, r)
+    rscore.Addlog(rscore.L_REQ, mreq, rscore.Set.Llev, r)
 
-    deck, settings := getdeck(req, db, settings)
+    deck := getdeck(req, db)
 
     mdeck, e := json.Marshal(deck)
-    rscore.Addlog(rscore.L_RESP, mdeck, settings.Llev, r)
+    rscore.Addlog(rscore.L_RESP, mdeck, rscore.Set.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(deck)
-
-    return settings
 }
 
 // addlog() wrapper for file requests
@@ -364,8 +363,7 @@ func logfreq(hlr *multipart.FileHeader, mt string, llev int, r *http.Request) {
 }
 
 // Wrapper for file mime type check
-func chkimgmime(hlr *multipart.FileHeader, settings rscore.Settings,
-    w http.ResponseWriter) (bool, string) {
+func chkimgmime(hlr *multipart.FileHeader, w http.ResponseWriter) (bool, string) {
 
     mt := hlr.Header["Content-Type"][0]
 
@@ -393,24 +391,23 @@ func gettags(r *http.Request, w http.ResponseWriter) (bool, []string) {
 }
 
 // Handles incoming requests to add images
-func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) rscore.Settings {
+func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     r.ParseMultipartForm(10 << 20)
     sf, hlr, e := r.FormFile("file")
     e = rscore.Cherr(e)
-    if e != nil { return settings }
+    if e != nil { return }
     defer sf.Close()
 
     uname := r.FormValue("user")
     skey := r.FormValue("skey")
 
-    ok, _ := rsuser.Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
-    if !ok { return settings }
+    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    if !ok { return }
 
-    ok, mt := chkimgmime(hlr, settings, w)
-    if !ok { return settings }
-    logfreq(hlr, mt, settings.Llev, r)
+    ok, mt := chkimgmime(hlr, w)
+    if !ok { return }
+    logfreq(hlr, mt, rscore.Set.Llev, r)
 
     fn, fnp := rsimage.Newimagepath(hlr.Filename)
 
@@ -429,40 +426,41 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     if szok == false {
         rscore.Sendstatus(rscore.C_WRSZ,
             "Image size to small or aspect ratio out of bounds", w)
-        return settings
+        return
     }
 
     _, b = rsimage.Scaleimage(i, isz, fnp)
 
     ok, tags := gettags(r, w)
-    if !ok { return settings }
+    if !ok { return }
 
-    nt, settings := rsdb.Tagstoindex(tags, settings)
+    var nt int
+    nt, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set) // TODO mutex
     rscore.Sendtagstatus(nt, w)
 
     var suf []string
     suf = append(suf, rscore.SUFINDEX[isz])
     stags := rscore.Addtagsuf(tags, suf)
 
-    settings = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, stags, w, settings)
-    rsdb.Wrsettings(db, settings)
+    // Mutex test
+    rscore.Smut.Lock()
+    rscore.Set = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, stags, w, rscore.Set)
+    rsdb.Wrsettings(db, rscore.Set)
+    rscore.Smut.Unlock()
 
     rscore.Sendstatus(rscore.C_OK, "", w)
-
-    return settings
 }
 
 // Handles incoming requests to add text
-func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) rscore.Settings {
+func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
-    if !ok { return settings }
+    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
+    if !ok { return }
 
     ok, tags := gettags(r, w)
-    if !ok { return settings }
+    if !ok { return }
 
     tr := rscore.Textreq{
             Ttext: c.Ttext,
@@ -472,59 +470,58 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     ltxt, e := json.Marshal(tr)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_REQ, ltxt, settings.Llev, r)
+    rscore.Addlog(rscore.L_REQ, ltxt, rscore.Set.Llev, r)
 
-    nt, settings := rsdb.Tagstoindex(tags, settings)
+    var nt int
+    nt, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set) // TODO mutex
     rscore.Sendtagstatus(nt, w)
 
+    rscore.Smut.Lock() // Mutex test
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
-        rsdb.Addtextwtags(tr.Ttext, tags, db, settings.Tmax, rscore.TBUC)
-        settings.Tmax++
+        rsdb.Addtextwtags(tr.Ttext, tags, db, rscore.Set.Tmax, rscore.TBUC)
+        rscore.Set.Tmax++
     }
 
     if len(tr.Btext) > 1 && len(tr.Btext) < rscore.BTEXTMAX {
-        rsdb.Addtextwtags(tr.Btext, tags, db, settings.Bmax, rscore.BBUC)
-        settings.Bmax++
+        rsdb.Addtextwtags(tr.Btext, tags, db, rscore.Set.Bmax, rscore.BBUC)
+        rscore.Set.Bmax++
     }
+    rscore.Smut.Unlock()
 
-    rsdb.Wrsettings(db, settings)
-
-    return settings
+    rsdb.Wrsettings(db, rscore.Set)
 }
 
 // Handles incoming requests for user index
-func userreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) {
+func userreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
-    resp := rsdb.Ruindex(db, settings)
+    resp := rsdb.Ruindex(db, rscore.Set)
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, mresp, settings.Llev, r)
+    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
 }
 
 // Handles incoming requests for tag index
-func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) {
+func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     resp := rscore.Tagresp{}
     var ttag rscore.Rtag
 
-    for _, t := range settings.Taglist {
+    for _, t := range rscore.Set.Taglist {
         ttag.Name = t
 
-        if settings.Tmax > 0 {
+        if rscore.Set.Tmax > 0 {
             ttag.TN = rsdb.Countobj(db, t, rscore.TBUC)
         }
 
-        if settings.Bmax > 0 {
+        if rscore.Set.Bmax > 0 {
             ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
         }
 
-        if settings.Imax > 0 {
+        if rscore.Set.Imax > 0 {
             ttag.IN = rsdb.Imgobjctr(db, t)
         }
 
@@ -533,25 +530,24 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, mresp, settings.Llev, r)
+    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
 }
 
 // Handles incoming requests for shutdowns
-func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) {
+func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_ADMIN)
+    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, c.User, c.Skey, rscore.ALEV_ADMIN)
     if !ok { return }
 
-    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), settings.Llev, r)
+    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), rscore.Set.Llev, r)
     rscore.Sendstatus(rscore.C_OK, "", w)
 
-    rsdb.Wrsettings(db, settings)
+    rsdb.Wrsettings(db, rscore.Set)
 
     if c.Wipe == "yes" {
         db.Close()
@@ -559,7 +555,7 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
         rscore.Rmall(rscore.IMGDIR)
     }
 
-    rscore.Shutdown(settings)
+    rscore.Shutdown(rscore.Set)
 }
 
 // Wrapper for basic checks of valid operations
@@ -608,8 +604,8 @@ func getcall(r *http.Request) rscore.Apicall {
 }
 
 // Sets new password and sends by email
-func pwdreset(db *bolt.DB, settings rscore.Settings, uname string,
-    email string, w http.ResponseWriter) (bool, rscore.User) {
+func pwdreset(db *bolt.DB, uname string, email string,
+    w http.ResponseWriter) (bool, rscore.User) {
 
     u := rsdb.Ruser(db, uname)
 
@@ -623,14 +619,13 @@ func pwdreset(db *bolt.DB, settings rscore.Settings, uname string,
     if !ok { return false, u }
 
     msg := fmt.Sprintf("Your new randomslide password: %s", np)
-    go sendmail(u.Email, "randomslide password reset", msg, settings.Smtp)
+    go sendmail(u.Email, "randomslide password reset", msg)
 
     return ok, u
 }
 
 // Changes user settings
-func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) {
+func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
     ok, op := getop(c.Rop, w)
@@ -643,16 +638,16 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     switch {
     case op == rscore.CU_MKADM || op == rscore.CU_RMADM:
-        ok, tu = rsuser.Chadminstatus(db, op, settings.Umax, c.User, c.Skey, tu, w)
+        ok, tu = rsuser.Chadminstatus(db, op, rscore.Set.Umax, c.User, c.Skey, tu, w)
 
     case op == rscore.CU_CPASS:
-        ok, tu = rsuser.Chpass(db, settings, c.User, c.Skey, c.Pass, tu, w)
+        ok, tu = rsuser.Chpass(db, rscore.Set, c.User, c.Skey, c.Pass, tu, w)
 
     case op == rscore.CU_RMUSR:
-        ok, settings = rsuser.Rmuser(db, settings, c.User, c.Skey, tu, w)
+        ok, rscore.Set = rsuser.Rmuser(db, rscore.Set, c.User, c.Skey, tu, w)
 
     case op == rscore.CU_PWDRS:
-        ok, tu = pwdreset(db, settings, c.User, c.Email, w)
+        ok, tu = pwdreset(db, c.User, c.Email, w)
 
     default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
@@ -660,7 +655,7 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     }
 
     if ok && op == rscore.CU_CPASS {
-        rsuser.Senduser(tu, r, w, settings)
+        rsuser.Senduser(tu, r, w, rscore.Set)
         rsdb.Wruser(db, tu)
 
     } else if ok {
@@ -679,27 +674,26 @@ func valemail(addr string) bool {
 }
 
 // Handles incoming requests for user registrations
-func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) rscore.Settings {
+func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
     u := rscore.User{}
 
     if !valemail(c.Email) {
         rscore.Sendstatus(rscore.C_IEMA, "Invalid email address", w)
-        return settings
+        return
     }
 
     u.Name = c.User
     u.Email = c.Email
 
-    if settings.Umax ==  0 {
+    if rscore.Set.Umax ==  0 {
         u.Alev = rscore.ALEV_ADMIN // Auto admin for first user to register
 
     } else {
         if rsdb.Isindb(db, []byte(u.Name), rscore.UBUC) {
             rscore.Sendstatus(rscore.C_UIDB, "Username already in db", w)
-            return settings
+            return
         }
 
         u.Alev = rscore.ALEV_CONTRIB
@@ -708,30 +702,29 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
     if u.Name != rscore.Cleanstring(u.Name, rscore.RXUSER) {
             rscore.Sendstatus(rscore.C_UICH,
                 "Username includes illegal characters", w)
-            return settings
+            return
     }
 
     ok, u := rsuser.Setpass(u, c.Pass)
     if !ok {
         rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w)
-        return settings
+        return
     }
 
-    settings = rsdb.Addutoindex(db, u.Name, settings)
+    rscore.Set = rsdb.Addutoindex(db, u.Name, rscore.Set)
     rsdb.Wruser(db, u)
-    rsuser.Senduser(u, r, w, settings)
+    rsuser.Senduser(u, r, w, rscore.Set)
 
-    rsdb.Wrsettings(db, settings)
-    return settings
+    rsdb.Wrsettings(db, rscore.Set)
+    return
 }
 
 // Handles incoming login requests
-func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) {
+func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    if settings.Umax < 1 {
+    if rscore.Set.Umax < 1 {
         rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
         return
     }
@@ -742,7 +735,7 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
             return
     }
 
-    uindex := rsdb.Ruindex(db, settings)
+    uindex := rsdb.Ruindex(db, rscore.Set)
     if !rscore.Findstrinslice(c.User, uindex.Names) {
         rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
         return
@@ -759,19 +752,18 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
 
     ml, e := json.Marshal(li)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
+    rscore.Addlog(rscore.L_RESP, ml, rscore.Set.Llev, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(li)
 }
 
 // Receives feedback data and saves to file
-func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB,
-    settings rscore.Settings) {
+func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, u := rsuser.Userv(db, w, settings.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, c.Fb)
@@ -789,61 +781,61 @@ func main() {
     db := rsdb.Open(*dbptr)
     defer db.Close()
 
-    settings := rsdb.Rsettings(db)
-    if *vptr { settings.Llev = 1 }
-    settings = rscore.Rsinit(settings)
+    rscore.Set = rsdb.Rsettings(db)
+    if *vptr { rscore.Set.Llev = 1 }
+    rscore.Set = rscore.Rsinit(rscore.Set)
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
     // Requests to shut down server
     http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-        shutdownhandler(w, r, db, settings)
+        shutdownhandler(w, r, db)
     })
 
     // Slide deck requests
     http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
-        settings = deckreqhandler(w, r, db, settings)
+        deckreqhandler(w, r, db)
     })
 
     // Tags requests
     http.HandleFunc("/gettags", func(w http.ResponseWriter, r *http.Request) {
-        tagreqhandler(w, r, db, settings)
+        tagreqhandler(w, r, db)
     })
 
     // Tags requests
     http.HandleFunc("/getusers", func(w http.ResponseWriter, r *http.Request) {
-        userreqhandler(w, r, db, settings)
+        userreqhandler(w, r, db)
     })
 
     // Add text to db
     http.HandleFunc("/addtext", func(w http.ResponseWriter, r *http.Request) {
-        settings = textreqhandler(w, r, db, settings)
+        textreqhandler(w, r, db)
     })
 
     // Upload images
     http.HandleFunc("/addimg", func(w http.ResponseWriter, r *http.Request) {
-        settings = imgreqhandler(w, r, db, settings)
+        imgreqhandler(w, r, db)
     })
 
     // User registration
     http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-        settings = reghandler(w, r, db, settings)
+        reghandler(w, r, db)
     })
 
     // User login
     http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-        loginhandler(w, r, db, settings)
+        loginhandler(w, r, db)
     })
 
     // Change user settings
     http.HandleFunc("/chuser", func(w http.ResponseWriter, r *http.Request) {
-        cuhandler(w, r, db, settings)
+        cuhandler(w, r, db)
     })
 
     // Feedback
     http.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
-        feedbackhandler(w, r, db, settings)
+        feedbackhandler(w, r, db)
     })
 
     lport := fmt.Sprintf(":%d", *pptr)

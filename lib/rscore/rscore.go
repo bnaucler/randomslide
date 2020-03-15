@@ -13,6 +13,7 @@ import (
     "fmt"
     "log"
     "net"
+    "sync"
     "time"
     "regexp"
     "strings"
@@ -34,6 +35,9 @@ const LOGPATH = "./static/log/" // Logs should be accessible from frontend
 const IMGDIR = "./static/img/"  // Image directory
 const PIDFILEPATH = "./data/"   // Base directory for storage of PID file
 const FBFILE = "./data/fb.txt"  // Storage of feedback data
+
+var Set Settings                // Global rsserver settings
+var Smut sync.Mutex             // Settings mutex
 
 const VERBDEF = false           // Verbose mode defaults to false
 

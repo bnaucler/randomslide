@@ -174,7 +174,9 @@ func Addutoindex(db *bolt.DB, uname string,
     users.Names = rscore.Rmdupstrfslice(users.Names)
     sort.Strings(users.Names)
 
+    rscore.Smut.Lock()
     settings = Wruindex(db, users, settings)
+    rscore.Smut.Unlock()
 
     return settings
 }
