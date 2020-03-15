@@ -38,6 +38,16 @@ tools/          - Tools for maintenence etc.
 * Improved bullet point handling
 * Put untagged data in 'random' tag
 
+
+## TODO (Frontend)
+* Userhandling
+* Share (deckid) on social media
+* CSS for all slides (maybe not 1 and 5)
+* CSS for the main site
+* JS-removing unused tags from DOM after slideshow has started
+* Refactor JS
+
+
 ## Text types
 Title (ttext): 1-35 characters  
 Body (btext): 5-80 characters
