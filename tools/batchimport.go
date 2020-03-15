@@ -18,8 +18,7 @@ import (
     "github.com/bnaucler/randomslide/lib/rsimage"
 )
 
-func readtxtfile(db *bolt.DB, fn string, tags []string,
-    settings rscore.Settings) (rscore.Settings, int) {
+func readtxtfile(db *bolt.DB, fn string, tags []string) int {
 
     f, e := os.Open(fn)
     rscore.Cherr(e)
@@ -37,24 +36,23 @@ func readtxtfile(db *bolt.DB, fn string, tags []string,
             continue
 
         } else if tlen > rscore.TTEXTMAX {
-            rsdb.Addtextwtags(raw, tags, db, settings.Bmax, rscore.BBUC)
-            settings.Bmax++
+            rsdb.Addtextwtags(raw, tags, db, rscore.Set.Bmax, rscore.BBUC)
+            rscore.Set.Bmax++
 
         } else {
-            rsdb.Addtextwtags(raw, tags, db, settings.Tmax, rscore.TBUC)
-            settings.Tmax++
+            rsdb.Addtextwtags(raw, tags, db, rscore.Set.Tmax, rscore.TBUC)
+            rscore.Set.Tmax++
         }
 
         ret++
     }
 
-    _, settings = rsdb.Tagstoindex(tags, settings)
+    _, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set)
 
-    return settings, ret
+    return ret
 }
 
-func readimg(db *bolt.DB, opath string, fl []string, tags []string,
-    settings rscore.Settings) (int, rscore.Settings) {
+func readimg(db *bolt.DB, opath string, fl []string, tags []string) int {
 
     n := 0
 
@@ -95,22 +93,22 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string,
         suf = append(suf, rscore.SUFINDEX[isz])
         ttags := rscore.Addtagsuf(tags, suf)
 
-        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, settings)
-        id := []byte(strconv.Itoa(settings.Imax))
+        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, rscore.Set)
+        id := []byte(strconv.Itoa(rscore.Set.Imax))
         fmt.Printf("IMPORTING: %+v\n", img)
 
         n++
         rsdb.Wrimage(db, id, img)
-        rsdb.Uilists(db, ttags, settings.Imax, rscore.IBUC)
-        settings.Imax++
+        rsdb.Uilists(db, ttags, rscore.Set.Imax, rscore.IBUC)
+        rscore.Set.Imax++
     }
 
     fmt.Printf("TAGS: %+v\n", tags)
-    return n, settings
+
+    return n
 }
 
-func readimgdir(db *bolt.DB, dns []string, tags []string,
-    settings rscore.Settings, verb bool) rscore.Settings {
+func readimgdir(db *bolt.DB, dns []string, tags []string, verb bool)  {
 
     var n int
 
@@ -122,25 +120,21 @@ func readimgdir(db *bolt.DB, dns []string, tags []string,
         if verb { fmt.Printf("Importing images from %s...\n", dn) }
         fl, e := d.Readdirnames(-1)
         rscore.Cherr(e)
-        n, settings = readimg(db, dn, fl, tags, settings)
+        n = readimg(db, dn, fl, tags)
         if verb { fmt.Printf("%d images imported\n", n) }
     }
 
-    _, settings = rsdb.Tagstoindex(tags, settings)
-    return settings
+    _, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set)
 }
 
-func readtextdir(db *bolt.DB, fn []string, tags []string,
-    settings rscore.Settings, verb bool) rscore.Settings {
+func readtextdir(db *bolt.DB, fn []string, tags []string, verb bool) {
 
     var n int
     for _, f := range fn {
         if verb { fmt.Printf("Importing %s...\n", f) }
-        settings, n = readtxtfile(db, f, tags, settings)
+        n = readtxtfile(db, f, tags)
         if verb { fmt.Printf("%d lines imported\n", n) }
     }
-
-    return settings
 }
 
 func main() {
@@ -154,15 +148,15 @@ func main() {
 
     db := rsdb.Open(*dbptr)
     defer db.Close()
-    settings := rsdb.Rsettings(db)
+    rscore.Set = rsdb.Rsettings(db)
     tags := rscore.Formattags(*tptr)
 
     if *iptr == true {
-        settings = readimgdir(db, fn, tags, settings, *vptr)
+        readimgdir(db, fn, tags, *vptr)
 
     } else {
-        settings = readtextdir(db, fn, tags, settings, *vptr)
+        readtextdir(db, fn, tags, *vptr)
     }
 
-    rsdb.Wrsettings(db, settings)
+    rsdb.Wrsettings(db, rscore.Set)
 }
