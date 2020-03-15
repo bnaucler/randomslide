@@ -27,9 +27,9 @@ tools/          - Tools for maintenence etc.
 * Refactor getimgtype()
 * Make tools use scaleimage()
 * Handler for text file batch processing
+* Enable goroutine for tag index mutex
 * Handler for SMTP setup
 * Proper automated tests
-* Storage of tag indexes in db
 * Improve API call logging
 * Propagate API call object
 * Usernames in log

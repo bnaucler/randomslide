@@ -152,6 +152,59 @@ func Ruindex(db *bolt.DB, settings rscore.Settings) rscore.Uindex {
     return users
 }
 
+// Writes tag index to db
+func Wrtindex(db *bolt.DB, tindex rscore.Tagresp) { // TODO rename tagresp
+
+    mti, e := json.Marshal(tindex)
+    rscore.Cherr(e)
+
+    e = Wrdb(db, rscore.TINDEX, mti, rscore.SBUC)
+    rscore.Cherr(e)
+}
+
+// Reads tag index from db
+func Rtindex(db *bolt.DB) rscore.Tagresp {
+
+    t := rscore.Tagresp{}
+
+    mti, e := Rdb(db, rscore.TINDEX, rscore.SBUC)
+    rscore.Cherr(e)
+    e = json.Unmarshal(mti, &t)
+
+    if e == nil { return t }
+    return rscore.Tagresp{}
+}
+
+// Returns updated rtag object
+func Updatertag(db *bolt.DB, t string) rscore.Rtag {
+
+    var rtag rscore.Rtag
+
+    rtag.Name = t
+
+    if rscore.Set.Tmax > 0 { rtag.TN = Countobj(db, t, rscore.TBUC) }
+    if rscore.Set.Bmax > 0 { rtag.BN = Countobj(db, t, rscore.BBUC) }
+    if rscore.Set.Imax > 0 { rtag.IN = Imgobjctr(db, t) }
+
+    return rtag
+}
+
+// Updates tag index
+func Updatetindex(db *bolt.DB) {
+
+    tindex := rscore.Tagresp{}
+
+    rscore.Smut.Lock()
+
+    for _, t := range rscore.Set.Taglist {
+        rtag := Updatertag(db, t)
+        tindex.Tags = append(tindex.Tags, rtag)
+    }
+
+    Wrtindex(db, tindex)
+    rscore.Smut.Unlock()
+}
+
 // Write user index to database
 func Wruindex(db *bolt.DB, users rscore.Uindex,
     settings rscore.Settings) rscore.Settings {

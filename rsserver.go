@@ -445,6 +445,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     // Mutex test
     rscore.Smut.Lock()
     rscore.Set = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, stags, w, rscore.Set)
+    rsdb.Updatetindex(db)
     rsdb.Wrsettings(db, rscore.Set)
     rscore.Smut.Unlock()
 
@@ -486,9 +487,10 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
         rsdb.Addtextwtags(tr.Btext, tags, db, rscore.Set.Bmax, rscore.BBUC)
         rscore.Set.Bmax++
     }
-    rscore.Smut.Unlock()
 
+    rsdb.Updatetindex(db)
     rsdb.Wrsettings(db, rscore.Set)
+    rscore.Smut.Unlock()
 }
 
 // Handles incoming requests for user index
@@ -507,26 +509,7 @@ func userreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 // Handles incoming requests for tag index
 func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
-    resp := rscore.Tagresp{}
-    var ttag rscore.Rtag
-
-    for _, t := range rscore.Set.Taglist {
-        ttag.Name = t
-
-        if rscore.Set.Tmax > 0 {
-            ttag.TN = rsdb.Countobj(db, t, rscore.TBUC)
-        }
-
-        if rscore.Set.Bmax > 0 {
-            ttag.BN = rsdb.Countobj(db, t, rscore.BBUC)
-        }
-
-        if rscore.Set.Imax > 0 {
-            ttag.IN = rsdb.Imgobjctr(db, t)
-        }
-
-        resp.Tags = append(resp.Tags, ttag)
-    }
+    resp := rsdb.Rtindex(db)
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
@@ -784,6 +767,9 @@ func main() {
     rscore.Set = rsdb.Rsettings(db)
     if *vptr { rscore.Set.Llev = 1 }
     rscore.Set = rscore.Rsinit(rscore.Set)
+
+    // Assuming first start, ensuring creation of SBUC
+    if rscore.Set.Umax == 0 { rsdb.Wrsettings(db, rscore.Set) }
 
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))

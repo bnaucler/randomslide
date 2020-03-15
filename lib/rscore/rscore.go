@@ -129,6 +129,7 @@ var SBUC = []byte("sbuc")       // Settings bucket
 var UBUC = []byte("ubuc")       // User bucket
 
 var INDEX = []byte(".index")    // Untouchable database index position
+var TINDEX = []byte(".tindex")  // Untouchable database tag index position
 
 // Image size per slide type reference chart TODO map with TT & BT bools
 var ISZINDEX = [][]int {
