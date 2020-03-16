@@ -31,7 +31,7 @@ tools/          - Tools for maintenence etc.
 * Handler for SMTP setup
 * Proper automated tests
 * Improve API call logging
-* Propagate API call object
+* Pointers for API call propagation
 * Web scraper - generate data from url
 * Contribution tracking
 * Improved bullet point handling

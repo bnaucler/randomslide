@@ -31,21 +31,21 @@ func Valskey(db *bolt.DB, uname string, skey string,
 }
 
 // Retrieves and validates user object
-func Userv(db *bolt.DB, w http.ResponseWriter, umax int, uname string,
-    skey string, alevreq int) (bool, rscore.User) {
+func Userv(db *bolt.DB, w http.ResponseWriter, umax int, c rscore.Apicall,
+    alevreq int) (bool, rscore.User) {
 
-    if uname == "" {
+    if c.User == "" {
         rscore.Sendstatus(rscore.C_NLOG,
             "User not logged in - no username provided", w)
         return false, rscore.User{}
     }
 
-    if !rsdb.Isindb(db, []byte(uname), rscore.UBUC) {
+    if !rsdb.Isindb(db, []byte(c.User), rscore.UBUC) {
         rscore.Sendstatus(rscore.C_NOSU, "No such user", w)
         return false, rscore.User{}
     }
 
-    sok, u := Valskey(db, uname, skey, umax)
+    sok, u := Valskey(db, c.User, c.Skey, umax)
 
     if !sok {
         rscore.Sendstatus(rscore.C_NLOG,
@@ -63,15 +63,15 @@ func Userv(db *bolt.DB, w http.ResponseWriter, umax int, uname string,
 }
 
 // Returns true if initiated by admin or operation applied to initiating user
-func Isadminorme(db *bolt.DB, settings rscore.Settings, uname string, skey string,
+func Isadminorme(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) bool {
 
     var ok bool
 
-    if tu.Name == uname {
-        ok, _ = Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_CONTRIB)
+    if tu.Name == c.User {
+        ok, _ = Userv(db, w, settings.Umax, c, rscore.ALEV_CONTRIB)
     } else {
-        ok, _ = Userv(db, w, settings.Umax, uname, skey, rscore.ALEV_ADMIN)
+        ok, _ = Userv(db, w, settings.Umax, c, rscore.ALEV_ADMIN)
     }
 
     return ok
@@ -92,24 +92,24 @@ func Setpass(u rscore.User, pass string) (bool, rscore.User) {
 }
 
 // Changes user password
-func Chpass(db *bolt.DB, settings rscore.Settings, uname string, skey string,
-    pass string, tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
+func Chpass(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
+    tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
 
-    ok := Isadminorme(db, settings, uname, skey, tu, w)
+    ok := Isadminorme(db, settings, c, tu, w)
     if !ok { return false, tu }
 
-    ok, tu = Setpass(tu, pass)
+    ok, tu = Setpass(tu, c.Pass)
     if !ok { rscore.Sendstatus(rscore.C_USPW, "Unsafe password", w) }
     return ok, tu
 }
 
 // Changes user admin status
-func Chadminstatus(db *bolt.DB, op int, umax int, uname string, skey string,
+func Chadminstatus(db *bolt.DB, op int, umax int, c rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
 
     var ok bool
 
-    ok, _ = Userv(db, w, umax, uname, skey, rscore.ALEV_ADMIN)
+    ok, _ = Userv(db, w, umax, c, rscore.ALEV_ADMIN)
     if !ok { return false, tu }
 
     switch {
@@ -127,10 +127,10 @@ func Chadminstatus(db *bolt.DB, op int, umax int, uname string, skey string,
 }
 
 // Removes user account from db
-func Rmuser(db *bolt.DB, settings rscore.Settings, uname string, skey string,
+func Rmuser(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) (bool, rscore.Settings) {
 
-    ok := Isadminorme(db, settings, uname, skey, tu, w)
+    ok := Isadminorme(db, settings, c, tu, w)
 
     if ok && settings.Umax > 1 {
         e := rsdb.Rmkv(db, []byte(tu.Name), rscore.UBUC)
