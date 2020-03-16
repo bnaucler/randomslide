@@ -435,7 +435,7 @@ func Valuser(u User, pass []byte) bool {
 }
 
 // Log file wrapper
-func Addlog(ltype int, msg []byte, llev int, r *http.Request) {
+func Addlog(ltype int, msg []byte, llev int, u User, r *http.Request) {
 
     ip := getclientip(r)
     var lentry string
@@ -443,17 +443,27 @@ func Addlog(ltype int, msg []byte, llev int, r *http.Request) {
     switch ltype {
     case L_REQ:
         if llev < 1 { return }
-        lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+
+        if u.Name == "" {
+            lentry = fmt.Sprintf("REQ from %s: %s", ip, msg)
+        } else {
+            lentry = fmt.Sprintf("REQ from %s (%s): %s", u.Name, ip, msg)
+        }
 
     case L_RESP:
         if llev < 1 { return }
-        lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+
+        if u.Name == "" {
+            lentry = fmt.Sprintf("RESP to %s: %s", ip, msg)
+        } else {
+            lentry = fmt.Sprintf("RESP to %s (%s): %s", u.Name, ip, msg)
+        }
 
     case L_SHUTDOWN:
-        lentry = fmt.Sprintf("Server shutdown requested from %s", ip)
+        lentry = fmt.Sprintf("Server shutdown requested from %s (%s)", u.Name, ip)
 
     default:
-        lentry = fmt.Sprintf("Something went wrong, but I don't know how to log it!")
+        lentry = fmt.Sprintf("Unknown log request")
     }
 
     log.Println(lentry)

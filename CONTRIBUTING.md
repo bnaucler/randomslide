@@ -23,7 +23,7 @@ static/log/     - Server and monitor log files
 tools/          - Tools for maintenence etc.
 ```
 
-## TODO
+## TODO (Backend)
 * Refactor getimgtype()
 * Make tools use scaleimage()
 * Handler for text file batch processing
@@ -32,7 +32,6 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * Improve API call logging
 * Propagate API call object
-* Usernames in log
 * Web scraper - generate data from url
 * Contribution tracking
 * Improved bullet point handling

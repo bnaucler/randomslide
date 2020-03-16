@@ -343,12 +343,12 @@ func deckreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     mreq, e := json.Marshal(req)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_REQ, mreq, rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_REQ, mreq, rscore.Set.Llev, rscore.User{}, r)
 
     deck := getdeck(req, db)
 
     mdeck, e := json.Marshal(deck)
-    rscore.Addlog(rscore.L_RESP, mdeck, rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_RESP, mdeck, rscore.Set.Llev, rscore.User{}, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(deck)
@@ -359,7 +359,7 @@ func logfreq(hlr *multipart.FileHeader, mt string, llev int, r *http.Request) {
 
     lmsg := fmt.Sprintf("File: %+v(%s) - %+v",
         hlr.Filename, rscore.Prettyfsize(hlr.Size), mt)
-    rscore.Addlog(rscore.L_REQ, []byte(lmsg), llev, r)
+    rscore.Addlog(rscore.L_REQ, []byte(lmsg), llev, rscore.User{}, r) // TODO
 }
 
 // Wrapper for file mime type check
@@ -457,7 +457,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, c.User, c.Skey, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     ok, tags := gettags(r, w)
@@ -471,7 +471,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     ltxt, e := json.Marshal(tr)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_REQ, ltxt, rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_REQ, ltxt, rscore.Set.Llev, u, r)
 
     var nt int
     nt, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set) // TODO mutex
@@ -500,7 +500,7 @@ func userreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, rscore.User{}, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
@@ -513,7 +513,7 @@ func tagreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     mresp, e := json.Marshal(resp)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, rscore.User{}, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(resp)
@@ -527,7 +527,7 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, c.User, c.Skey, rscore.ALEV_ADMIN)
     if !ok { return }
 
-    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), rscore.Set.Llev, rscore.User{}, r)
     rscore.Sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, rscore.Set)
@@ -735,7 +735,7 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     ml, e := json.Marshal(li)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, rscore.Set.Llev, r)
+    rscore.Addlog(rscore.L_RESP, ml, rscore.Set.Llev, u, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(li)

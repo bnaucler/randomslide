@@ -160,7 +160,7 @@ func Senduser(u rscore.User, r *http.Request, w http.ResponseWriter,
     li := Getloginobj(u)
     ml, e := json.Marshal(li)
     rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, r)
+    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, u, r)
 
     enc := json.NewEncoder(w)
     enc.Encode(li)
