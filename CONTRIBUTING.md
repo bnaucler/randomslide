@@ -34,8 +34,11 @@ tools/          - Tools for maintenence etc.
 * Pointers for API call propagation
 * Web scraper - generate data from url
 * Contribution tracking
+* Possibility to remove text & img objects from db
+* Inappropriate content reporting
 * Improved bullet point handling
 * Put untagged data in 'random' tag
+* Rebuild setslidetype()
 
 
 ## TODO (Frontend)
