@@ -293,7 +293,7 @@ type Statusresp struct {
 
 // Log all errors to file
 func Cherr(e error) error {
-    if e != nil { log.Fatal(e) }
+    if e != nil { log.Println(e) }
     return e
 }
 
