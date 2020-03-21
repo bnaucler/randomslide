@@ -753,6 +753,14 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
 
+// Launches mapped handler functions
+func starthlr(url string, fn rscore.Hfn, db *bolt.DB) {
+
+    http.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+        fn(w, r, db)
+    })
+}
+
 func main() {
 
     pptr := flag.Int("p", rscore.DEFAULTPORT, "port number to listen")
@@ -773,55 +781,22 @@ func main() {
     // Static content
     http.Handle("/", http.FileServer(http.Dir("./static")))
 
-    // Requests to shut down server
-    http.HandleFunc("/restart", func(w http.ResponseWriter, r *http.Request) {
-        shutdownhandler(w, r, db)
-    })
+    // Map endpoints to handlers
+    var hlrs = map[string]rscore.Hfn {
+        "/restart":     shutdownhandler,
+        "/getdeck":     deckreqhandler,
+        "/gettags":     tagreqhandler,
+        "/getusers":    userreqhandler,
+        "/addtext":     textreqhandler,
+        "/addimg":      imgreqhandler,
+        "/register":    reghandler,
+        "/login":       loginhandler,
+        "/chuser":      cuhandler,
+        "/feedback":    feedbackhandler,
+    }
 
-    // Slide deck requests
-    http.HandleFunc("/getdeck", func(w http.ResponseWriter, r *http.Request) {
-        deckreqhandler(w, r, db)
-    })
-
-    // Tags requests
-    http.HandleFunc("/gettags", func(w http.ResponseWriter, r *http.Request) {
-        tagreqhandler(w, r, db)
-    })
-
-    // Tags requests
-    http.HandleFunc("/getusers", func(w http.ResponseWriter, r *http.Request) {
-        userreqhandler(w, r, db)
-    })
-
-    // Add text to db
-    http.HandleFunc("/addtext", func(w http.ResponseWriter, r *http.Request) {
-        textreqhandler(w, r, db)
-    })
-
-    // Upload images
-    http.HandleFunc("/addimg", func(w http.ResponseWriter, r *http.Request) {
-        imgreqhandler(w, r, db)
-    })
-
-    // User registration
-    http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-        reghandler(w, r, db)
-    })
-
-    // User login
-    http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-        loginhandler(w, r, db)
-    })
-
-    // Change user settings
-    http.HandleFunc("/chuser", func(w http.ResponseWriter, r *http.Request) {
-        cuhandler(w, r, db)
-    })
-
-    // Feedback
-    http.HandleFunc("/feedback", func(w http.ResponseWriter, r *http.Request) {
-        feedbackhandler(w, r, db)
-    })
+    // Launch all handlers
+    for url, fn := range hlrs { starthlr(url, fn, db) }
 
     lport := fmt.Sprintf(":%d", *pptr)
     e := http.ListenAndServe(lport, nil)

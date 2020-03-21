@@ -25,6 +25,7 @@ import (
     "encoding/json"
     "path/filepath"
 
+    "github.com/boltdb/bolt"
     "golang.org/x/crypto/bcrypt"
 )
 
@@ -160,6 +161,9 @@ var IMGMIME = []string{
     "image/png",
     "image/gif",
 }
+
+// Launcher of handle functions
+type Hfn func(http.ResponseWriter, *http.Request, *bolt.DB)
 
 type Settings struct {
     Llev int                    // Log level
