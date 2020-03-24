@@ -25,7 +25,6 @@ tools/          - Tools for maintenence etc.
 
 ## TODO (Backend)
 * Refactor getimgtype()
-* Make tools use scaleimage()
 * Handler for text file batch processing
 * Enable goroutine for tag index mutex
 * Handler for SMTP setup
