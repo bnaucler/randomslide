@@ -263,6 +263,7 @@ type Imgobj struct {
     Fname string                // File name
     Tags []string               // All tags where object exists (for associative decks)
     Size int                    // S (0), M (1), L (2) or XL (3)
+    Contr string                // Image object contributor
     H int                       // Image height
     W int                       // Image width
 }

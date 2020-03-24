@@ -31,7 +31,6 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * Improve API call logging
 * Web scraper - generate data from url
-* Contribution tracking
 * Possibility to remove text & img objects from db
 * Inappropriate content reporting
 * Improved bullet point handling

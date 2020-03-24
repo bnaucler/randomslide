@@ -115,13 +115,14 @@ func Getimgtype(iw int, ih int) (int, bool) {
     return t, ok
 }
 
-func Mkimgobj(fn string, tags []string, iw int, ih int, szt int,
+func Mkimgobj(fn string, tags []string, iw int, ih int, szt int, contr string,
     settings rscore.Settings) rscore.Imgobj {
 
     img := rscore.Imgobj{
         Id: settings.Imax,
         Fname: fn,
         Tags: tags,
+        Contr: contr,
         W: iw,
         H: ih,
         Size: szt,

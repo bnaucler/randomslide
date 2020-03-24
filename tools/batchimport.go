@@ -58,10 +58,12 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string) int {
 
     n := 0
 
+
     for _, fn := range fl {
 
         ext := filepath.Ext(fn)
         fnp := fmt.Sprintf("%s/%s", opath, fn)
+        contr := fmt.Sprintf("batchimport: %s", fn)
 
         ibuf, e := ioutil.ReadFile(fnp)
         rscore.Cherr(e)
@@ -90,7 +92,8 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string) int {
         suf = append(suf, rscore.SUFINDEX[isz])
         ttags := rscore.Addtagsuf(tags, suf)
 
-        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, rscore.Set)
+        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz,
+            contr, rscore.Set)
         id := []byte(strconv.Itoa(rscore.Set.Imax))
         fmt.Printf("IMPORTING: %+v\n", img)
 

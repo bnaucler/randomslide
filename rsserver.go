@@ -401,7 +401,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     ok, mt := chkimgmime(hlr, w)
@@ -443,7 +443,8 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     // Mutex test
     rscore.Smut.Lock()
-    rscore.Set = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, stags, w, rscore.Set)
+    rscore.Set = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, u.Name,
+        stags, w, rscore.Set)
     rsdb.Updatetindex(db)
     rsdb.Wrsettings(db, rscore.Set)
     rscore.Smut.Unlock()
