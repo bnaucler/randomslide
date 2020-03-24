@@ -255,6 +255,7 @@ type Textobj struct {
     Id int                      // Index number
     Text string                 // The text itself
     Tags []string               // All tags where object exists (for associative decks)
+    Contr string                // Text object contributor
 }
 
 type Imgobj struct {

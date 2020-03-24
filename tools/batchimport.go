@@ -28,6 +28,8 @@ func readtxtfile(db *bolt.DB, fn string, tags []string) int {
 
     scanner := bufio.NewScanner(f)
 
+    contr := fmt.Sprintf("batchimport: %s", fn)
+
     for scanner.Scan() {
         raw := scanner.Text()
         tlen := len(raw)
@@ -36,11 +38,11 @@ func readtxtfile(db *bolt.DB, fn string, tags []string) int {
             continue
 
         } else if tlen > rscore.TTEXTMAX {
-            rsdb.Addtextwtags(raw, tags, db, rscore.Set.Bmax, rscore.BBUC)
+            rsdb.Addtextwtags(raw, tags, db, contr, rscore.Set.Bmax, rscore.BBUC)
             rscore.Set.Bmax++
 
         } else {
-            rsdb.Addtextwtags(raw, tags, db, rscore.Set.Tmax, rscore.TBUC)
+            rsdb.Addtextwtags(raw, tags, db, contr, rscore.Set.Tmax, rscore.TBUC)
             rscore.Set.Tmax++
         }
 

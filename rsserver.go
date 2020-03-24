@@ -478,12 +478,12 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     rscore.Smut.Lock() // Mutex test
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
-        rsdb.Addtextwtags(tr.Ttext, tags, db, rscore.Set.Tmax, rscore.TBUC)
+        rsdb.Addtextwtags(tr.Ttext, tags, db, u.Name, rscore.Set.Tmax, rscore.TBUC)
         rscore.Set.Tmax++
     }
 
     if len(tr.Btext) > 1 && len(tr.Btext) < rscore.BTEXTMAX {
-        rsdb.Addtextwtags(tr.Btext, tags, db, rscore.Set.Bmax, rscore.BBUC)
+        rsdb.Addtextwtags(tr.Btext, tags, db, u.Name, rscore.Set.Bmax, rscore.BBUC)
         rscore.Set.Bmax++
     }
 

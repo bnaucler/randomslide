@@ -400,11 +400,12 @@ func Uilists(db *bolt.DB, tags []string, i int, buc []byte) {
 
 // Conditionally adds tagged text to database
 func Addtextwtags(text string, tags []string, db *bolt.DB,
-    mxindex int, buc []byte) {
+    uname string, mxindex int, buc []byte) {
 
     to := rscore.Textobj{
             Id: mxindex,
             Text: text,
+            Contr: uname,
             Tags: tags }
 
     // Storing the object in db
