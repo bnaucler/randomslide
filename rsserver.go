@@ -401,7 +401,7 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, c, rscore.ALEV_CONTRIB)
+    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     ok, mt := chkimgmime(hlr, w)
@@ -456,7 +456,7 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, c, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     ok, tags := gettags(r, w)
@@ -523,7 +523,7 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, c, rscore.ALEV_ADMIN)
+    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_ADMIN)
     if !ok { return }
 
     rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), rscore.Set.Llev, rscore.User{}, r)
@@ -586,7 +586,7 @@ func getcall(r *http.Request) rscore.Apicall {
 }
 
 // Sets new password and sends by email
-func pwdreset(db *bolt.DB, c rscore.Apicall,
+func pwdreset(db *bolt.DB, c *rscore.Apicall,
     w http.ResponseWriter) (bool, rscore.User) {
 
     u := rsdb.Ruser(db, c.User)
@@ -620,16 +620,16 @@ func cuhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     switch {
     case op == rscore.CU_MKADM || op == rscore.CU_RMADM:
-        ok, tu = rsuser.Chadminstatus(db, op, rscore.Set.Umax, c, tu, w)
+        ok, tu = rsuser.Chadminstatus(db, op, rscore.Set.Umax, &c, tu, w)
 
     case op == rscore.CU_CPASS:
-        ok, tu = rsuser.Chpass(db, rscore.Set, c, tu, w)
+        ok, tu = rsuser.Chpass(db, rscore.Set, &c, tu, w)
 
     case op == rscore.CU_RMUSR:
-        ok, rscore.Set = rsuser.Rmuser(db, rscore.Set, c, tu, w)
+        ok, rscore.Set = rsuser.Rmuser(db, rscore.Set, &c, tu, w)
 
     case op == rscore.CU_PWDRS:
-        ok, tu = pwdreset(db, c, w)
+        ok, tu = pwdreset(db, &c, w)
 
     default:
         rscore.Sendstatus(rscore.C_NSOP, "No such operation", w)
@@ -745,7 +745,7 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, c, rscore.ALEV_CONTRIB)
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
     if !ok { return }
 
     d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, c.Fb)

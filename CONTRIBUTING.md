@@ -30,7 +30,6 @@ tools/          - Tools for maintenence etc.
 * Handler for SMTP setup
 * Proper automated tests
 * Improve API call logging
-* Pointers for API call propagation
 * Web scraper - generate data from url
 * Contribution tracking
 * Possibility to remove text & img objects from db

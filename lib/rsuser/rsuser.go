@@ -31,7 +31,7 @@ func Valskey(db *bolt.DB, uname string, skey string,
 }
 
 // Retrieves and validates user object
-func Userv(db *bolt.DB, w http.ResponseWriter, umax int, c rscore.Apicall,
+func Userv(db *bolt.DB, w http.ResponseWriter, umax int, c *rscore.Apicall,
     alevreq int) (bool, rscore.User) {
 
     if c.User == "" {
@@ -63,7 +63,7 @@ func Userv(db *bolt.DB, w http.ResponseWriter, umax int, c rscore.Apicall,
 }
 
 // Returns true if initiated by admin or operation applied to initiating user
-func Isadminorme(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
+func Isadminorme(db *bolt.DB, settings rscore.Settings, c *rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) bool {
 
     var ok bool
@@ -92,7 +92,7 @@ func Setpass(u rscore.User, pass string) (bool, rscore.User) {
 }
 
 // Changes user password
-func Chpass(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
+func Chpass(db *bolt.DB, settings rscore.Settings, c *rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
 
     ok := Isadminorme(db, settings, c, tu, w)
@@ -104,7 +104,7 @@ func Chpass(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
 }
 
 // Changes user admin status
-func Chadminstatus(db *bolt.DB, op int, umax int, c rscore.Apicall,
+func Chadminstatus(db *bolt.DB, op int, umax int, c *rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) (bool, rscore.User) {
 
     var ok bool
@@ -127,7 +127,7 @@ func Chadminstatus(db *bolt.DB, op int, umax int, c rscore.Apicall,
 }
 
 // Removes user account from db
-func Rmuser(db *bolt.DB, settings rscore.Settings, c rscore.Apicall,
+func Rmuser(db *bolt.DB, settings rscore.Settings, c *rscore.Apicall,
     tu rscore.User, w http.ResponseWriter) (bool, rscore.Settings) {
 
     ok := Isadminorme(db, settings, c, tu, w)
