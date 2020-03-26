@@ -25,15 +25,12 @@ tools/          - Tools for maintenence etc.
 
 ## TODO (Backend)
 * Refactor getimgtype()
-* Make tools use scaleimage()
 * Handler for text file batch processing
 * Enable goroutine for tag index mutex
 * Handler for SMTP setup
 * Proper automated tests
 * Improve API call logging
-* Pointers for API call propagation
 * Web scraper - generate data from url
-* Contribution tracking
 * Possibility to remove text & img objects from db
 * Inappropriate content reporting
 * Improved bullet point handling

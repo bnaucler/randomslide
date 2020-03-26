@@ -28,6 +28,8 @@ func readtxtfile(db *bolt.DB, fn string, tags []string) int {
 
     scanner := bufio.NewScanner(f)
 
+    contr := fmt.Sprintf("batchimport: %s", fn)
+
     for scanner.Scan() {
         raw := scanner.Text()
         tlen := len(raw)
@@ -36,11 +38,11 @@ func readtxtfile(db *bolt.DB, fn string, tags []string) int {
             continue
 
         } else if tlen > rscore.TTEXTMAX {
-            rsdb.Addtextwtags(raw, tags, db, rscore.Set.Bmax, rscore.BBUC)
+            rsdb.Addtextwtags(raw, tags, db, contr, rscore.Set.Bmax, rscore.BBUC)
             rscore.Set.Bmax++
 
         } else {
-            rsdb.Addtextwtags(raw, tags, db, rscore.Set.Tmax, rscore.TBUC)
+            rsdb.Addtextwtags(raw, tags, db, contr, rscore.Set.Tmax, rscore.TBUC)
             rscore.Set.Tmax++
         }
 
@@ -56,10 +58,12 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string) int {
 
     n := 0
 
+
     for _, fn := range fl {
 
         ext := filepath.Ext(fn)
         fnp := fmt.Sprintf("%s/%s", opath, fn)
+        contr := fmt.Sprintf("batchimport: %s", fn)
 
         ibuf, e := ioutil.ReadFile(fnp)
         rscore.Cherr(e)
@@ -76,14 +80,9 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string) int {
         nfn := fmt.Sprintf("%s%s", rscore.Randstr(rscore.RFNLEN), ext)
         nfnp := fmt.Sprintf("%s%s", rscore.IMGDIR, nfn)
 
-        ni, rsz := rsimage.Transform(i, isz)
+        rsz, b := rsimage.Scaleimage(i, isz, nfnp)
 
-        if rsz {
-            b = ni.Bounds()
-            e = rsimage.Wrimagefile(ni, nfnp)
-            rscore.Cherr(e)
-
-        } else {
+        if !rsz {
             _, e = rscore.Cp(fnp, nfnp)
             rscore.Cherr(e)
         }
@@ -93,7 +92,8 @@ func readimg(db *bolt.DB, opath string, fl []string, tags []string) int {
         suf = append(suf, rscore.SUFINDEX[isz])
         ttags := rscore.Addtagsuf(tags, suf)
 
-        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz, rscore.Set)
+        img := rsimage.Mkimgobj(nfn, ttags, b.Max.X, b.Max.Y, isz,
+            contr, rscore.Set)
         id := []byte(strconv.Itoa(rscore.Set.Imax))
         fmt.Printf("IMPORTING: %+v\n", img)
 
