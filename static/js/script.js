@@ -102,6 +102,8 @@ function fetchSlides(){
 // Creates decks based on static request TODO: merge w createSlides()
 function createSlidesStatic(resp) {
     var s = JSON.parse(resp.responseText);
+    deckId = s.Id;
+
     var fns = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
     for(i in s.Slides) { fns[s.Slides[i].Type](s.Slides[i]); }
     setTimeout(startSlide, 800);
