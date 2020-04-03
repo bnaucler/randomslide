@@ -524,10 +524,10 @@ func shutdownhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
 
-    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_ADMIN)
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_ADMIN)
     if !ok { return }
 
-    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), rscore.Set.Llev, rscore.User{}, r)
+    rscore.Addlog(rscore.L_SHUTDOWN, []byte(""), rscore.Set.Llev, u, r)
     rscore.Sendstatus(rscore.C_OK, "", w)
 
     rsdb.Wrsettings(db, rscore.Set)
