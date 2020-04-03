@@ -282,7 +282,7 @@ function endScreen(){
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>You just hade deckid: " + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
+    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>Direct link to deck: https://randomslide.com/deck.html?id=" + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
 
 }
 /*
