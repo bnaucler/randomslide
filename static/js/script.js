@@ -4,7 +4,47 @@ var resp;
 var slideIndex = 1;
 var slideshow = true;
 var deckId;
-window.onload = getTags();
+
+// Initialization of randomslide - called by index.html
+function rsinit() {
+    window.onload = getTags();
+
+    document.getElementById('timerOrNot').addEventListener('change', function() {
+        if(this.value === "timer"){
+            document.getElementById("slideTimer").style.display = "inline";
+        } else{
+            document.getElementById("slideTimer").style.display = "none";
+        }
+      });
+}
+
+// Creates XHR and calls rfunc with response
+function mkxhr(dest, rfunc) {
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", dest, false);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4 && xhr.status == 200) {
+            rfunc(xhr);
+        }
+    }
+
+    xhr.send();
+}
+
+// Parses URI and requests deck
+function deckfruri() {
+    var url = window.location.href;
+    id = url.substring(url.indexOf('?id=') + 4);
+
+    slideProg = "change";
+
+    var req = "/getdeck?id=" + id;
+    mkxhr(req, createSlidesStatic)
+}
 
 function getTags(){
     var categ = document.getElementById("category");
@@ -29,14 +69,6 @@ function getTags(){
     tagJX.send();
 }
 
-document.getElementById('timerOrNot').addEventListener('change', function() {
-    if(this.value === "timer"){
-        document.getElementById("slideTimer").style.display = "inline";
-    } else{
-        document.getElementById("slideTimer").style.display = "none";
-    }
-  });
-
 
 function fetchSlides(){
     var xhttp = new XMLHttpRequest();
@@ -47,7 +79,7 @@ function fetchSlides(){
     }
 
     let stringToSend = "";
-    let selectedTags = document.getElementById("category").selectedOptions;  
+    let selectedTags = document.getElementById("category").selectedOptions;
     for (let i=0; i<selectedTags.length; i++) {
         stringToSend += selectedTags[i].label;
 
@@ -67,7 +99,15 @@ function fetchSlides(){
     createSlides(resp.Slides);
 }
 
-// creating slides from the JSON 
+// Creates decks based on static request TODO: merge w createSlides()
+function createSlidesStatic(resp) {
+    var s = JSON.parse(resp.responseText);
+    var fns = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
+    for(i in s.Slides) { fns[s.Slides[i].Type](s.Slides[i]); }
+    setTimeout(startSlide, 800);
+}
+
+// creating slides from the JSON
 function createSlides(resp){
     for(i in resp){
         switch(resp[i].Type){
@@ -158,7 +198,7 @@ function slideShow(n){
         slideIndex = slides.length;
     }
     for(let i = 0; i < slides.length; i++){
-        slides[i].style.display = "none"; 
+        slides[i].style.display = "none";
     }
     if(slideshow === true){
         slides[slideIndex-1].style.display = "block";
@@ -221,7 +261,7 @@ function changeCSS(slideToStyle) {
         case 'slide3':
             csslink.href='/css/slide3.css';
             break;
-        case 'slide4':            
+        case 'slide4':
             csslink.href='/css/slide4.css';
             break;
         case 'slide5':
@@ -232,7 +272,7 @@ function changeCSS(slideToStyle) {
             break;
         case 'slide7':
             csslink.href='/css/slide7.css';
-            break;   
+            break;
     }
 }
 
@@ -245,7 +285,7 @@ function endScreen(){
     output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>You just hade deckid: " + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
 
 }
-/* 
+/*
 todo:
 
 2. olika slide-types -> olika funktion för att skapa slides
