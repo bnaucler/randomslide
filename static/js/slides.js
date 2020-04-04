@@ -1,12 +1,19 @@
 var i = 1;
 
-function slide0(resp){
+// Returns standardized slide div
+function getdiv(id) {
     let outputEl = document.getElementById("output");
     var div = document.createElement("div");
     div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide0");
+    div.setAttribute("id", "slide" + id);
     div.style.display = "none";
     outputEl.appendChild(div);
+
+    return div;
+}
+
+function slide0(resp){
+    div = getdiv(0);
 
     let slideHeader = document.createElement("h2");
     let headerText = document.createTextNode(resp.Title);
@@ -20,12 +27,7 @@ function slide0(resp){
 }
 
 function slide1(resp){
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide1");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(1);
 
     let slideImg = document.createElement("div");
     slideImg.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
@@ -35,12 +37,7 @@ function slide1(resp){
 }
 
 function slide2(resp){
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide2");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(2);
 
     let slideHeader = document.createElement("h3");
     let headerText = document.createTextNode(resp.Title);
@@ -49,12 +46,7 @@ function slide2(resp){
 }
 
 function slide3(resp){
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide3");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(3);
 
     let ul = document.createElement("ul");
     for(i in resp.Bpts){
@@ -67,12 +59,7 @@ function slide3(resp){
 }
 
 function slide4(resp){
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide4");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(4);
 
     let slideHeader = document.createElement("h2");
     let headerText = document.createTextNode(resp.Title);
@@ -91,12 +78,7 @@ function slide4(resp){
 }
 
 function slide5(resp){
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide5");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(5);
 
     let imgNo = Math.floor(Math.random() * 4);
     let slideImg = document.createElement("div");
@@ -110,16 +92,10 @@ function slide5(resp){
     textdiv.classList.add("textdiv");
     div.appendChild(slideImg);
     div.appendChild(textdiv);
-    
 }
 
 function slide6(resp){
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide6");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(6);
 
     let slideImg = document.createElement("img");
     slideImg.setAttribute("src", "img/" + resp.Img.Fname);
@@ -133,13 +109,7 @@ function slide6(resp){
 }
 
 function slide7(resp){
-    console.log("Här ska jag trolla för er.")
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide7");
-    div.style.display = "none";
-    outputEl.appendChild(div);
+    div = getdiv(7);
 
     let canvas = document.createElement("canvas");
     canvas.setAttribute("id", "myChart" + i);
