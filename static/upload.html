@@ -10,9 +10,11 @@
   <body>
       <div class="wrapper">
         <header>
-            <h2>randomslide v0.3a</h2>
-            <a href="admin.html">adminpage</a><br />
-            <a href="index.html">startpage</a>
+            <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
+            <nav>
+                <a class="mitm" href="index.html">home</a>
+                <a class="mitm" href="admin.html">admin</a>
+            </nav>
         </header>
 <br />
     <div>
@@ -40,14 +42,14 @@
         <fieldset>
             <h2>Add text to db</h2>
                 <h3>Add title:</h3>
-                    <input type="text" id="titelinput" name="titelinput"> 
-                    
+                    <input type="text" id="titelinput" name="titelinput">
+
                 <h3>Add text:</h3>
-                    <textarea id="textinput" name="textinput"> 
+                    <textarea id="textinput" name="textinput">
                     </textarea>
 
                 <h3>Add tags (separated by space):</h3>
-                    <input type="text" id="taginput" name="taginput"> 
+                    <input type="text" id="taginput" name="taginput">
         <br />
         <br />
                 <button onclick="addTitle()">Send data</button>
@@ -63,7 +65,7 @@
             <br />
             <input type="text" name="imgTagInput" id="imgTagInput">
             <button onclick="addImg()">Send img</button>
-          
+
         </fieldset>
     </div>
     <script src="js/uhandling.js"></script>

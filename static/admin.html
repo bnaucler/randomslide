@@ -8,32 +8,27 @@
     <title>adminpage</title>
 </head>
 <body>
-
-
     <div class="wrapper">
         <header>
-            <h1>randomSlide</h1>
+            <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
             <nav>
-            <a href="admin.html">adminpage</a>
-            <a href="upload.html">upload content</a>
+                <a class="mitm" href="admin.html">admin</a>
+                <a class="mitm" href="upload.html">contribute</a>
+                <a class="mitm mred" href="#" onclick="restartServer()">restart server</a>
             </nav>
-            <button onclick="restartServer()" class="bigredbutton">RESTART</button>
         </header>
-
-
-
-        </div>
-        <h2>Monitorlog:</h2>
-        <div id="logfileMonitor">
-            
-
-        </div>
-        <h2>Serverlog:</h2>
-        <div id="logfileServer">
-            
-
-        </div>
     </div>
+
+    <div id="logwrapper">
+        <h2>Monitor log:</h2>
+        <div id="logfileMonitor"></div>
+
+        <h2>Server log:</h2>
+        <div id="logfileServer"></div>
+    </div>
+
+    </div>
+    <div class="biggap"></div>
     <script src="js/admin.js"></script>
 </body>
 </html>
