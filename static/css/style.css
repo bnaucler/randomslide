@@ -162,6 +162,15 @@ option:hover {
     display: none;
 }
 
+#username, #password {
+    font-size: 1.2em;
+    font-weight: bold;
+    border: 2px black solid;
+    border-radius: 4px;
+    /* padding: 8px; */
+    width: 50%;
+}
+
 .genbutton {
     background-color: #1e1e1e;
     border: 0;
@@ -192,6 +201,11 @@ option:hover {
     top: 0;
     left: 20%;
     background: white;
+}
+
+#regwrapper {
+    display: block;
+    margin: 0 auto;
 }
 
 .hide {
