@@ -22,7 +22,7 @@
         <!-- <h2 class="choice">Make your choices!</h2> -->
         <br />
                 <div class="category">
-                <label for="category">Category(CTRL + CLICK to select more than one):</label>
+                <label for="category">Category (hold CTRL to select multiple):</label>
                     <br />
 
                 <select id="category" name="category" class="item" multiple>
@@ -32,12 +32,12 @@
                     <br />
                     <br />
                     <div class="right">
-                <label for="amountOfSlides">Amount of slides to be generated? (min 5, max 25):</label>
+                <label for="amountOfSlides">Amount of slides (min 5, max 25):</label>
                     <br />
                 <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
                     <br />
                     <br />
-                <label for="language">Language?</label>
+                <label for="language">Language</label>
                 <br />
                 <select id="lang" name="lang" class="item">
                     <option value="en">English</option>
@@ -46,18 +46,18 @@
                     <br />
 
 
-                <label for="timerOrNot">Change slide yourself or on a timer?</label>
+                <label for="timerOrNot">Manual / time based slide changes</label>
                     <br />
                 <select name="timerOrNot" id="timerOrNot" class="item">
-                    <option value="change" selected="selected">Change myself</option>
-                    <option value="timer">Timer!</option>
+                    <option value="change" selected="selected">Manual</option>
+                    <option value="timer">Timer</option>
                 </select>
             </div>
                     <br />
                     <br />
                     <div class="placeholder"></div>
                 <div id="slideTimer" class="item">
-                    <label for="time">Time between slide changes? (30-240 sec):</label>
+                    <label for="time">Seconds per slide (30-240):</label>
                     <br />
                     <br />
                     <input type="number" name="time" id="time" min="30" max="240" value="60">
@@ -67,12 +67,12 @@
                     <br />
 
                 <div id="specId">
-                    <label for="deckid">Got a deck ID from a friend? Insert here!</label>
+                    <label for="deckid">Got a deck ID from a friend?</label>
                     <br />
                     <br />
                     <input class="item" type="text" pattern="[0-9]{1,}" name="deckid" id="deckid">
                 </div>
-                <button class="genbutton item" onclick="fetchSlides()">Generate!</button>
+                <button class="item genbutton" onclick="fetchSlides()">Generate!</button>
 
         </div>
 
