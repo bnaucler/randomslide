@@ -24,7 +24,6 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO (Backend)
-* Change 'from' to admin email
 * Refactor getimgtype()
 * Handler for text file batch processing
 * Enable goroutine for tag index mutex

@@ -213,7 +213,7 @@ type Apicall struct {
 }
 
 type Smtp struct {
-    From string                 // Name of email sender
+    Admin string                // Admin email address
     Server string               // Which server to connect to
     User string                 // User account for logging in
     Pass string                 // Password for user auth

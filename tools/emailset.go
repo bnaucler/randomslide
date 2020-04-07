@@ -35,7 +35,7 @@ func main() {
     settings := rsdb.Rsettings(db)
 
     a := rscore.Smtp{
-        From:       rtxt("from"),
+        Admin:      rtxt("admin"),
         Server:     rtxt("server"),
         User:       rtxt("user"),
         Pass:       rtxt("pass"),

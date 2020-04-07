@@ -40,7 +40,7 @@ func sendmail(addr string, subj string, body string) {
 
     swp := fmt.Sprintf("%s:%d", s.Server, s.Port)
 
-    e := smtp.SendMail(swp, a, s.From, to, []byte(m))
+    e := smtp.SendMail(swp, a, s.Admin, to, []byte(m))
     rscore.Cherr(e)
 }
 
@@ -756,7 +756,7 @@ func rephandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
                        "Slide #: %d\n" +
                        "Message: %s", u.Name, c.Id, c.Slide, c.Msg)
 
-    go sendmail(rscore.Set.Smtp.From, "randomslide password reset", msg)
+    go sendmail(rscore.Set.Smtp.Admin, "randomslide password reset", msg)
 
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
