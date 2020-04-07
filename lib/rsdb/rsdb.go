@@ -83,7 +83,9 @@ func Mv(db *bolt.DB, sk []byte, dk []byte, cbuc []byte) error {
 
     e = Wrdb(db, dk, data, cbuc)
     rscore.Cherr(e)
+    if e != nil { return e }
 
+    e = Rmkv(db, sk, cbuc)
     return e
 }
 
