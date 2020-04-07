@@ -106,6 +106,15 @@ Endpoint:               Variables:              Comment:
                         msg         string      Motivation for report
 
 
+/remove*                                        Removes object from db
+                                                Requires admin rights
+                        id          int         Object id
+                        type        string      Object type:
+                                                    img: image
+                                                    ttext: title
+                                                    btext: body text
+
+
 /feedback*                                      Give feedback on user experience
                         msg         string      The feedback info itself
 

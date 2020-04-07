@@ -413,6 +413,30 @@ func Uilists(db *bolt.DB, tags []string, i int, buc []byte) {
     }
 }
 
+// Removes object from all relevant index lists
+func Rmfilists(db *bolt.DB, tags []rscore.Rtag, i int, buc []byte) {
+
+    for _, s := range tags {
+        var ud bool
+
+        ctag := rscore.Iindex{}
+        ntag := rscore.Iindex{}
+        key := []byte(s.Name)
+
+        resp, e := Rdb(db, key, buc)
+        rscore.Cherr(e)
+
+        json.Unmarshal(resp, &ctag)
+        ntag.Ids, ud = rscore.Rmifrslice(i, ctag.Ids)
+
+        if ud {
+            dbw, e := json.Marshal(ntag)
+            e = Wrdb(db, key, dbw, buc)
+            rscore.Cherr(e)
+        }
+    }
+}
+
 // Conditionally adds tagged text to database
 func Addtextwtags(text string, tags []string, db *bolt.DB,
     uname string, mxindex int, buc []byte) {

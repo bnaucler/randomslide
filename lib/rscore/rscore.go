@@ -84,6 +84,7 @@ const C_UNKN = 10               // Unknown error
 const C_USPW = 11               // Unsafe password
 const C_IEMA = 12               // Invalid email address
 const C_WEMA = 13               // Incorrect email address
+const C_NOBJ = 14               // No such database object
 
 // User level definitions
 const ALEV_USER = 0             // Regular user
@@ -208,6 +209,7 @@ type Apicall struct {
     Bpoint string               // Bullet point
     Rop string                  // Raw (unprocessed) operation
     Wipe string                 // Request to wipe database
+    Type string                 // Object type reference
 }
 
 type Smtp struct {
@@ -407,6 +409,23 @@ func Identicalbs(s1 []byte, s2 []byte) bool {
     }
 
     return true
+}
+
+// Removes int from slice if present returns 1 if action taken
+func Rmifrslice(n int, s []int) ([]int, bool) {
+
+    var ud bool
+    var ret []int
+
+    for _, v := range s {
+        if v != n {
+            ret = append(ret, v)
+        } else {
+            ud = true
+        }
+    }
+
+    return ret, ud
 }
 
 // Removes duplicate strings from slice

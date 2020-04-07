@@ -582,6 +582,7 @@ func getcall(r *http.Request) rscore.Apicall {
         Bpoint:     r.FormValue("bpoint"),
         Rop:        r.FormValue("op"),
         Wipe:       r.FormValue("wipe"),
+        Type:       r.FormValue("type"),
     }
 
     return ret
@@ -773,6 +774,50 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
 
+// Removes specified object from database
+func rmhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
+
+    c := getcall(r)
+
+    ok, _ := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_ADMIN)
+    if !ok { return }
+
+    var buc []byte
+
+    switch  {
+    case c.Type == "img":
+        buc = rscore.IBUC
+
+    case c.Type == "ttext":
+        buc = rscore.TBUC
+
+    case c.Type == "btext":
+        buc = rscore.BBUC
+    }
+
+    e := rsdb.Rmkv(db, []byte(c.Id), buc)
+    rscore.Cherr(e)
+
+    if e != nil {
+        rscore.Sendstatus(rscore.C_NOBJ, "No such database object", w)
+        return
+    }
+
+    i, e := strconv.Atoi(c.Id)
+    rscore.Cherr(e)
+
+    if e != nil {
+        rscore.Sendstatus(rscore.C_NOBJ, "No such database object", w)
+        return
+    }
+
+    tl := rsdb.Rtindex(db)
+    rsdb.Rmfilists(db, tl.Tags, i, buc)
+    rsdb.Updatetindex(db)
+
+    rscore.Sendstatus(rscore.C_OK, "", w)
+}
+
 // Launches mapped handler functions
 func starthlr(url string, fn rscore.Hfn, db *bolt.DB) {
 
@@ -814,6 +859,7 @@ func main() {
         "/chuser":      cuhandler,
         "/feedback":    feedbackhandler,
         "/report":      rephandler,
+        "/remove":      rmhandler,
     }
 
     // Launch all handlers

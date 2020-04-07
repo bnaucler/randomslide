@@ -32,7 +32,7 @@ tools/          - Tools for maintenence etc.
 * Proper automated tests
 * Improve API call logging
 * Web scraper - generate data from url
-* Possibility to remove text & img objects from db
+* Add logging to rmhandler
 * Improved bullet point handling
 * Put untagged data in 'random' tag
 * Rebuild setslidetype()
