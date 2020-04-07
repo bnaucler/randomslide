@@ -200,10 +200,11 @@ type Apicall struct {
     Tags string                 // Tags
     Lang string                 // Languge code, 'en', 'de', 'se', etc
     Id string                   // Deck ID request
+    Slide string                // Slide number for reference
     Amount string               // Amount of slides requested
     Ttext string                // Title test
     Btext string                // Body test
-    Fb string                   // Feedback text
+    Msg string                  // Feedback text
     Bpoint string               // Bullet point
     Rop string                  // Raw (unprocessed) operation
     Wipe string                 // Request to wipe database

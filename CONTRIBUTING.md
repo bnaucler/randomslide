@@ -24,6 +24,7 @@ tools/          - Tools for maintenence etc.
 ```
 
 ## TODO (Backend)
+* Change 'from' to admin email
 * Refactor getimgtype()
 * Handler for text file batch processing
 * Enable goroutine for tag index mutex
@@ -32,7 +33,6 @@ tools/          - Tools for maintenence etc.
 * Improve API call logging
 * Web scraper - generate data from url
 * Possibility to remove text & img objects from db
-* Inappropriate content reporting
 * Improved bullet point handling
 * Put untagged data in 'random' tag
 * Rebuild setslidetype()

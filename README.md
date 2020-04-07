@@ -99,8 +99,15 @@ Endpoint:               Variables:              Comment:
                                                     3: Remove user account
                                                     4: Email new password
 
+
+/report*                                        Reports inappropriate content to admin email
+                        id          int         Deck number
+                        slide       int         Slide to report
+                        msg         string      Motivation for report
+
+
 /feedback*                                      Give feedback on user experience
-                        fb          string      The feedback info itself
+                        msg         string      The feedback info itself
 
 ```
 Endpoints marked with `*` requires the user to be logged in, authenticated by `user` & `skey` being included with the request.

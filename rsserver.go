@@ -574,10 +574,11 @@ func getcall(r *http.Request) rscore.Apicall {
         Tags:       r.FormValue("tags"),
         Lang:       r.FormValue("lang"),
         Id:         r.FormValue("id"),
+        Slide:      r.FormValue("slide"),
         Amount:     r.FormValue("amount"),
         Ttext:      r.FormValue("ttext"),
         Btext:      r.FormValue("btext"),
-        Fb:         r.FormValue("fb"),
+        Msg:        r.FormValue("msg"),
         Bpoint:     r.FormValue("bpoint"),
         Rop:        r.FormValue("op"),
         Wipe:       r.FormValue("wipe"),
@@ -742,6 +743,24 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 }
 
 // Receives feedback data and saves to file
+func rephandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
+
+    c := getcall(r)
+
+    ok, u := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
+    if !ok { return }
+
+    msg := fmt.Sprintf("Content report from %s:\n" +
+                       "Deck ID: %d\n" +
+                       "Slide #: %d\n" +
+                       "Message: %s", u.Name, c.Id, c.Slide, c.Msg)
+
+    go sendmail(rscore.Set.Smtp.From, "randomslide password reset", msg)
+
+    rscore.Sendstatus(rscore.C_OK, "", w)
+}
+
+// Receives feedback data and saves to file
 func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
@@ -749,7 +768,7 @@ func feedbackhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     ok, u := rsuser.Userv(db, w, rscore.Set.Umax, &c, rscore.ALEV_CONTRIB)
     if !ok { return }
 
-    d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, c.Fb)
+    d := fmt.Sprintf("%s (%s): %s\n", u.Name, u.Email, c.Msg)
     rscore.Appendfile(rscore.FBFILE, d)
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
@@ -794,6 +813,7 @@ func main() {
         "/login":       loginhandler,
         "/chuser":      cuhandler,
         "/feedback":    feedbackhandler,
+        "/report":      rephandler,
     }
 
     // Launch all handlers
