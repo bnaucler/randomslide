@@ -742,7 +742,7 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     enc.Encode(li)
 }
 
-// Receives feedback data and saves to file
+// Reports content to admin via email
 func rephandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     c := getcall(r)
