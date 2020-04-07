@@ -74,6 +74,19 @@ func Rmkv(db *bolt.DB, k []byte, cbuc []byte) (e error) {
     return
 }
 
+// Moves db value from sk to dk
+func Mv(db *bolt.DB, sk []byte, dk []byte, cbuc []byte) error {
+
+    data, e := Rdb(db, sk, cbuc)
+    rscore.Cherr(e)
+    if e != nil { return e }
+
+    e = Wrdb(db, dk, data, cbuc)
+    rscore.Cherr(e)
+
+    return e
+}
+
 // Wrapper for writing settings to database
 func Wrsettings(db *bolt.DB, settings rscore.Settings) {
 
