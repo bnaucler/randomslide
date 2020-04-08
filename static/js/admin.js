@@ -1,4 +1,4 @@
-function restartServer(){   
+function restartServer() {
     var xh = new XMLHttpRequest();
     xh.open('GET', "/restart", true);
     xh.send();
@@ -6,51 +6,39 @@ function restartServer(){
 
 window.onload = fetchLogs();
 
-function fetchLogs(){
+function fetchLogs() {
     var monitorajax = new XMLHttpRequest();
 
     monitorajax.onreadystatechange = function() {
-        if (this.readyState == 4){
-            printMonLogs(monitorajax.responseText)
+        if (this.readyState == 4) {
+            printLogs(monitorajax.responseText, "logfileMonitor");
         }
     }
 
     var serverajax = new XMLHttpRequest();
 
     serverajax.onreadystatechange = function() {
-        if (this.readyState == 4){
-            printServLogs(serverajax.responseText)
+        if (this.readyState == 4) {
+            printLogs(serverajax.responseText, "logfileServer");
         }
     }
 
-//rssserver.log och rsmonitor.log
-monitorajax.open('GET', "log/rsmonitor.log", true);
-monitorajax.send();
-serverajax.open('GET', "log/rsserver.log", true);
-serverajax.send();
+    monitorajax.open('GET', "log/rsmonitor.log", true);
+    monitorajax.send();
+
+    serverajax.open('GET', "log/rsserver.log", true);
+    serverajax.send();
 }
 
-function printMonLogs(log){
+function printLogs(log, mename) {
     let lines = log.split('\n');
-    var monitorEl = document.getElementById("logfileMonitor");
+    var monitorEl = document.getElementById(mename);
     monitorEl.innerHTML = "";
-    for(let line = lines.length - 1; line >= 0; line--){
 
+    for(let line = lines.length - 1; line >= 0; line--) {
         let p = document.createElement("p");
         let logtxt = document.createTextNode(lines[line]);
         p.appendChild(logtxt);
         monitorEl.appendChild(p);
-    }
-}
-
-function printServLogs(log){
-    let lines = log.split('\n');
-    var serverEl = document.getElementById("logfileServer");
-    serverEl.innerHTML = "";
-    for(let line = lines.length - 1; line >= 0; line--){
-        let p = document.createElement("p");
-        let logtxt = document.createTextNode(lines[line]);
-        p.appendChild(logtxt);
-        serverEl.appendChild(p);
     }
 }
