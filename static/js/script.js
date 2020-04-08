@@ -20,7 +20,6 @@ function rsinit() {
 
 // Creates XHR and calls rfunc with response
 function mkxhr(dest, rfunc) {
-
     var xhr = new XMLHttpRequest();
 
     xhr.open("GET", dest, false);
@@ -75,7 +74,7 @@ function launchDirectly(resp) {
     createSlides(resp, startSlide);
 }
 
-function fetchSlides(){
+function fetchSlides() {
     let stringToSend = "";
     let selectedTags = document.getElementById("category").selectedOptions;
 
@@ -96,7 +95,7 @@ function fetchSlides(){
     mkxhr(req, getReady)
 }
 
-// Creates decks based on static request TODO: merge w createSlides()
+// Creates decks based on request, calling fn to launch
 function createSlides(resp, fn) {
     var s = JSON.parse(resp.responseText);
     deckId = s.Id;
@@ -106,7 +105,7 @@ function createSlides(resp, fn) {
     setTimeout(fn, 800);
 }
 
-function loadingSlides(){
+function loadingSlides() {
     let amount = document.getElementById("amountOfSlides").value;
     let category = document.getElementById("category").selectedOptions;
     let lang = document.getElementById("lang").value;
@@ -143,11 +142,12 @@ function loadingSlides(){
     document.getElementById("formwrapper").appendChild(butt);
 }
 
-function startSlide(){
+function startSlide() {
     let wrapper = document.getElementById("formwrapper");
     wrapper.innerHTML = "";
     slideShow();
-    if(slideProg === "change"){
+
+    if(slideProg === "change") {
         document.getElementById("prev").style.display = "inline";
         document.getElementById("next").style.display = "inline";
     } else {
@@ -156,31 +156,30 @@ function startSlide(){
     }
 }
 
-function slideShow(n){
+function slideShow(n) {
     let slides = document.getElementsByClassName("theSlides");
 
-    if(n > slides.length){
+    if(n > slides.length) {
         endScreen();
         slideshow = false;
     }
 
-    if(n < 1){
+    if(n < 1) {
         slideIndex = slides.length;
     }
 
-    for(let i = 0; i < slides.length; i++){
+    for(let i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
     }
 
-    if(slideshow === true){
+    if(slideshow === true) {
         slides[slideIndex-1].style.display = "block";
         changeCSS(slides[slideIndex-1].id);
     }
-
 }
 
-document.onkeydown = function(e){
-    switch (e.keyCode){
+document.onkeydown = function(e) {
+    switch (e.keyCode) {
         case 37:
             changeSlide(-1);
             break;
@@ -190,11 +189,11 @@ document.onkeydown = function(e){
     }
 }
 
-function changeSlide(n){
+function changeSlide(n) {
         slideShow(slideIndex += n);
 }
 
-function displayTimer(){
+function displayTimer() {
     let slidechangeprev = document.getElementById("prev");
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
@@ -202,14 +201,15 @@ function displayTimer(){
 
     var timing = timer;
 
-    var timebased = setInterval(function(){
-        if(timing != 0){
+    var timebased = setInterval(function() {
+        if(timing != 0) {
             document.getElementById("timeDisplay").innerHTML = timing;
             timing -= 1;
-        }else {
+
+        } else {
             changeSlide(1);
             timing = timer;
-            if(slideshow === false){
+            if(slideshow === false) {
                 clearInterval(timebased);
                 document.getElementById("timeDisplay").innerHTML = "";
             }
@@ -222,14 +222,13 @@ function changeCSS(slideToStyle) {
     cssref.href = '/css/' + slideToStyle + '.css';
 }
 
-function endScreen(){
+function endScreen() {
     let output = document.getElementById("output");
     let slidechangeprev = document.getElementById("prev");
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
     output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>Direct link to deck: https://randomslide.com/deck.html?id=" + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
-
 }
 /*
 todo:
