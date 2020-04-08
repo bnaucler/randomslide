@@ -7,7 +7,7 @@ var deckId;
 
 // Initialization of randomslide - called by index.html
 function rsinit() {
-    window.onload = getTags();
+    window.onload = mkxhr("/gettags", displayTags);
 
     document.getElementById('timerOrNot').addEventListener('change', function() {
         if(this.value === "timer"){
@@ -43,43 +43,42 @@ function deckfruri() {
     slideProg = "change";
 
     var req = "/getdeck?id=" + id;
-    mkxhr(req, createSlidesStatic)
+    mkxhr(req, launchDirectly)
 }
 
-function getTags(){
+// Publishes tag data for selection
+function displayTags(resp) {
+
     var categ = document.getElementById("category");
-    let tagJX = new XMLHttpRequest();
-    tagJX.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            tags = JSON.parse(this.responseText);
-            for(i in tags.Tags){
-                let tag = document.createElement("option");
-                tag.setAttribute("value", tags.Tags[i].Name);
-                let tagText = tags.Tags[i].Name;
-                let TNtxt = tags.Tags[i].TN;
-                let BNtxt = tags.Tags[i].BN;
-                let INtxt = tags.Tags[i].IN;
-                let tagInfo = document.createTextNode(tagText + " (" + TNtxt + ") (" + BNtxt + ") (" + INtxt +")");
-                tag.appendChild(tagInfo);
-                categ.appendChild(tag);
-            }
-        }
+
+    tags = JSON.parse(resp.responseText);
+    for(i in tags.Tags){
+        let tag = document.createElement("option");
+        tag.setAttribute("value", tags.Tags[i].Name);
+        let tagText = tags.Tags[i].Name;
+        let TNtxt = tags.Tags[i].TN;
+        let BNtxt = tags.Tags[i].BN;
+        let INtxt = tags.Tags[i].IN;
+        let tagInfo = document.createTextNode(tagText + " (" + TNtxt + ") (" + BNtxt + ") (" + INtxt +")");
+        tag.appendChild(tagInfo);
+        categ.appendChild(tag);
     }
-    tagJX.open("GET", "/gettags", false);
-    tagJX.send();
 }
 
+// Generates start screen before launching deck
+function getReady(resp) {
+    createSlides(resp, loadingSlides);
+}
+
+// Launch without showing start screen
+function launchDirectly(resp) {
+    createSlides(resp, startSlide);
+}
 
 function fetchSlides(){
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            resp = JSON.parse(this.responseText);
-        }
-    }
-
     let stringToSend = "";
     let selectedTags = document.getElementById("category").selectedOptions;
+
     for (let i=0; i<selectedTags.length; i++) {
         stringToSend += selectedTags[i].label;
 
@@ -93,53 +92,18 @@ function fetchSlides(){
         var deckid = document.getElementById("deckid").value;
     }
 
-    xhttp.open("GET", "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid, false);
-    xhttp.send();
-    deckId = resp.Id;
-    createSlides(resp.Slides);
+    var req = "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid;
+    mkxhr(req, getReady)
 }
 
 // Creates decks based on static request TODO: merge w createSlides()
-function createSlidesStatic(resp) {
+function createSlides(resp, fn) {
     var s = JSON.parse(resp.responseText);
     deckId = s.Id;
 
     var fns = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
     for(i in s.Slides) { fns[s.Slides[i].Type](s.Slides[i]); }
-    setTimeout(startSlide, 800);
-}
-
-// creating slides from the JSON
-function createSlides(resp){
-    for(i in resp){
-        switch(resp[i].Type){
-            case 0:
-                slide0(resp[i]);
-                break;
-            case 1:
-                slide1(resp[i]);
-                break;
-            case 2:
-                slide2(resp[i]);
-                break;
-            case 3:
-                slide3(resp[i]);
-                break;
-            case 4:
-                slide4(resp[i]);
-                break;
-            case 5:
-                slide5(resp[i]);
-                break;
-            case 6:
-                slide6(resp[i]);
-                break;
-            case 7:
-                slide7(resp[i]);
-                break;
-        }
-    }
-    setTimeout(loadingSlides, 800);
+    setTimeout(fn, 800);
 }
 
 function loadingSlides(){
@@ -159,14 +123,16 @@ function loadingSlides(){
             tagString +=  " ";
         }
     }
-//fixa så inte (5)(5)(5) följer med till den här sidan
+
     wrapper.innerHTML += "Your tags:  " + tagString + "<br />";
     wrapper.innerHTML += "Amount of slides: " + amount + "<br />";
+
     if(slideProg == "change"){
         wrapper.innerHTML += "Your choice is to change slides yourself. <br />"
     } else {
         wrapper.innerHTML += "Your choice is that slides change every " + timer + " seconds. <br />";
     }
+
     wrapper.innerHTML += "Language: " + lang + "<br />";
 
     let butt = document.createElement("button");
@@ -192,16 +158,20 @@ function startSlide(){
 
 function slideShow(n){
     let slides = document.getElementsByClassName("theSlides");
+
     if(n > slides.length){
         endScreen();
         slideshow = false;
     }
+
     if(n < 1){
         slideIndex = slides.length;
     }
+
     for(let i = 0; i < slides.length; i++){
         slides[i].style.display = "none";
     }
+
     if(slideshow === true){
         slides[slideIndex-1].style.display = "block";
         changeCSS(slides[slideIndex-1].id);
@@ -247,35 +217,9 @@ function displayTimer(){
     }, 1000);
 }
 
-
 function changeCSS(slideToStyle) {
-    var csslink = document.getElementById('style');
-    switch(slideToStyle){
-        case 'slide0':
-            csslink.href='/css/slide0.css';
-            break;
-        case 'slide1':
-            csslink.href='/css/slide1.css';
-            break;
-        case 'slide2':
-            csslink.href='/css/slide2.css';
-            break;
-        case 'slide3':
-            csslink.href='/css/slide3.css';
-            break;
-        case 'slide4':
-            csslink.href='/css/slide4.css';
-            break;
-        case 'slide5':
-            csslink.href='/css/slide5.css';
-            break;
-        case 'slide6':
-            csslink.href='/css/slide6.css';
-            break;
-        case 'slide7':
-            csslink.href='/css/slide7.css';
-            break;
-    }
+    var cssref = document.getElementById('style');
+    cssref.href = '/css/' + slideToStyle + '.css';
 }
 
 function endScreen(){
