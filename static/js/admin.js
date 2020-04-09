@@ -1,5 +1,5 @@
 function restartServer() {
-    mkxhr("/restart", restartmsg)
+    mkxhr("/restart", restartmsg);
 }
 
 // Giving user information that server is restarting
