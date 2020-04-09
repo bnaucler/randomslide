@@ -1,35 +1,29 @@
 function restartServer() {
-    var xh = new XMLHttpRequest();
-    xh.open('GET', "/restart", true);
-    xh.send();
+    mkxhr("/restart", restartmsg)
 }
 
-window.onload = fetchLogs();
+// Giving user information that server is restarting
+function restartmsg() {
+    // TODO
+}
 
+// Calls printLogs() for monitor
+function pmlog(resp) {
+    printLogs(resp.responseText, "logfileMonitor");
+}
+
+// Calls printLogs() for server
+function pslog(resp) {
+    printLogs(resp.responseText, "logfileServer");
+}
+
+// Retrieves log files
 function fetchLogs() {
-    var monitorajax = new XMLHttpRequest();
-
-    monitorajax.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            printLogs(monitorajax.responseText, "logfileMonitor");
-        }
-    }
-
-    var serverajax = new XMLHttpRequest();
-
-    serverajax.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            printLogs(serverajax.responseText, "logfileServer");
-        }
-    }
-
-    monitorajax.open('GET', "log/rsmonitor.log", true);
-    monitorajax.send();
-
-    serverajax.open('GET', "log/rsserver.log", true);
-    serverajax.send();
+    mkxhr("log/rsmonitor.log", pmlog);
+    mkxhr("log/rsserver.log", pslog);
 }
 
+// Log file parser
 function printLogs(log, mename) {
     let lines = log.split('\n');
     var monitorEl = document.getElementById(mename);
