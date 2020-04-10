@@ -1,4 +1,3 @@
-
 // Sends alert to user
 function sendalert(txt) {
 
@@ -56,28 +55,25 @@ function loginUser(){
     mkxhr(req, ulogresp);
 }
 
+// Processes feedback responses
+function fbresp(resp) {
+
+    var s = JSON.parse(resp.responseText);
+
+    if(s.Code == 0){
+        sendalert("Thank you for your feedback");
+
+    } else {
+        sendalert(s.Text);
+    }
+}
+
+// Makes XHR call for feedback requests
 function sendFeedback(){
-    let fbAjax = new XMLHttpRequest();
     let user = sessionStorage.getItem('user');
     let key = sessionStorage.getItem('key');
     let feedback = document.getElementById("feedbackform").value;
-    fbAjax.onreadystatechange = function(){
-        if (this.readyState == 4 ) {
-            let resp = JSON.parse(this.responseText);
-            if(resp.Code == 0){
-                var alertHTML = '<div class="alert">Thanks for your feedback, it might be used for something</div>';
-                document.body.insertAdjacentHTML("beforeend", alertHTML);
-                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-            }
-            if(resp.Code == 6){
-                var alertHTML = '<div class="alert">' + resp.Text + '</div>';
-                document.body.insertAdjacentHTML("beforeend", alertHTML);
-                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-                window.alert();
-            }
-        }
-    }
 
-    fbAjax.open("POST", "/feedback?msg=" + feedback + "&user=" + user + "&skey=" + key, false);
-    fbAjax.send();
+    var req = "/feedback?msg=" + feedback + "&user=" + user + "&skey=" + key;
+    mkxhr(req, fbresp);
 }
