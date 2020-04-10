@@ -1,21 +1,40 @@
+
+// Sends alert to user
+function sendalert(txt) {
+
+    var alertHTML = '<div class="alert">' + txt + '</div>';
+    document.body.insertAdjacentHTML("beforeend", alertHTML);
+    setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+}
+
 // Processes user registration response
 function uregresp(resp) {
 
     var s = JSON.parse(resp.responseText);
-    var atxt;
 
     if (s.Skey != undefined) {
-        atxt = "User created, you are now logged in.";
         sessionStorage.setItem('key', s.Skey);
         sessionStorage.setItem('user', s.Name);
+        sendalert("User created, you are now logged in.");
 
     } else {
-        atxt = s.Text;
+        sendalert(s.Text);
     }
+}
 
-    var alertHTML = '<div class="alert">' + atxt + '</div>';
-    document.body.insertAdjacentHTML("beforeend", alertHTML);
-    setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+// Processes user login response
+function ulogresp(resp) {
+
+    var s = JSON.parse(resp.responseText);
+
+    if (s.Skey != "") {
+        sessionStorage.setItem('key', s.Skey);
+        sessionStorage.setItem('user', s.Name);
+        sendalert("Logged in");
+
+    } else {
+        sendalert("Incorrect username or password");
+    }
 }
 
 // Makes XHR call for user registration
@@ -28,28 +47,13 @@ function registerUser(){
     mkxhr(req, uregresp)
 }
 
+// Makes XHR call for user login
 function loginUser(){
-    let loginAjax = new XMLHttpRequest();
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
-    loginAjax.onreadystatechange = function () {
-        if (this.readyState == 4 ) {
-            let resp = JSON.parse(this.responseText);
-            if (resp.Skey != ""){
-                var alertHTML = '<div class="alert">Logged in!</div>';
-                document.body.insertAdjacentHTML("beforeend", alertHTML);
-                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-                sessionStorage.setItem('key', resp.Skey);
-                sessionStorage.setItem('user', resp.Name);
-            } else {
-                var alertHTML = '<div class="alert">Bad username or password. Try again.</div>';
-                document.body.insertAdjacentHTML("beforeend", alertHTML);
-                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-            }
-        }
-    }
-    loginAjax.open("POST", "/login?user=" + userName + "&pass=" + passWord, false);
-    loginAjax.send();
+
+    var req = "/login?user=" + userName + "&pass=" + passWord;
+    mkxhr(req, ulogresp);
 }
 
 function sendFeedback(){
