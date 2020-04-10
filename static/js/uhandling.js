@@ -37,7 +37,7 @@ function ulogresp(resp) {
 }
 
 // Makes XHR call for user registration
-function registerUser(){
+function registerUser() {
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
     let email = document.getElementById("email").value;
@@ -47,7 +47,7 @@ function registerUser(){
 }
 
 // Makes XHR call for user login
-function loginUser(){
+function loginUser() {
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
 
@@ -60,7 +60,7 @@ function fbresp(resp) {
 
     var s = JSON.parse(resp.responseText);
 
-    if(s.Code == 0){
+    if(s.Code == 0) {
         sendalert("Thank you for your feedback");
 
     } else {
@@ -69,7 +69,7 @@ function fbresp(resp) {
 }
 
 // Makes XHR call for feedback requests
-function sendFeedback(){
+function sendFeedback() {
     let user = sessionStorage.getItem('user');
     let key = sessionStorage.getItem('key');
     let feedback = document.getElementById("feedbackform").value;
