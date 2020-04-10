@@ -164,7 +164,7 @@ option:hover {
     display: none;
 }
 
-#username, #password {
+#username, #password, #email {
     font-size: 1.2em;
     font-weight: bold;
     border: 2px black solid;

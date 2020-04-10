@@ -1,26 +1,31 @@
+// Processes user registration response
+function uregresp(resp) {
+
+    var s = JSON.parse(resp.responseText);
+    var atxt;
+
+    if (s.Skey != undefined) {
+        atxt = "User created, you are now logged in.";
+        sessionStorage.setItem('key', s.Skey);
+        sessionStorage.setItem('user', s.Name);
+
+    } else {
+        atxt = s.Text;
+    }
+
+    var alertHTML = '<div class="alert">' + atxt + '</div>';
+    document.body.insertAdjacentHTML("beforeend", alertHTML);
+    setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+}
+
+// Makes XHR call for user registration
 function registerUser(){
-    let registerAjax = new XMLHttpRequest();
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
+    let email = document.getElementById("email").value;
 
-    registerAjax.onreadystatechange = function () {
-        if (this.readyState == 4 ) {
-            let resp = JSON.parse(this.responseText);
-            if (resp.Code === 3){
-                var alertHTML = '<div class="alert">' + resp.Text + '. Try again with another username.</div>';
-                document.body.insertAdjacentHTML("beforeend", alertHTML);
-                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-            } else {
-                var alertHTML = '<div class="alert">User created, you are now logged in.</div>';
-                document.body.insertAdjacentHTML("beforeend", alertHTML);
-                setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-                sessionStorage.setItem('key', resp.Skey);
-                sessionStorage.setItem('user', resp.Name);
-            }
-        }
-    }
-    registerAjax.open("POST", "/register?user=" + userName + "&pass=" + passWord, false);
-    registerAjax.send();
+    var req = "/register?user=" + userName + "&pass=" + passWord + "&email=" + email;
+    mkxhr(req, uregresp)
 }
 
 function loginUser(){
