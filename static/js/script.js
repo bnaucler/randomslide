@@ -15,7 +15,7 @@ function rsinit() {
         } else{
             document.getElementById("slideTimer").style.display = "none";
         }
-      });
+    });
 }
 
 // Creates XHR and calls rfunc with response
@@ -51,14 +51,11 @@ function displayTags(resp) {
     var categ = document.getElementById("category");
 
     tags = JSON.parse(resp.responseText);
-    for(i in tags.Tags){
+
+    for(let t of tags.Tags) {
         let tag = document.createElement("option");
-        tag.setAttribute("value", tags.Tags[i].Name);
-        let tagText = tags.Tags[i].Name;
-        let TNtxt = tags.Tags[i].TN;
-        let BNtxt = tags.Tags[i].BN;
-        let INtxt = tags.Tags[i].IN;
-        let tagInfo = document.createTextNode(tagText + " (" + TNtxt + ") (" + BNtxt + ") (" + INtxt +")");
+        tag.setAttribute("value", t.Name);
+        let tagInfo = document.createTextNode(t.Name + " (" + t.TN + ") (" + t.BN + ") (" + t.IN +")");
         tag.appendChild(tagInfo);
         categ.appendChild(tag);
     }
@@ -116,9 +113,9 @@ function loadingSlides() {
     wrapper.innerHTML = "";
 
     let tagString = "";
-    for (let i=0; i<category.length; i++) {
+    for (let i = 0; i < category.length; i++) {
         tagString += category[i].label;
-        if (i < (category.length - 1)){
+        if (i < (category.length - 1)) {
             tagString +=  " ";
         }
     }
