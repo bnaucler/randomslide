@@ -22,7 +22,7 @@ function rsinit() {
 function mkxhr(dest, rfunc) {
     var xhr = new XMLHttpRequest();
 
-    xhr.open("GET", dest, false);
+    xhr.open("POST", dest, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function() {
