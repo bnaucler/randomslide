@@ -1,11 +1,3 @@
-// Sends alert to user
-function sendalert(txt) {
-
-    var alertHTML = '<div class="alert">' + txt + '</div>';
-    document.body.insertAdjacentHTML("beforeend", alertHTML);
-    setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
-}
-
 // Processes user registration response
 function uregresp(resp) {
 

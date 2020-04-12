@@ -34,6 +34,23 @@ function mkxhr(dest, rfunc) {
     xhr.send();
 }
 
+// Sends alert to user
+function sendalert(txt) {
+
+    var alertHTML = '<div class="alert">' + txt + '</div>';
+    document.body.insertAdjacentHTML("beforeend", alertHTML);
+    setTimeout(() => document.querySelector('.alert').outerHTML = "", 2000);
+}
+
+// Returns user & skey string
+function getukstr() {
+    let user = sessionStorage.getItem('user');
+    let key = sessionStorage.getItem('key');
+    str = "&user=" + user + "&skey=" + key;
+
+    return str
+}
+
 // Parses URI and requests deck
 function deckfruri() {
     var url = window.location.href;
@@ -227,11 +244,3 @@ function endScreen() {
     slidechangenext.style.display = "none";
     output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>Direct link to deck: https://randomslide.com/deck.html?id=" + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
 }
-/*
-todo:
-
-2. olika slide-types -> olika funktion för att skapa slides
-    beroende på om det är en lista, en stor bild, en liten bild.
-3. CSS för olika slide-types
-
-*/

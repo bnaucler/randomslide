@@ -1,12 +1,3 @@
-// Returns user & skey string
-function getukstr() {
-    let user = sessionStorage.getItem('user');
-    let key = sessionStorage.getItem('key');
-    str = "&user=" + user + "&skey=" + key;
-
-    return str
-}
-
 // Processes text addition response
 function atresp(resp) {
 
