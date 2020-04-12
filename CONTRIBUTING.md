@@ -9,7 +9,6 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Indent by four spaces
 
 ## Defaults
-* Backend requests are sent as POST
 * Server listens at port 6291 by default
 
 ## Folder structure
@@ -43,7 +42,6 @@ tools/          - Tools for maintenence etc.
 * CSS for all slides (maybe not 1 and 5)
 * CSS for the main site
 * JS-removing unused tags from DOM after slideshow has started
-* Refactor JS
 
 
 ## Text types
