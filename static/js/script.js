@@ -10,7 +10,7 @@ function rsinit() {
     window.onload = mkxhr("/gettags", displayTags);
 
     document.getElementById('timerOrNot').addEventListener('change', function() {
-        if(this.value === "timer"){
+        if(this.value === "timer") {
             document.getElementById("slideTimer").style.display = "inline";
         } else{
             document.getElementById("slideTimer").style.display = "none";
@@ -95,13 +95,13 @@ function fetchSlides() {
     for (let i=0; i<selectedTags.length; i++) {
         stringToSend += selectedTags[i].label;
 
-        if (i < (selectedTags.length - 1)){
+        if (i < (selectedTags.length - 1)) {
             stringToSend +=  " ";
         }
     }
 
     let amount = document.getElementById("amountOfSlides").value;
-    if(document.getElementById("deckid").value != null){
+    if(document.getElementById("deckid").value != null) {
         var deckid = document.getElementById("deckid").value;
     }
 
@@ -140,7 +140,7 @@ function loadingSlides() {
     wrapper.innerHTML += "Your tags:  " + tagString + "<br />";
     wrapper.innerHTML += "Amount of slides: " + amount + "<br />";
 
-    if(slideProg == "change"){
+    if(slideProg == "change") {
         wrapper.innerHTML += "Your choice is to change slides yourself. <br />"
     } else {
         wrapper.innerHTML += "Your choice is that slides change every " + timer + " seconds. <br />";
@@ -236,11 +236,21 @@ function changeCSS(slideToStyle) {
     cssref.href = '/css/' + slideToStyle + '.css';
 }
 
+function getbaseurl() {
+    var l = document.createElement("a");
+    l.href = window.location.href;
+
+    return l.origin;
+}
+
 function endScreen() {
     let output = document.getElementById("output");
+    let dlink = getbaseurl() + "/deck.html?id=" + deckId;
+
     let slidechangeprev = document.getElementById("prev");
     let slidechangenext = document.getElementById("next");
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
-    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>Direct link to deck: https://randomslide.com/deck.html?id=" + deckId + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
+
+    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>Direct link to deck: " + dlink + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
 }
