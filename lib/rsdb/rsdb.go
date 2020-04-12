@@ -95,8 +95,10 @@ func Wrsettings(db *bolt.DB, settings rscore.Settings) {
     mset, e := json.Marshal(settings)
     rscore.Cherr(e)
 
+    rscore.Smut.Lock()
     e = Wrdb(db, rscore.INDEX, mset, rscore.SBUC)
     rscore.Cherr(e)
+    rscore.Smut.Unlock()
 }
 
 // Wrapper for reading settings from database

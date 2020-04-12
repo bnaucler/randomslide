@@ -477,7 +477,6 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     nt, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set) // TODO mutex
     rscore.Sendtagstatus(nt, w)
 
-    rscore.Smut.Lock() // Mutex test
     if len(tr.Ttext) > 1 && len(tr.Ttext) < rscore.TTEXTMAX {
         rsdb.Addtextwtags(tr.Ttext, tags, db, u.Name, rscore.Set.Tmax, rscore.TBUC)
         rscore.Set.Tmax++
@@ -490,7 +489,6 @@ func textreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
 
     rsdb.Updatetindex(db)
     rsdb.Wrsettings(db, rscore.Set)
-    rscore.Smut.Unlock()
 }
 
 // Handles incoming requests for user index
