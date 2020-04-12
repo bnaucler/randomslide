@@ -84,11 +84,11 @@ func Getimgtype(iw int, ih int) (int, bool) {
         return 4, false
 
     case nw > 12: // Landscape
-        if w > rscore.IMGMAX[0][0] || h > rscore.IMGMAX[0][1] {
+        if w >= rscore.IMGMAX[0][0] || h >= rscore.IMGMAX[0][1] {
             t = 0
             ok = true
 
-        } else if w < rscore.IMGMIN[0][0] || h < rscore.IMGMIN[0][1] {
+        } else if w < rscore.IMGMIN[1][0] || h < rscore.IMGMIN[1][1] {
             ok = false
 
         } else {
