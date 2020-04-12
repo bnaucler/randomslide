@@ -1,5 +1,6 @@
 function restartServer() {
-    mkxhr("/restart", restartmsg);
+    var req = "/restart" + getukstr();
+    mkxhr(req, restartmsg);
 }
 
 // Giving user information that server is restarting
