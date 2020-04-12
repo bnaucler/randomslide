@@ -275,11 +275,8 @@ func mkdeck(db *bolt.DB, deck rscore.Deck, req rscore.Deckreq) rscore.Deck {
     deck.Id = rscore.Set.Dmax
     rsdb.Wrdeck(db, deck)
 
-    // Mutex test
-    rscore.Smut.Lock()
     rscore.Set.Dmax++
     rsdb.Wrsettings(db, rscore.Set)
-    rscore.Smut.Unlock()
 
     return deck
 }
