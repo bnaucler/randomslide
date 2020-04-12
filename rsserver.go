@@ -434,20 +434,17 @@ func imgreqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     if !ok { return }
 
     var nt int
-    nt, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set) // TODO mutex
+    nt, rscore.Set = rsdb.Tagstoindex(tags, rscore.Set)
     rscore.Sendtagstatus(nt, w)
 
     var suf []string
     suf = append(suf, rscore.SUFINDEX[isz])
     stags := rscore.Addtagsuf(tags, suf)
 
-    // Mutex test
-    rscore.Smut.Lock()
     rscore.Set = rsdb.Addimgwtags(db, fn, b.Max.X, b.Max.Y, isz, u.Name,
         stags, w, rscore.Set)
     rsdb.Updatetindex(db)
     rsdb.Wrsettings(db, rscore.Set)
-    rscore.Smut.Unlock()
 
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
