@@ -9,6 +9,7 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Indent by four spaces
 
 ## Defaults
+* Backend requests are sent as POST
 * Server listens at port 6291 by default
 
 ## Folder structure
