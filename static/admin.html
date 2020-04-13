@@ -17,7 +17,30 @@
                 <a class="mitm mred" href="#" onclick="restartServer()">restart server</a>
             </nav>
         </header>
+
         <div id="logwrapper">
+
+        <fieldset>
+            <h2>Edit user:</h2>
+            <select id="seluser" name="seluser" class="item"></select><br><br>
+
+            <input type="radio" name="selop" id="r0" value="0">
+            <label for="r0">Make admin</label><br>
+            <input type="radio" name="selop" id="r1" value="1">
+            <label for="r1">Remove admin rights</label><br>
+            <input type="radio" name="selop" id="r2" value="2">
+            <label for="r2">Change password (enter below)</label><br>
+            <input type="radio" name="selop" id="r3" value="3">
+            <label for="r3">Remove user account</label><br>
+            <input type="radio" name="selop" id="r4" value="4">
+            <label for="r4">Email new password to user (will be randomly generated)</label><br><br>
+
+            <label for="password">New password (if applicable):</label><br>
+            <input type="password" name="password" id="password"><br><br>
+
+            <button onclick="chuser()">Submit</button>
+        </fieldset>
+
             <h2>Monitor log:</h2>
             <div id="logfileMonitor">
 
@@ -33,6 +56,6 @@
 
     <script src="js/script.js"></script>
     <script src="js/admin.js"></script>
-    <script type="text/javascript">window.onload = fetchLogs();</script>
+    <script type="text/javascript">window.onload = initrsadmin();</script>
 </body>
 </html>
