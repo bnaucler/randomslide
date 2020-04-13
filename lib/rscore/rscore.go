@@ -12,7 +12,6 @@ import (
     "io"
     "fmt"
     "log"
-    "net"
     "sync"
     "time"
     "regexp"
@@ -445,12 +444,9 @@ func Rmdupstrfslice(list []string) []string {
 // Retrieves client IP address from http request
 func getclientip(r *http.Request) string {
 
-    ipraw := r.Header.Get("X-Real-Ip")
-    if ipraw == "" { ipraw = r.Header.Get("X-Forwarded-For") }
-    if ipraw == "" { ipraw = r.RemoteAddr }
-
-    ip, _, e := net.SplitHostPort(ipraw)
-    Cherr(e)
+    ip := r.Header.Get("X-Real-Ip")
+    if ip == "" { ip = r.Header.Get("X-Forwarded-For") }
+    if ip == "" { ip = r.RemoteAddr }
 
     return ip
 }
