@@ -445,7 +445,11 @@ func Rmdupstrfslice(list []string) []string {
 // Retrieves client IP address from http request
 func getclientip(r *http.Request) string {
 
-    ip, _, e := net.SplitHostPort(r.RemoteAddr)
+    ipraw := r.Header.Get("X-Real-Ip")
+    if ipraw == "" { ipraw = r.Header.Get("X-Forwarded-For") }
+    if ipraw == "" { ipraw = r.RemoteAddr }
+
+    ip, _, e := net.SplitHostPort(ipraw)
     Cherr(e)
 
     return ip
