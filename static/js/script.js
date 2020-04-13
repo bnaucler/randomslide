@@ -46,7 +46,7 @@ function sendalert(txt) {
 function getukstr() {
     let user = sessionStorage.getItem('user');
     let key = sessionStorage.getItem('key');
-    str = "&user=" + user + "&skey=" + key;
+    str = "user=" + user + "&skey=" + key;
 
     return str
 }

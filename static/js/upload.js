@@ -17,7 +17,7 @@ function addText() {
     let body = document.getElementById("textinput").value;
     let tags = document.getElementById("taginput").value;
 
-    var req = "/addtext?ttext=" + title + "&btext=" + body + "&tags=" + tags + getukstr();
+    var req = "/addtext?ttext=" + title + "&btext=" + body + "&tags=" + tags + "&" + getukstr();
 
     mkxhr(req, atresp);
 }
@@ -36,7 +36,7 @@ function airesp(resp) {
 // Sends XHR requests to add images
 function addImg() {
     let imgtags = document.getElementById("imgTagInput").value;
-    let url = "/addimg?tags=" + imgtags + getukstr();
+    let url = "/addimg?tags=" + imgtags + "&" + getukstr();
 
     let formdata = new FormData();
     let fileToSend = document.getElementById("file").files[0];
