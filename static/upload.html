@@ -8,10 +8,12 @@
     <title>randomslide - contribute</title>
   </head>
   <body>
+    <div id="usericon" onclick="togglenav();"></div>
+
       <div class="wrapper">
         <header>
             <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
-            <nav>
+            <nav id="nav">
                 <a class="mitm" href="index.html">home</a>
                 <a class="mitm" href="admin.html">admin</a>
             </nav>
@@ -70,5 +72,6 @@
     <script src="js/script.js"></script>
     <script src="js/uhandling.js"></script>
     <script src="js/upload.js"></script>
+    <script type="text/javascript">window.onload = initusermenu();</script>
   </body>
 </html>

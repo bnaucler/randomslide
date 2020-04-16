@@ -75,6 +75,7 @@ function initrsadmin() {
     mkxhr("log/rsmonitor.log", pmlog);
     mkxhr("log/rsserver.log", pslog);
     mkxhr("/getusers", ulresp);
+    initusermenu();
 }
 
 // Log file parser

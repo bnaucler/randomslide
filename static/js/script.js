@@ -4,6 +4,7 @@ var resp;
 var slideIndex = 1;
 var slideshow = true;
 var deckId;
+var navopen = false;
 
 // Initialization of randomslide - called by index.html
 function rsinit() {
@@ -18,6 +19,22 @@ function rsinit() {
         }
     });
 }
+
+// Toggles nav visibility
+function togglenav() {
+
+    nav = document.getElementById('nav');
+
+    if(navopen == false) {
+        nav.style.display = "block";
+        navopen = true;
+
+    } else {
+        nav.style.display = "none";
+        navopen = false;
+    }
+}
+
 
 // Creates the user menu
 function initusermenu() {
