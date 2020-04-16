@@ -203,8 +203,13 @@ function loadingSlides() {
 
 function startSlide() {
     let wrapper = document.getElementById("formwrapper");
+    let usericon = document.getElementById("usericon");
+    let nav = document.getElementById("nav");
     wrapper.innerHTML = "";
     slideShow();
+
+    usericon.style.display = "none";
+    nav.style.display = "none";
 
     if(slideProg === "change") {
         document.getElementById("prev").style.display = "inline";
