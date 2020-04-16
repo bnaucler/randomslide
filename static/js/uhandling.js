@@ -1,7 +1,8 @@
 // Logs user in
-function loginuser(s) {
+function inituser(s) {
     sessionStorage.setItem('key', s.Skey);
     sessionStorage.setItem('user', s.Name);
+    sessionStorage.setItem('alev', s.Alev);
     initusermenu();
 }
 
@@ -11,7 +12,7 @@ function uregresp(resp) {
     var s = JSON.parse(resp.responseText);
 
     if (s.Skey != undefined) {
-        loginuser(s);
+        inituser(s);
         sendalert("User created, you are now logged in.");
 
     } else {
@@ -25,7 +26,7 @@ function ulogresp(resp) {
     var s = JSON.parse(resp.responseText);
 
     if(s.Skey != undefined && s.Skey.length > 10) {
-        loginuser(s);
+        inituser(s);
         sendalert("Logged in");
 
     } else {
