@@ -8,6 +8,7 @@ var deckId;
 // Initialization of randomslide - called by index.html
 function rsinit() {
     window.onload = mkxhr("/gettags", displayTags);
+    window.onload = initusermenu();
 
     document.getElementById('timerOrNot').addEventListener('change', function() {
         if(this.value === "timer") {
@@ -16,6 +17,20 @@ function rsinit() {
             document.getElementById("slideTimer").style.display = "none";
         }
     });
+}
+
+// Creates the user menu
+function initusermenu() {
+    let user = sessionStorage.getItem('user');
+    let umenu = document.getElementById('usermenu');
+    var i;
+
+    if(user == null) i = 'x'; // TODO: make this make sense
+    else i = user.charAt(0);
+
+    umenu.innerHTML = "";
+    var init = document.createTextNode(i.toLowerCase());
+    umenu.appendChild(init);
 }
 
 // Creates XHR and calls rfunc with response

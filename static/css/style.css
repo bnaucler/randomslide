@@ -11,6 +11,7 @@
  */
 
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
 
 * {
     font-family: 'Roboto', sans-serif;
@@ -263,4 +264,28 @@ fieldset {
     margin: 20px;
     border: 5px solid grey;
     border-radius: 10px;
+}
+
+#usermenu {
+    display: block;
+    position: fixed;
+    height: 60px;
+    width: 60px;
+    top: 20px;
+    right: 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, .8);
+    font-family: 'Orbitron', sans-serif;
+    vertical-align: middle;
+    display: table-cell;
+    text-align: center;
+    font-size: 2.5em;
+    transition: .3s;
+}
+
+#usermenu:hover {
+
+    /* background-color: #007588; */
+    background-color: rgba(255, 255, 255, 1);
+    transition: .3s;
 }
