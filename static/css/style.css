@@ -266,7 +266,7 @@ fieldset {
     border-radius: 10px;
 }
 
-#usermenu {
+#usericon {
     display: block;
     position: fixed;
     height: 60px;
@@ -283,9 +283,7 @@ fieldset {
     transition: .3s;
 }
 
-#usermenu:hover {
-
-    /* background-color: #007588; */
+#usericon:hover {
     background-color: rgba(255, 255, 255, 1);
     transition: .3s;
 }

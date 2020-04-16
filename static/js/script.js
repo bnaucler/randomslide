@@ -22,7 +22,7 @@ function rsinit() {
 // Creates the user menu
 function initusermenu() {
     let user = sessionStorage.getItem('user');
-    let umenu = document.getElementById('usermenu');
+    let umenu = document.getElementById('usericon');
     var i;
 
     if(user == null) i = 'x'; // TODO: make this make sense
