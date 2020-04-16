@@ -18,7 +18,7 @@ function ulogresp(resp) {
 
     var s = JSON.parse(resp.responseText);
 
-    if (s.Skey != "") {
+    if(s.Skey != undefined && s.Skey.length > 10) {
         sessionStorage.setItem('key', s.Skey);
         sessionStorage.setItem('user', s.Name);
         sendalert("Logged in");
