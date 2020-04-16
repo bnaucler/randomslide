@@ -1,11 +1,17 @@
+// Logs user in
+function loginuser(s) {
+    sessionStorage.setItem('key', s.Skey);
+    sessionStorage.setItem('user', s.Name);
+    initusermenu();
+}
+
 // Processes user registration response
 function uregresp(resp) {
 
     var s = JSON.parse(resp.responseText);
 
     if (s.Skey != undefined) {
-        sessionStorage.setItem('key', s.Skey);
-        sessionStorage.setItem('user', s.Name);
+        loginuser(s);
         sendalert("User created, you are now logged in.");
 
     } else {
@@ -19,8 +25,7 @@ function ulogresp(resp) {
     var s = JSON.parse(resp.responseText);
 
     if(s.Skey != undefined && s.Skey.length > 10) {
-        sessionStorage.setItem('key', s.Skey);
-        sessionStorage.setItem('user', s.Name);
+        loginuser(s);
         sendalert("Logged in");
 
     } else {
