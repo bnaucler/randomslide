@@ -8,8 +8,8 @@ var navopen = false;
 
 // Initialization of randomslide - called by index.html
 function rsinit() {
-    window.onload = mkxhr("/gettags", displayTags);
-    window.onload = initusermenu();
+    mkxhr("/gettags", displayTags);
+    initusermenu();
 
     document.getElementById('timerOrNot').addEventListener('change', function() {
         if(this.value === "timer") {
@@ -47,6 +47,47 @@ function togglenav() {
     else closenav();
 }
 
+// Returns a nav item
+function createnavitem(label, dest) {
+    var l = document.createElement("a");
+    let txt = document.createTextNode(label);
+    l.href = dest;
+    l.appendChild(txt);
+    l.setAttribute("class", "mitm");
+
+    return l;
+}
+
+// Constructs nav based on access level
+function createnav() {
+    let alev = sessionStorage.getItem('alev');
+    let nav = document.getElementById('nav');
+
+    nav.innerHTML = "";
+
+    nav.appendChild(createnavitem("contribute", "upload.html"));
+    nav.appendChild(createnavitem("admin", "admin.html"));
+
+    if(alev > 1) {
+        let rst = createnavitem("restart server", "#");
+        rst.setAttribute("class", "mitm mred");
+        rst.onclick = function() { restartServer(); };
+        nav.appendChild(rst);
+    }
+
+    if(!alev || alev < 1) {
+        // TODO: This is ugly. Fix.
+        nav.innerHTML = "";
+        let lsc = createnavitem("log in", "#");
+        lsc.setAttribute("class", "mitm");
+        lsc.onclick = function() {
+            document.getElementById('tint').style.display = "block";
+            document.getElementById('loginscr').style.display = "block";
+        }
+        nav.appendChild(lsc);
+    }
+}
+
 // Creates the user menu
 function initusermenu() {
     let user = sessionStorage.getItem('user');
@@ -61,6 +102,7 @@ function initusermenu() {
     var init = document.createTextNode(i.toLowerCase());
     umenu.appendChild(init);
 
+    createnav();
 }
 
 // Creates XHR and calls rfunc with response
@@ -77,6 +119,17 @@ function mkxhr(dest, rfunc) {
     }
 
     xhr.send();
+}
+
+// Giving user information that server is restarting
+function restartmsg() {
+    // TODO
+}
+
+// Restarts the server
+function restartServer() {
+    var req = "/restart?" + getukstr();
+    mkxhr(req, restartmsg);
 }
 
 // Sends alert to user

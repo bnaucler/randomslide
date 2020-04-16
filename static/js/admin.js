@@ -1,8 +1,3 @@
-function restartServer() {
-    var req = "/restart?" + getukstr();
-    mkxhr(req, restartmsg);
-}
-
 // Processes user list request response
 function ulresp(resp) {
     var s = JSON.parse(resp.responseText);
@@ -53,11 +48,6 @@ function chuser() {
     }
 
     mkxhr(req, churesp);
-}
-
-// Giving user information that server is restarting
-function restartmsg() {
-    // TODO
 }
 
 // Calls printLogs() for monitor

@@ -46,6 +46,12 @@ function registerUser() {
 
 // Makes XHR call for user login
 function loginUser() {
+    let loginscr = document.getElementById("loginscr");
+    let tint = document.getElementById("tint");
+
+    loginscr.style.display = "none";
+    tint.style.display = "none";
+
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
 
