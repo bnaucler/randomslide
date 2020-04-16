@@ -20,26 +20,38 @@ function rsinit() {
     });
 }
 
-// Toggles nav visibility
-function togglenav() {
-
+// Opens nav
+function opennav() {
     nav = document.getElementById('nav');
 
-    if(navopen == false) {
-        nav.style.display = "block";
-        navopen = true;
+    document.addEventListener("click", function(evt) {
+        var clickin = nav.contains(event.target);
+        if(!clickin && navopen) closenav();
+    }, true);
 
-    } else {
-        nav.style.display = "none";
-        navopen = false;
-    }
+    nav.style.display = "block";
+    navopen = true;
 }
 
+// Closes nav
+function closenav() {
+    nav = document.getElementById('nav');
+
+    nav.style.display = "none";
+    navopen = false;
+}
+
+// Toggles nav visibility
+function togglenav() {
+    if(navopen == false) opennav();
+    else closenav();
+}
 
 // Creates the user menu
 function initusermenu() {
     let user = sessionStorage.getItem('user');
     let umenu = document.getElementById('usericon');
+
     var i;
 
     if(user == null) i = 'x'; // TODO: make this make sense
@@ -48,6 +60,7 @@ function initusermenu() {
     umenu.innerHTML = "";
     var init = document.createTextNode(i.toLowerCase());
     umenu.appendChild(init);
+
 }
 
 // Creates XHR and calls rfunc with response
