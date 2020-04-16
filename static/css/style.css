@@ -44,9 +44,14 @@ body {
 
 nav {
     display: none;
+    position: fixed;
+    width: 150px;
+    background-color: rgba(255, 255, 255, .8);
+    right: 20px;
+    top: 100px;
+    border-radius: 8px;
     text-align: center;
     margin: 0 auto;
-    padding-bottom: 30px;
 }
 
 h1 {
@@ -66,18 +71,19 @@ h2 {
 }
 
 .mitm {
-    font-size: 1.5em;
-    margin-right: 20px;
-    color: #fff;
-    background-color: #1e1e1e;
+    margin: 5px;
+    display: block;
+    font-size: 1.2em;
+    color: #1e1e1e;
     text-decoration: none;
+    border-radius: 8px;
     padding: 10px;
-    border-radius: 4px;
     transition: .3s;
 }
 
 .mitm:hover {
     background-color: #007588;
+    color: #fff;
     transition: .3s;
 }
 
