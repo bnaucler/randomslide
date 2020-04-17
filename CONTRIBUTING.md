@@ -35,10 +35,10 @@ tools/          - Tools for maintenence etc.
 * Improved bullet point handling
 * Put untagged data in 'random' tag
 * Rebuild setslidetype()
+* Anonymize skeys when logging
 
 
 ## TODO (Frontend)
-* Userhandling
 * Share (deckid) on social media
 * CSS for all slides (maybe not 1 and 5)
 * CSS for the main site

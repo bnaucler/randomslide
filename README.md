@@ -2,7 +2,7 @@
 ![randomslide logo](visuals/randomslide-08.png)
 
 
-# randomslide v0.3A
+# randomslide v0.4A
 Generate random slides for slideshow karaokae or other pranks. Actual real world usefulness can be questioned.
 
 ## Created by
