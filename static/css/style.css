@@ -325,3 +325,21 @@ fieldset {
     width: 100vw;
     background-color: rgba(0, 0, 0, .5);
 }
+
+.cbtn {
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5em;
+    transition: .3s;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.cbtn:hover {
+    background: #912104;
+    color: #fff;
+    transition: .3s;
+}
