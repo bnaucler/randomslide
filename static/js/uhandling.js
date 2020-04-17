@@ -34,29 +34,37 @@ function ulogresp(resp) {
     }
 }
 
+function hideoverlays() {
+    let loginscr = document.getElementById("loginscr");
+    let regscr = document.getElementById("regscr");
+    let tint = document.getElementById("tint");
+
+    loginscr.style.display = "none";
+    regscr.style.display = "none";
+    tint.style.display = "none";
+}
+
 // Makes XHR call for user registration
 function registerUser() {
-    let userName = document.getElementById("username").value;
-    let passWord = document.getElementById("password").value;
+    let userName = document.getElementById("regusername").value;
+    let passWord = document.getElementById("regpassword").value;
     let email = document.getElementById("email").value;
 
     var req = "/register?user=" + userName + "&pass=" + passWord + "&email=" + email;
     mkxhr(req, uregresp)
+
+    hideoverlays();
 }
 
 // Makes XHR call for user login
 function loginUser() {
-    let loginscr = document.getElementById("loginscr");
-    let tint = document.getElementById("tint");
-
-    loginscr.style.display = "none";
-    tint.style.display = "none";
-
     let userName = document.getElementById("username").value;
     let passWord = document.getElementById("password").value;
 
     var req = "/login?user=" + userName + "&pass=" + passWord;
     mkxhr(req, ulogresp);
+
+    hideoverlays();
 }
 
 // Processes feedback responses

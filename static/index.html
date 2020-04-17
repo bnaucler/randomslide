@@ -20,16 +20,30 @@
     <div id="usericon" onclick="togglenav();"></div>
     <nav id="nav"></nav>
 
-        <div id="loginscr">
-            <label for="username">Username:</label><br />
-            <input type="text" name="username" id="username">
-            <br />
-            <label for="password">Password:</label><br />
-            <input type="password" name="password" id="password">
-            <br />
-            <button class="item genbutton" onclick="loginUser()">Login!</button>
-            <p>Or <a href="reg.html">sign up here</a></p>
-        </div>
+    <div id="loginscr">
+        <label for="username">Username:</label><br />
+        <input type="text" name="username" id="username">
+        <br />
+        <label for="password">Password:</label><br />
+        <input type="password" name="password" id="password">
+        <br />
+        <button class="item genbutton" onclick="loginUser();">Login!</button>
+        <p><a href="#" onclick="openregscr();">sign up</a> | <a href="#" onclick="pwreset();">password reset</a></p>
+    </div>
+
+    <div id="regscr">
+        <label for="username">Username:</label><br />
+        <input type="text" name="regusername" id="regusername">
+        <br />
+        <label for="password">Password:</label><br />
+        <input type="password" name="regpassword" id="regpassword">
+        <br />
+        <label for="email">Email address:</label><br />
+        <input type="text" name="email" id="email">
+        <br />
+        <button class="item genbutton" onclick="registerUser();">Register</button>
+        <p><a href="#" onclick="openloginscr();">log in</a> | <a href="#" onclick="pwreset();">password reset</a></p>
+    </div>
 
     <div class="wrapper">
     <header>

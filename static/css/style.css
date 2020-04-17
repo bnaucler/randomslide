@@ -182,12 +182,11 @@ option:hover {
     display: none;
 }
 
-#username, #password, #email {
+#username, #password, #email, #regusername, #regpassword {
     font-size: 1.2em;
     font-weight: bold;
     border: 2px black solid;
     border-radius: 4px;
-    /* padding: 8px; */
     width: 50%;
 }
 
@@ -306,7 +305,7 @@ fieldset {
     transition: .3s;
 }
 
-#loginscr {
+#loginscr, #regscr {
     display: none;
     position: fixed;
     padding: 40px;

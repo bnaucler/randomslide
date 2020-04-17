@@ -35,6 +35,7 @@ tools/          - Tools for maintenence etc.
 * Improved bullet point handling
 * Put untagged data in 'random' tag
 * Rebuild setslidetype()
+* Username length restrictions
 
 
 ## TODO (Frontend)

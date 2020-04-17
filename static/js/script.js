@@ -58,6 +58,22 @@ function createnavitem(label, dest) {
     return l;
 }
 
+// Shows the login screen overlay
+function openloginscr() {
+    hideoverlays();
+
+    document.getElementById('tint').style.display = "block";
+    document.getElementById('loginscr').style.display = "block";
+}
+
+// Opens the user registration screen overlay
+function openregscr() {
+    hideoverlays();
+
+    document.getElementById('tint').style.display = "block";
+    document.getElementById('regscr').style.display = "block";
+}
+
 // Constructs nav based on access level
 function createnav() {
     let alev = sessionStorage.getItem('alev');
@@ -80,10 +96,7 @@ function createnav() {
         nav.innerHTML = "";
         let lsc = createnavitem("log in", "#");
         lsc.setAttribute("class", "mitm");
-        lsc.onclick = function() {
-            document.getElementById('tint').style.display = "block";
-            document.getElementById('loginscr').style.display = "block";
-        }
+        lsc.onclick = function() { openloginscr(); };
         nav.appendChild(lsc);
     }
 }
@@ -215,6 +228,11 @@ function createSlides(resp, fn) {
     var fns = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
     for(i in s.Slides) { fns[s.Slides[i].Type](s.Slides[i]); }
     setTimeout(fn, 800);
+}
+
+// Emails new password to user TODO: requires changes in backend
+function pwreset() {
+    sendalert('Feature not implemented yet - please contact a site admin');
 }
 
 function loadingSlides() {
