@@ -8,6 +8,7 @@ var navopen = false;
 
 // Initialization of randomslide - called by index.html
 function rsinit() {
+    checkurifordeck();
     mkxhr("/gettags", displayTags);
     initusermenu();
 
@@ -162,10 +163,19 @@ function getukstr() {
     return str
 }
 
+// Returns true if number is parseable as int
+function isint(n) {
+
+    if(isNaN(n)) return false;
+    else return true;
+}
+
 // Parses URI and requests deck
-function deckfruri() {
+function checkurifordeck() {
     var url = window.location.href;
     id = url.substring(url.indexOf('?id=') + 4);
+
+    if(!isint(id)) return;
 
     slideProg = "change";
 
@@ -276,7 +286,10 @@ function startSlide() {
     let wrapper = document.getElementById("formwrapper");
     let usericon = document.getElementById("usericon");
     let nav = document.getElementById("nav");
+
     wrapper.innerHTML = "";
+    hideoverlays();
+
     slideShow();
 
     usericon.style.display = "none";
@@ -357,6 +370,7 @@ function changeCSS(slideToStyle) {
     cssref.href = '/css/' + slideToStyle + '.css';
 }
 
+// Returns the base URL of randomslide instance
 function getbaseurl() {
     var l = document.createElement("a");
     l.href = window.location.href;
@@ -366,7 +380,7 @@ function getbaseurl() {
 
 function endScreen() {
     let output = document.getElementById("output");
-    let dlink = getbaseurl() + "/deck.html?id=" + deckId;
+    let dlink = getbaseurl() + "?id=" + deckId;
 
     let slidechangeprev = document.getElementById("prev");
     let slidechangenext = document.getElementById("next");
