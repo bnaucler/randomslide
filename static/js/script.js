@@ -48,17 +48,6 @@ function togglenav() {
     else closenav();
 }
 
-// Returns a nav item
-function createnavitem(label, dest) {
-    var l = document.createElement("a");
-    let txt = document.createTextNode(label);
-    l.href = dest;
-    l.appendChild(txt);
-    l.setAttribute("class", "mitm");
-
-    return l;
-}
-
 // Shows the login screen overlay
 function openloginscr() {
     hideoverlays();
@@ -75,6 +64,29 @@ function openregscr() {
     document.getElementById('regscr').style.display = "block";
 }
 
+// Logs the user out
+function logout() {
+    sessionStorage.clear();
+    hideoverlays();
+    initusermenu();
+    closenav();
+}
+
+// Returns a nav item
+function createnavitem(label, dest, jsaction) {
+    var l = document.createElement("a");
+    let txt = document.createTextNode(label);
+    l.href = dest;
+    l.appendChild(txt);
+    l.setAttribute("class", "mitm");
+
+    if(jsaction) {
+        l.onclick = function() { jsaction(); };
+    }
+
+    return l;
+}
+
 // Constructs nav based on access level
 function createnav() {
     let alev = sessionStorage.getItem('alev');
@@ -82,24 +94,24 @@ function createnav() {
 
     nav.innerHTML = "";
 
-    nav.appendChild(createnavitem("contribute", "upload.html"));
-    nav.appendChild(createnavitem("admin", "admin.html"));
-
-    if(alev > 1) {
-        let rst = createnavitem("restart server", "#");
-        rst.setAttribute("class", "mitm mred");
-        rst.onclick = function() { restartServer(); };
-        nav.appendChild(rst);
-    }
-
-    if(!alev || alev < 1) {
-        // TODO: This is ugly. Fix.
-        nav.innerHTML = "";
+    if(!alev || alev < 1) { // User not logged in
         let lsc = createnavitem("log in", "#");
         lsc.setAttribute("class", "mitm");
         lsc.onclick = function() { openloginscr(); };
         nav.appendChild(lsc);
+        return;
     }
+
+    nav.appendChild(createnavitem("contribute", "upload.html"));
+    nav.appendChild(createnavitem("admin", "admin.html"));
+
+    if(alev > 1) { // User is admin
+        let rst = createnavitem("restart server", "#");
+        rst.setAttribute("class", "mitm mred");
+        nav.appendChild(rst);
+    }
+
+    nav.appendChild(createnavitem("log out", "#", logout));
 }
 
 // Creates the user menu
