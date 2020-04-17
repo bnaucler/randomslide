@@ -47,6 +47,7 @@ const BPOINTMAX = 20            // Max length for bullet point
 const RNUMBMAX = 30             // Random number base max
 const RNUMEMAX = 3              // Random number exponent max
 
+const UNMINLEN = 2              // Minimum accepted lendth of user names
 const PWMINLEN = 6              // Minimum accepted lendth of password
 const RPWDLEN = 15              // Length of random generated passwords
 
@@ -84,6 +85,7 @@ const C_USPW = 11               // Unsafe password
 const C_IEMA = 12               // Invalid email address
 const C_WEMA = 13               // Incorrect email address
 const C_NOBJ = 14               // No such database object
+const C_UNTS = 15               // User name too short
 
 // User level definitions
 const ALEV_USER = 0             // Regular user

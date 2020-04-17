@@ -676,7 +676,12 @@ func reghandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
         u.Alev = rscore.ALEV_CONTRIB
     }
 
-    if u.Name != rscore.Cleanstring(u.Name, rscore.RXUSER) {
+    if len(u.Name) < rscore.UNMINLEN {
+            rscore.Sendstatus(rscore.C_UNTS,
+                "Username is too short", w)
+            return
+
+    } else if u.Name != rscore.Cleanstring(u.Name, rscore.RXUSER) {
             rscore.Sendstatus(rscore.C_UICH,
                 "Username includes illegal characters", w)
             return
