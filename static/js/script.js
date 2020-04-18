@@ -200,7 +200,7 @@ function checkurifordeck() {
     slideProg = "change";
 
     var req = "/getdeck?id=" + id;
-    mkxhr(req, launchDirectly)
+    mkxhr(req, createSlides)
 }
 
 // Publishes tag data for selection
