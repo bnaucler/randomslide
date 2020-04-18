@@ -34,16 +34,6 @@ function ulogresp(resp) {
     }
 }
 
-function hideoverlays() {
-    let loginscr = document.getElementById("loginscr");
-    let regscr = document.getElementById("regscr");
-    let tint = document.getElementById("tint");
-
-    loginscr.style.display = "none";
-    regscr.style.display = "none";
-    tint.style.display = "none";
-}
-
 // Makes XHR call for user registration
 function registerUser() {
     let userName = document.getElementById("regusername").value;

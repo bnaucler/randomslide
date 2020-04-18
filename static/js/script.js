@@ -48,6 +48,13 @@ function togglenav() {
     else closenav();
 }
 
+// Hides all overlay elements
+function hideoverlays() {
+
+    var overlays = [ "tint", "loginscr", "regscr", "endscr", "prev", "next", "nav" ]
+    for(s of overlays) { document.getElementById(s).style.display = "none"; }
+}
+
 // Shows the login screen overlay
 function openloginscr() {
     hideoverlays();
@@ -149,6 +156,7 @@ function mkxhr(dest, rfunc) {
 
 // Giving user information that server is restarting
 function restartmsg() {
+    sendalert('Restarting server');
     // TODO
 }
 
@@ -211,16 +219,6 @@ function displayTags(resp) {
     }
 }
 
-// Generates start screen before launching deck
-function getReady(resp) {
-    createSlides(resp, loadingSlides);
-}
-
-// Launch without showing start screen
-function launchDirectly(resp) {
-    createSlides(resp, startSlide);
-}
-
 function fetchSlides() {
     let stringToSend = "";
     let selectedTags = document.getElementById("category").selectedOptions;
@@ -239,59 +237,25 @@ function fetchSlides() {
     }
 
     var req = "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid;
-    mkxhr(req, getReady)
+    mkxhr(req, createSlides);
 }
 
-// Creates decks based on request, calling fn to launch
-function createSlides(resp, fn) {
+// Creates decks based on request
+function createSlides(resp) {
     var s = JSON.parse(resp.responseText);
     deckId = s.Id;
+    slideProg = document.getElementById("timerOrNot").value;
+    createendscr(s);
+    document.getElementById("formwrapper").innerHTML = ""; // cowboy
 
     var fns = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
     for(i in s.Slides) { fns[s.Slides[i].Type](s.Slides[i]); }
-    setTimeout(fn, 800);
+    setTimeout(startSlide, 800);
 }
 
 // Emails new password to user TODO: requires changes in backend
 function pwreset() {
     sendalert('Feature not implemented yet - please contact a site admin');
-}
-
-function loadingSlides() {
-    let amount = document.getElementById("amountOfSlides").value;
-    let category = document.getElementById("category").selectedOptions;
-    let lang = document.getElementById("lang").value;
-    let wrapper = document.getElementById("formwrapper");
-    slideProg = document.getElementById("timerOrNot").value;
-    timer = document.getElementById("time").value;
-
-    wrapper.innerHTML = "";
-
-    let tagString = "";
-    for (let i = 0; i < category.length; i++) {
-        tagString += category[i].label;
-        if (i < (category.length - 1)) {
-            tagString +=  " ";
-        }
-    }
-
-    wrapper.innerHTML += "Your tags:  " + tagString + "<br />";
-    wrapper.innerHTML += "Amount of slides: " + amount + "<br />";
-
-    if(slideProg == "change") {
-        wrapper.innerHTML += "Your choice is to change slides yourself. <br />"
-    } else {
-        wrapper.innerHTML += "Your choice is that slides change every " + timer + " seconds. <br />";
-    }
-
-    wrapper.innerHTML += "Language: " + lang + "<br />";
-
-    let butt = document.createElement("button");
-    let buttxt = document.createTextNode("GO!");
-    butt.setAttribute("class", "bigredbutton");
-    butt.setAttribute("onclick", "startSlide()");
-    butt.appendChild(buttxt);
-    document.getElementById("formwrapper").appendChild(butt);
 }
 
 function cdown(sec) {
@@ -311,22 +275,48 @@ function cdown(sec) {
     }, 1000);
 }
 
-function startSlide() {
-    let wrapper = document.getElementById("formwrapper");
-    let usericon = document.getElementById("usericon");
-    let nav = document.getElementById("nav");
+function createendscr(s) {
+    let esid = document.getElementById("esid");
+    let esnum = document.getElementById("esnum");
+    let estags = document.getElementById("estags");
+    let eslink = document.getElementById("eslink");
+    let essbtn = document.getElementById("essbtn");
 
-    wrapper.innerHTML = "";
+    let dlink = getbaseurl() + "?id=" + deckId;
+
+    let category = document.getElementById("category").selectedOptions;
+
+    if(category.length > 1) {
+        let tagString = "";
+
+        for (let i = 0; i < category.length; i++) {
+            tagString += category[i].label;
+            if (i < (category.length - 1)) {
+                tagString +=  " ";
+            }
+        }
+        estags.innerHTML = "Selected tags: " + tagString;
+
+    } else {
+        estags.style.display = "none";;
+    }
+
+    esid.innerHTML = "Deck ID: " + deckId;
+    esnum.innerHTML = "Consisting of " + s.Slides.length + " slides";
+    eslink.innerHTML = "Direct link to deck: " + dlink; // TODO make link
+}
+
+// Launches slideshow
+function startSlide() {
+    document.getElementById("usericon").style.display = "none";
 
     hideoverlays();
     cdown(3);
 
-    usericon.style.display = "none";
-    nav.style.display = "none";
-
     if(slideProg === "change") {
         document.getElementById("prev").style.display = "inline";
         document.getElementById("next").style.display = "inline";
+
     } else {
         document.getElementById("timeDisplay").style.display = "inline";
         displayTimer(true);
@@ -337,7 +327,7 @@ function slideShow(n) {
     let slides = document.getElementsByClassName("theSlides");
 
     if(n > slides.length) {
-        endScreen();
+        showendscr();
         slideshow = false;
     }
 
@@ -407,14 +397,10 @@ function getbaseurl() {
     return l.origin;
 }
 
-function endScreen() {
-    let output = document.getElementById("output");
-    let dlink = getbaseurl() + "?id=" + deckId;
+// Displays the end screen
+function showendscr() {
+    hideoverlays();
 
-    let slidechangeprev = document.getElementById("prev");
-    let slidechangenext = document.getElementById("next");
-    slidechangeprev.style.display = "none";
-    slidechangenext.style.display = "none";
-
-    output.innerHTML = "<div id='theSlides' style='display: inline; min-height: 90vh;'><h1>End of slideshow</h1><h2>Direct link to deck: " + dlink + "</h2><br /><h2>Thanks for using randomslide</h2></div>";
+    document.getElementById('style').href = '/css/style.css';
+    document.getElementById('endscr').style.display = "block";
 }
