@@ -320,6 +320,8 @@ fieldset {
 
 #tint {
     display: none;
+    top: 0;
+    left: 0;
     position: fixed;
     height: 100vh;
     width: 100vw;
@@ -342,4 +344,20 @@ fieldset {
     background: #912104;
     color: #fff;
     transition: .3s;
+}
+
+#countdown {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    color: #1e1e1e;
+    background-color: #eee;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15em;
+    text-align: center;
+    padding-top: 1.3em;
+    z-index: 20;
 }

@@ -294,15 +294,32 @@ function loadingSlides() {
     document.getElementById("formwrapper").appendChild(butt);
 }
 
+function cdown(sec) {
+    let cd = document.getElementById("countdown");
+    cd.style.display = "block";
+
+    var count = setInterval(function() {
+        if(sec == 0) {
+            cd.style.display = "none";
+            slideShow();
+            sec = timer;
+
+        } else {
+            cd.innerHTML = sec;
+            sec -= 1;
+        }
+    }, 1000);
+}
+
 function startSlide() {
     let wrapper = document.getElementById("formwrapper");
     let usericon = document.getElementById("usericon");
     let nav = document.getElementById("nav");
 
     wrapper.innerHTML = "";
-    hideoverlays();
 
-    slideShow();
+    hideoverlays();
+    cdown(3);
 
     usericon.style.display = "none";
     nav.style.display = "none";
