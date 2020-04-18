@@ -1,120 +1,137 @@
 var i = 1;
 
 // Returns standardized slide div
-function getdiv(id) {
-    let outputEl = document.getElementById("output");
-    var div = document.createElement("div");
-    div.setAttribute("class", "theSlides");
-    div.setAttribute("id", "slide" + id);
-    div.style.display = "none";
-    outputEl.appendChild(div);
+function getsc() {
+    let op = document.getElementById("output");
+    var sc = document.createElement("div");
 
-    return div;
+    sc.classList.add("rscontainer");
+    sc.style.display = "none";
+
+    op.appendChild(sc);
+
+    return sc;
 }
 
-function slide0(resp){
-    div = getdiv(0);
+// Title with image
+function slide0(resp) {
+    let sc = getsc();
+    let hdr = document.createElement("h4");
+    let title = document.createTextNode(resp.Title);
 
-    let slideHeader = document.createElement("h2");
-    let headerText = document.createTextNode(resp.Title);
-    slideHeader.appendChild(headerText);
-    div.appendChild(slideHeader);
+    hdr.classList.add("rss0tit");
+    hdr.appendChild(title);
+    sc.appendChild(hdr);
 
-    let slideImg = document.createElement("img");
-    slideImg.setAttribute("src", "img/" + resp.Img.Fname);
-    slideImg.classList.add("slideimg");
-    div.appendChild(slideImg);
+    let img = document.createElement("img");
+    img.setAttribute("src", "img/" + resp.Img.Fname);
+    img.classList.add("rsh0img");
+    sc.appendChild(img);
 }
 
+// Full screen image
 function slide1(resp){
-    div = getdiv(1);
+    let op = document.getElementById("output");
+    let sc = getsc();
 
-    let slideImg = document.createElement("div");
-    slideImg.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
+    let img = document.createElement("div");
+    img.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
 
-    slideImg.classList.add("slideimg");
-    div.appendChild(slideImg);
+    img.classList.add("rss1img");
+    sc.appendChild(img);
 }
 
+// Big number
 function slide2(resp){
-    div = getdiv(2);
+    let sc = getsc();
 
-    let slideHeader = document.createElement("h3");
-    let headerText = document.createTextNode(resp.Title);
-    slideHeader.appendChild(headerText);
-    div.appendChild(slideHeader);
+    let bignum = document.createElement("h4");
+    let txt = document.createTextNode(resp.Title);
+
+    bignum.classList.add("rss2bignum");
+    bignum.appendChild(txt);
+    sc.appendChild(bignum);
 }
 
+// Bullet point list
 function slide3(resp){
-    div = getdiv(3);
+    let sc = getsc();
 
     let ul = document.createElement("ul");
+    ul.classList.add("rss3ul");
+
     for(i in resp.Bpts){
         let li = document.createElement("li");
         let litext = document.createTextNode(resp.Bpts[i]);
+        li.classList.add("rss3li");
         li.appendChild(litext);
         ul.appendChild(li);
     }
-    div.appendChild(ul);
+
+    sc.appendChild(ul);
 }
 
+// Title, image & body text
 function slide4(resp){
-    div = getdiv(4);
+    let sc = getsc();
 
-    let slideHeader = document.createElement("h2");
-    let headerText = document.createTextNode(resp.Title);
-    slideHeader.appendChild(headerText);
-    div.appendChild(slideHeader);
+    let hdr = document.createElement("h4");
+    let title = document.createTextNode(resp.Title);
+    hdr.classList.add("rss4tit");
+    hdr.appendChild(title);
+    sc.appendChild(hdr);
 
-    let slideImg = document.createElement("img");
-    slideImg.setAttribute("src", "img/" + resp.Img.Fname);
-    slideImg.classList.add("slideimg");
-    div.appendChild(slideImg);
+    let img = document.createElement("img");
+    img.setAttribute("src", "img/" + resp.Img.Fname);
+    img.classList.add("rss4img");
+    sc.appendChild(img);
 
-    let slideTxt = document.createElement("p");
-    let slideContent = document.createTextNode(resp.Btext);
-    slideTxt.appendChild(slideContent);
-    div.appendChild(slideTxt);
+    let bt = document.createElement("p");
+    let btext = document.createTextNode(resp.Btext);
+    img.classList.add("rss4bt");
+    bt.appendChild(btext);
+    sc.appendChild(bt);
 }
 
+// Inspirational quote
 function slide5(resp){
-    div = getdiv(5);
+    let sc = getsc();
 
     let imgNo = Math.floor(Math.random() * 4);
-    let slideImg = document.createElement("div");
-    slideImg.classList.add("slideimg");
-    let textdiv = document.createElement("div");
-    let inspoP = document.createElement("p");
-    slideImg.style.backgroundImage = 'url(inspoimg/inspo' + imgNo + '.jpg)';
-    let inspotext = document.createTextNode('"' + resp.Title + '"');
-    inspoP.appendChild(inspotext);
-    textdiv.appendChild(inspoP);
-    textdiv.classList.add("textdiv");
-    div.appendChild(slideImg);
-    div.appendChild(textdiv);
+    let img = document.createElement("div");
+    img.classList.add("rss5img");
+    img.style.backgroundImage = 'url(inspoimg/inspo' + imgNo + '.jpg)';
+    sc.appendChild(img);
+
+    let quote = document.createElement("h4");
+    let title = document.createTextNode('"' + resp.Title + '"');
+    quote.classList.add("rss5q");
+    sc.appendChild(quote);
 }
 
+// Image with text
 function slide6(resp){
-    div = getdiv(6);
+    let sc = getsc();
 
-    let slideImg = document.createElement("img");
-    slideImg.setAttribute("src", "img/" + resp.Img.Fname);
-    slideImg.classList.add("slideimg");
-    div.appendChild(slideImg);
+    let img = document.createElement("img");
+    img.setAttribute("src", "img/" + resp.Img.Fname);
+    img.classList.add("rss6img");
+    sc.appendChild(img);
 
-    let slideTxt = document.createElement("p");
-    let slideContent = document.createTextNode(resp.Btext);
-    slideTxt.appendChild(slideContent);
-    div.appendChild(slideTxt);
+    let bt = document.createElement("p");
+    let txt = document.createTextNode(resp.Btext);
+    bt.appendChild(txt);
+    sc.appendChild(bt);
 }
 
+// Graph
 function slide7(resp){
-    div = getdiv(7);
+    let sc = getsc();
 
     let canvas = document.createElement("canvas");
     canvas.setAttribute("id", "myChart" + i);
 
-    div.appendChild(canvas);
+    sc.appendChild(canvas);
 
     var colors = [
         'rgba(255, 99, 132, 0.5)',

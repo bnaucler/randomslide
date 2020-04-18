@@ -314,19 +314,24 @@ function startSlide() {
     cdown(3);
 
     if(slideProg === "change") {
-        document.getElementById("prev").style.display = "inline";
-        document.getElementById("next").style.display = "inline";
+        document.getElementById("prev").style.display = "block";
+        document.getElementById("next").style.display = "block";
 
     } else {
-        document.getElementById("timeDisplay").style.display = "inline";
+        document.getElementById("timeDisplay").style.display = "block";
         displayTimer(true);
     }
 }
 
+// TODO: more ideomatic sorting
 function slideShow(n) {
-    let slides = document.getElementsByClassName("theSlides");
+    let slides = document.getElementsByClassName("rscontainer");
+    let output = document.getElementById("output");
+
+    output.style.display = "block";
 
     if(n > slides.length) {
+        output.style.display = "none";
         showendscr();
         slideshow = false;
     }
@@ -341,7 +346,6 @@ function slideShow(n) {
 
     if(slideshow === true) {
         slides[slideIndex-1].style.display = "block";
-        changeCSS(slides[slideIndex-1].id);
     }
 }
 
@@ -382,11 +386,6 @@ function displayTimer() {
             }
         }
     }, 1000);
-}
-
-function changeCSS(slideToStyle) {
-    var cssref = document.getElementById('style');
-    cssref.href = '/css/' + slideToStyle + '.css';
 }
 
 // Returns the base URL of randomslide instance
