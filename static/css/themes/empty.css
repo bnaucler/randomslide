@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* master div holding all slides */
+.rscontainer {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: #fff;
+}
+
+/* slide type 0 - Big title */
+.rss0 {
+}
+
+.rss0tit {
+}
+
+.rss0img {
+}
+
+/* slide type 1 - Full screen image */
+.rss1 {
+}
+
+.rss1img {
+}
+
+/* slide type 2 - Big number */
+.rss2 {
+}
+
+.rss2bignum {
+}
+
+/* slide type 3 - Bullet point list */
+.rss3 {
+}
+
+.rss3ul {
+}
+
+.rss3li {
+}
+
+/* slide type 4 - Title, image & subtitle */
+.rss4 {
+}
+
+.rss4tit {
+}
+
+.rss4img {
+}
+
+.rss4bt {
+}
+
+/* slide type 5 - Inspirational quote */
+.rss5img {
+}
+
+.rss5q {
+}
+
+/* slide type 6 - Picture with text */
+.rss6 {
+}
+
+.rss6img {
+}
+
+/* slide type 7 - Graph */
+.rss7 {
+}
+
