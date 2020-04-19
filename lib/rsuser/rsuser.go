@@ -153,16 +153,21 @@ func Getloginobj(u rscore.User) rscore.Login {
     return ur
 }
 
+// Logs logins with anonymized skey
+func Anonlog(li rscore.Login, u rscore.User, r *http.Request) {
+
+    li.Skey = "not logged"
+    ml, e := json.Marshal(li)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, ml, rscore.Set.Llev, u, r)
+}
+
 // Wrapper for sending user object to frontend
 func Senduser(u rscore.User, r *http.Request, w http.ResponseWriter,
     settings rscore.Settings) {
 
     li := Getloginobj(u)
-    ml, e := json.Marshal(li)
-    rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, settings.Llev, u, r)
-
+    Anonlog(li, u, r)
     enc := json.NewEncoder(w)
     enc.Encode(li)
 }
-

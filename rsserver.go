@@ -724,20 +724,13 @@ func loginhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     }
 
     u := rsdb.Ruser(db, c.User)
-    li := rscore.Login{}
 
     if rscore.Valuser(u, []byte(c.Pass)) {
         u.Skey = rscore.Randstr(rscore.SKEYLEN)
-        li = rsuser.Getloginobj(u)
         rsdb.Wruser(db, u)
     }
 
-    ml, e := json.Marshal(li)
-    rscore.Cherr(e)
-    rscore.Addlog(rscore.L_RESP, ml, rscore.Set.Llev, u, r)
-
-    enc := json.NewEncoder(w)
-    enc.Encode(li)
+    rsuser.Senduser(u, r, w, rscore.Set)
 }
 
 // Reports content to admin via email
