@@ -39,12 +39,11 @@ tools/          - Tools for maintenence etc.
 * Improved bullet point handling
 * Put untagged data in 'random' tag
 * Rebuild setslidetype()
+* Handler for theme lists
 
 
 ## TODO (Frontend)
 * Share (deckid) on social media
-* CSS for all slides (maybe not 1 and 5)
-* CSS for the main site
 * JS-removing unused tags from DOM after slideshow has started
 
 
