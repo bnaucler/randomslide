@@ -13,12 +13,6 @@ function getsc(n) {
     return sc;
 }
 
-// Adds multiple classes to elements and returns
-function addmcs(cs) {
-
-
-}
-
 // Title with image
 function slide0(resp) {
     let sc = getsc(0);
