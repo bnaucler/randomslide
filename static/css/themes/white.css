@@ -2,6 +2,8 @@
 
 * {
     font-family: 'Roboto', sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 /* master div holding all slides */
@@ -15,14 +17,29 @@
     background: #fff;
 }
 
+/* put your general styles here */
+.rss {
+}
+
 /* slide type 0 - Big title */
 .rss0 {
 }
 
 .rss0tit {
+    display: block;
+    font-size: 3em;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 1em;
+    padding-bottom: 1em;
 }
 
 .rss0img {
+    display: block;
+    margin: 0 auto;
+    width: 70vw;
+    height: 70vh;
+	background-size: cover;
 }
 
 /* slide type 1 - Full screen image */
@@ -46,6 +63,11 @@
 }
 
 .rss2bignum {
+    position: relative;
+    font-size: 18em;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* slide type 3 - Bullet point list */
@@ -53,6 +75,10 @@
 }
 
 .rss3ul {
+    font-size: 3em;
+    margin: 0 auto;
+    margin-top: 4em;
+    width: 50%;
 }
 
 .rss3li {
@@ -63,12 +89,30 @@
 }
 
 .rss4tit {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3em;
 }
 
 .rss4img {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 60%;
+    width: 80%;
+    background-size: cover;
+    background-position: center center;
 }
 
 .rss4bt {
+    position: fixed;
+    top: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2em;
 }
 
 /* slide type 5 - Inspirational quote */
@@ -80,12 +124,23 @@
     width: 100vw;
     background-size: cover;
     background-position: center center;
-    margin: 0;
-    padding: 0;
     filter: blur(2px);
 }
 
 .rss5q {
+    position: relative;
+    padding: 1em;
+    display: block;
+    font-size: 4em;
+    margin: 0 auto;
+    color: #1e1e1e;
+    text-align: center;
+    top: 50%;
+    max-width: 70%;
+    z-index: 10;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, .7);
+    border-radius: 8px;
 }
 
 /* slide type 6 - Picture with text */
@@ -93,9 +148,39 @@
 }
 
 .rss6img {
+    display: block;
+    position: fixed;
+    top: 10vh;
+    left: 10vw;
+    width: 40%;
+    height: 80%;
+    background-size: cover;
+    background-position: center center;
+}
+
+.rss6txt {
+    display: block;
+    position: fixed;
+    top: 20%;
+    left: 60%;
+    width: 30%;
+    font-size: 4em;
 }
 
 /* slide type 7 - Graph */
 .rss7 {
+    padding: 2em;
+}
+
+.rss7con {
+    position: fixed;
+    height: 80%;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 2em;
+}
+
+.rss7cvs {
 }
 

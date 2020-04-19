@@ -1,11 +1,11 @@
-var i = 1;
-
 // Returns standardized slide div
-function getsc() {
+function getsc(n) {
     let op = document.getElementById("output");
     var sc = document.createElement("div");
 
     sc.classList.add("rscontainer");
+    sc.classList.add("rss");
+    sc.classList.add("rss" + n);
     sc.style.display = "none";
 
     op.appendChild(sc);
@@ -13,9 +13,15 @@ function getsc() {
     return sc;
 }
 
+// Adds multiple classes to elements and returns
+function addmcs(cs) {
+
+
+}
+
 // Title with image
 function slide0(resp) {
-    let sc = getsc();
+    let sc = getsc(0);
     let hdr = document.createElement("h4");
     let title = document.createTextNode(resp.Title);
 
@@ -25,14 +31,14 @@ function slide0(resp) {
 
     let img = document.createElement("img");
     img.setAttribute("src", "img/" + resp.Img.Fname);
-    img.classList.add("rsh0img");
+    img.classList.add("rss0img");
     sc.appendChild(img);
 }
 
 // Full screen image
 function slide1(resp){
     let op = document.getElementById("output");
-    let sc = getsc();
+    let sc = getsc(1);
 
     let img = document.createElement("div");
     img.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
@@ -43,7 +49,7 @@ function slide1(resp){
 
 // Big number
 function slide2(resp){
-    let sc = getsc();
+    let sc = getsc(2);
 
     let bignum = document.createElement("h4");
     let txt = document.createTextNode(resp.Title);
@@ -55,7 +61,7 @@ function slide2(resp){
 
 // Bullet point list
 function slide3(resp){
-    let sc = getsc();
+    let sc = getsc(3);
 
     let ul = document.createElement("ul");
     ul.classList.add("rss3ul");
@@ -73,7 +79,7 @@ function slide3(resp){
 
 // Title, image & body text
 function slide4(resp){
-    let sc = getsc();
+    let sc = getsc(4);
 
     let hdr = document.createElement("h4");
     let title = document.createTextNode(resp.Title);
@@ -81,21 +87,21 @@ function slide4(resp){
     hdr.appendChild(title);
     sc.appendChild(hdr);
 
-    let img = document.createElement("img");
-    img.setAttribute("src", "img/" + resp.Img.Fname);
+    let img = document.createElement("div");
+    img.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
     img.classList.add("rss4img");
     sc.appendChild(img);
 
     let bt = document.createElement("p");
     let btext = document.createTextNode(resp.Btext);
-    img.classList.add("rss4bt");
+    bt.classList.add("rss4bt");
     bt.appendChild(btext);
     sc.appendChild(bt);
 }
 
 // Inspirational quote
 function slide5(resp){
-    let sc = getsc();
+    let sc = getsc(5);
 
     let imgNo = Math.floor(Math.random() * 4);
     let img = document.createElement("div");
@@ -104,35 +110,42 @@ function slide5(resp){
     sc.appendChild(img);
 
     let quote = document.createElement("h4");
-    let title = document.createTextNode('"' + resp.Title + '"');
+    let txt = document.createTextNode('"' + resp.Title + '"');
     quote.classList.add("rss5q");
+    quote.appendChild(txt);
     sc.appendChild(quote);
 }
 
 // Image with text
 function slide6(resp){
-    let sc = getsc();
+    let sc = getsc(6);
 
-    let img = document.createElement("img");
-    img.setAttribute("src", "img/" + resp.Img.Fname);
+    let img = document.createElement("div");
+    img.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
     img.classList.add("rss6img");
     sc.appendChild(img);
 
     let bt = document.createElement("p");
     let txt = document.createTextNode(resp.Btext);
+    bt.classList.add("rss6txt");
     bt.appendChild(txt);
     sc.appendChild(bt);
 }
 
 // Graph
 function slide7(resp){
-    let sc = getsc();
+    let sc = getsc(7);
+
+    let con = document.createElement("div");
+    con.classList.add("rss7con");
 
     let canvas = document.createElement("canvas");
-    canvas.setAttribute("id", "myChart" + i);
+    canvas.classList.add("rss7cvs");
 
-    sc.appendChild(canvas);
+    con.appendChild(canvas);
+    sc.appendChild(con);
 
+    // TODO: Move colors to theme
     var colors = [
         'rgba(255, 99, 132, 0.5)',
         'rgba(54, 162, 235, 0.5)',
@@ -157,9 +170,11 @@ function slide7(resp){
             var colorsToUse = colors.slice(0, resp.Dpts.length);
             var bordersToUse = bordercolors.slice(0, resp.Dpts.length);
             break;
+
         case 1:
             var chartType = 'line';
             break;
+
         case 2:
             var chartType = 'pie';
             var colorsToUse = colors.slice(0, resp.Dpts.length);
@@ -167,7 +182,8 @@ function slide7(resp){
             break;
     }
 
-    let ctx = document.getElementById('myChart' + i).getContext('2d');
+    let ctx = canvas.getContext('2d');
+
     let myChart = new Chart(ctx, {
         type: chartType,
         data: {
@@ -194,5 +210,4 @@ function slide7(resp){
             }
         }
     });
-    i++;
 }
