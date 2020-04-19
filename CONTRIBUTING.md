@@ -12,6 +12,10 @@ Contributions are very welcome! At this early stage, this file will double as a 
 * Backend requests are sent as POST
 * Server listens at port 6291 by default
 
+## Themes
+Deck themes are defined by css files located in `static/css/themes/`.  
+Look at the files `empty.css` and `white.css` to get an idea of what does what.
+
 ## Folder structure
 ```
 bin/            - Script and compiled binaries
