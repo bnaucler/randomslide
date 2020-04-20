@@ -75,21 +75,45 @@ function slide3(resp){
 function slide4(resp){
     let sc = getsc(4);
 
+    console.log(resp);
+
     let hdr = document.createElement("h4");
     let title = document.createTextNode(resp.Title);
-    hdr.classList.add("rss4tit");
     hdr.appendChild(title);
-    sc.appendChild(hdr);
 
     let img = document.createElement("div");
     img.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
-    img.classList.add("rss4img");
-    sc.appendChild(img);
 
     let bt = document.createElement("p");
     let btext = document.createTextNode(resp.Btext);
-    bt.classList.add("rss4bt");
     bt.appendChild(btext);
+
+    switch(resp.Img.Size) {
+        case 0:
+        case 1: // Image is in landscape format
+            hdr.classList.add("rss4tit-ls");
+            img.classList.add("rss4img-ls");
+            bt.classList.add("rss4bt-ls");
+            console.log('landscape img');
+            break;
+
+        case 2: // Image is roughly square
+            hdr.classList.add("rss4tit-bs");
+            img.classList.add("rss4img-bs");
+            bt.classList.add("rss4bt-bs");
+            console.log('box-shaped img');
+            break;
+
+        case 3: // Image is in portrait format
+            hdr.classList.add("rss4tit-pt");
+            img.classList.add("rss4img-pt");
+            bt.classList.add("rss4bt-pt");
+            console.log('portrait img');
+            break;
+    }
+
+    sc.appendChild(hdr);
+    sc.appendChild(img);
     sc.appendChild(bt);
 }
 

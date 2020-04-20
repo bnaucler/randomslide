@@ -89,7 +89,8 @@
 .rss4 {
 }
 
-.rss4tit {
+/* -ls indicates landscape format image */
+.rss4tit-ls {
     position: fixed;
     top: 10%;
     left: 50%;
@@ -97,7 +98,7 @@
     font-size: 3em;
 }
 
-.rss4img {
+.rss4img-ls {
     position: fixed;
     top: 20%;
     left: 50%;
@@ -108,13 +109,54 @@
     background-position: center center;
 }
 
-.rss4bt {
+.rss4bt-ls {
     position: fixed;
     top: 85%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 2em;
 }
+
+/* -bs indicates box-shaped (roughly square) image */
+.rss4tit-bs {
+}
+
+.rss4img-bs {
+}
+
+.rss4bt-bs {
+}
+
+/* -pt indicates portrait image */
+.rss4tit-pt {
+    position: fixed;
+    top: 20%;
+    left: 20%;
+    width: 30%;
+    transform: translateX(-50%);
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+.rss4img-pt {
+    position: fixed;
+    top: 10%;
+    left: 40%;
+    height: 80%;
+    width: 50%;
+    background-size: cover;
+    background-position: center center;
+}
+
+.rss4bt-pt {
+    position: fixed;
+    top: 50%;
+    left: 20%;
+    width: 30%;
+    transform: translateX(-50%);
+    font-size: 2em;
+}
+
 
 /* slide type 5 - Inspirational quote */
 .rss5img {
