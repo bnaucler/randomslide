@@ -2,6 +2,8 @@
 
 * {
     font-family: 'Roboto', sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 /* master div holding all slides */
@@ -12,6 +14,7 @@
     left: 0;
     height: 100vh;
     width: 100vw;
+    background: #fff;
 }
 
 /* put your general styles here */
@@ -56,14 +59,36 @@
 .rss4 {
 }
 
-.rss4tit {
+/* -ls indicates landscape format image */
+.rss4tit-ls {
 }
 
-.rss4img {
+.rss4img-ls {
 }
 
-.rss4bt {
+.rss4bt-ls {
 }
+
+/* -bs indicates box-shaped (roughly square) image */
+.rss4tit-bs {
+}
+
+.rss4img-bs {
+}
+
+.rss4bt-bs {
+}
+
+/* -pt indicates portrait image */
+.rss4tit-pt {
+}
+
+.rss4img-pt {
+}
+
+.rss4bt-pt {
+}
+
 
 /* slide type 5 - Inspirational quote */
 .rss5img {
@@ -76,10 +101,25 @@
 .rss6 {
 }
 
-.rss6img {
+/* -ls indicates landscape format image */
+.rss6img-ls {
 }
 
-.rss6txt {
+.rss6txt-ls {
+}
+
+/* -bs indicates box-shaped (roughly square) image */
+.rss6img-bs {
+}
+
+.rss6txt-bs {
+}
+
+/* -pt indicates portrait image */
+.rss6img-pt {
+}
+
+.rss6txt-pt {
 }
 
 /* slide type 7 - Graph */
