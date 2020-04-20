@@ -189,7 +189,22 @@
 .rss6 {
 }
 
-.rss6img {
+/* -ls indicates landscape format image */
+.rss6img-ls {
+}
+
+.rss6txt-ls {
+}
+
+/* -bs indicates box-shaped (roughly square) image */
+.rss6img-bs {
+}
+
+.rss6txt-bs {
+}
+
+/* -pt indicates portrait image */
+.rss6img-pt {
     display: block;
     position: fixed;
     top: 10vh;
@@ -200,7 +215,7 @@
     background-position: center center;
 }
 
-.rss6txt {
+.rss6txt-pt {
     display: block;
     position: fixed;
     top: 20%;

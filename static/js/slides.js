@@ -75,8 +75,6 @@ function slide3(resp){
 function slide4(resp){
     let sc = getsc(4);
 
-    console.log(resp);
-
     let hdr = document.createElement("h4");
     let title = document.createTextNode(resp.Title);
     hdr.appendChild(title);
@@ -94,21 +92,18 @@ function slide4(resp){
             hdr.classList.add("rss4tit-ls");
             img.classList.add("rss4img-ls");
             bt.classList.add("rss4bt-ls");
-            console.log('landscape img');
             break;
 
         case 2: // Image is roughly square
             hdr.classList.add("rss4tit-bs");
             img.classList.add("rss4img-bs");
             bt.classList.add("rss4bt-bs");
-            console.log('box-shaped img');
             break;
 
         case 3: // Image is in portrait format
             hdr.classList.add("rss4tit-pt");
             img.classList.add("rss4img-pt");
             bt.classList.add("rss4bt-pt");
-            console.log('portrait img');
             break;
     }
 
@@ -140,13 +135,30 @@ function slide6(resp){
 
     let img = document.createElement("div");
     img.style.backgroundImage = 'url(img/' + resp.Img.Fname + ')';
-    img.classList.add("rss6img");
-    sc.appendChild(img);
 
     let bt = document.createElement("p");
     let txt = document.createTextNode(resp.Btext);
-    bt.classList.add("rss6txt");
     bt.appendChild(txt);
+
+    switch(resp.Img.Size) {
+        case 0:
+        case 1: // Image is in landscape format
+            img.classList.add("rss6img-ls");
+            bt.classList.add("rss6txt-ls");
+            break;
+
+        case 2: // Image is roughly square
+            img.classList.add("rss6img-bs");
+            bt.classList.add("rss6txt-bs");
+            break;
+
+        case 3: // Image is in portrait format
+            img.classList.add("rss6img-pt");
+            bt.classList.add("rss6txt-pt");
+            break;
+    }
+
+    sc.appendChild(img);
     sc.appendChild(bt);
 }
 
