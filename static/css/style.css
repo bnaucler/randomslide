@@ -214,13 +214,17 @@ option:hover {
 
 .alert {
     width: 60%;
-    height: 100px;
-    line-height: 100px;
+    height: 110px;
+    line-height: 115px;
     text-align: center;
     position: fixed;
-    top: 0;
+    top: -10px;
     left: 20%;
-    background: white;
+    color: #1e1e1e;
+    font-size: 1.2em;
+    background-color: #eee;
+    border: 4px #007588 solid;
+    border-radius: 8px;
 }
 
 #regwrapper {
