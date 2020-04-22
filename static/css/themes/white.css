@@ -119,12 +119,30 @@
 
 /* -bs indicates box-shaped (roughly square) image */
 .rss4tit-bs {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3em;
 }
 
 .rss4img-bs {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 60%;
+    width: 60%;
+    background-size: cover;
+    background-position: center center;
 }
 
 .rss4bt-bs {
+    position: fixed;
+    top: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2em;
 }
 
 /* -pt indicates portrait image */
