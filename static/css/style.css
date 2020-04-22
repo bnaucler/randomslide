@@ -236,39 +236,31 @@ option:hover {
     display: none;
 }
 
-.slidechanger {
-    display: none;
-    z-index: 10;
-    position: fixed;
-    bottom: 0;
-    font-size: 1,2em;
-    font-weight: bold;
-}
-
 .prev {
     left: 0;
-    width: 75px;
 }
 
 .next {
     right: 0;
-    border-radius: 3px 0 0 3px;
 }
 
 .prev, .next {
+    display: none;
+    z-index: 10;
+    position: fixed;
     cursor: pointer;
     top: 50%;
-    margin-top: -30px;
-    padding: 16px;
+    padding: 30px;
+    transform: translateY(-50%);
     color: #888;
     font-weight: bold;
     font-size: 3em;
-    user-select: none;
-    text-align: center;
+    transition: .3s;
 }
 
 .prev:hover, .next:hover {
-    color: #912104;
+    color: #1e1e1e;
+    transition: .3s;
 }
 
 #output {
