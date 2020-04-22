@@ -110,9 +110,10 @@ function createnav() {
     }
 
     nav.appendChild(createnavitem("contribute", "upload.html"));
-    nav.appendChild(createnavitem("admin", "admin.html"));
 
     if(alev > 1) { // User is admin
+        nav.appendChild(createnavitem("admin", "admin.html"));
+
         let rst = createnavitem("restart server", "#");
         rst.setAttribute("class", "mitm mred");
         nav.appendChild(rst);
