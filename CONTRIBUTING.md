@@ -43,8 +43,8 @@ tools/          - Tools for maintenence etc.
 
 
 ## TODO (Frontend)
-* Share (deckid) on social media
 * JS-removing unused tags from DOM after slideshow has started
+* Improved slide indexing and iteration
 
 
 ## Text types
@@ -58,7 +58,7 @@ Index   Img sz    Type                        Description
 1       0         Full screen image
 2       NULL      Big number                  A slide just saying things like '+12%'
 3       3         Bullet point list
-4       1         Title, image & subtitle
+4       ANY       Title, image & subtitle
 5       NULL      'Inspirational quote'       Soo much potential here
 6       1/2/3     Picture with text           Theme can decide if text goes under, next to etc
 7       NULL      Graph                       No good slideshow is complete without a graph

@@ -280,9 +280,15 @@ function createendscr(s) {
     let esnum = document.getElementById("esnum");
     let estags = document.getElementById("estags");
     let eslink = document.getElementById("eslink");
-    let essbtn = document.getElementById("essbtn");
+    let fbbtn = document.getElementById("fbbtn");
+    let libtn = document.getElementById("libtn");
+
+    let dli = document.createElement("a");
 
     let dlink = getbaseurl() + "?id=" + deckId;
+    dli.href = dlink;
+
+    let dltxt = document.createTextNode(dlink);
 
     let category = document.getElementById("category").selectedOptions;
 
@@ -301,9 +307,13 @@ function createendscr(s) {
         estags.style.display = "none";;
     }
 
+    fbbtn.href = "http://www.facebook.com/sharer/sharer.php?u=" + dlink;
+    libtn.href = "http://www.linkedin.com/shareArticle?mini=true&url=" + dlink;
     esid.innerHTML = "Deck ID: " + deckId;
     esnum.innerHTML = "Consisting of " + s.Slides.length + " slides";
-    eslink.innerHTML = "Direct link to deck: " + dlink; // TODO make link
+    eslink.innerHTML = "Direct link to deck: ";
+    dli.appendChild(dltxt);
+    eslink.appendChild(dli);
 }
 
 // Launches slideshow
