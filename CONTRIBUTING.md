@@ -37,7 +37,6 @@ tools/          - Tools for maintenence etc.
 * Web scraper - generate data from url
 * Add logging to rmhandler
 * Improved bullet point handling
-* Put untagged data in 'random' tag
 * Rebuild setslidetype()
 * Handler for theme lists
 
@@ -45,6 +44,14 @@ tools/          - Tools for maintenence etc.
 ## TODO (Frontend)
 * JS-removing unused tags from DOM after slideshow has started
 * Improved slide indexing and iteration
+* Github link on index.html
+* Background image credit on index.html
+* Remove unnecessary blankspace in bottom of index.html
+* Implement functional theme selector
+* Cleanup of style.css
+* Reorganization of js functions between script files
+* Buttons for reporting of inappropriate content
+* Visual layout of timer
 
 
 ## Text types
