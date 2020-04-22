@@ -216,9 +216,22 @@
 
 /* -bs indicates box-shaped (roughly square) image */
 .rss6img-bs {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 75%;
+    width: 75%;
+    background-size: cover;
+    background-position: center center;
 }
 
 .rss6txt-bs {
+    position: fixed;
+    top: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2em;
 }
 
 /* -pt indicates portrait image */
