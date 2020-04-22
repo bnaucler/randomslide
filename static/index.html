@@ -70,88 +70,77 @@
         <p><a href="#" onclick="openloginscr();">log in</a> | <a href="#" onclick="pwreset();">password reset</a></p>
     </div>
 
-
     <div class="wrapper">
-    <header>
-        <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
-    </header>
+        <header>
+            <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
+        </header>
 
-    <div id="endscr">
-        <h3>Your deck:</h3>
-        <p id="esid"></p>
-        <p id="esnum"></p>
-        <p id="estags"></p><br>
-        <p id="eslink"></p>
-        <button class="genbutton" onclick="window.location.href = 'index.html';">go again</button>
-        <br><br>
-        <p>Share deck on:<br>
-        <a id="fbbtn">facebook</a> | <a id="libtn">LinkedIn</a>
-        </p>
-    </div>
+        <div id="endscr">
+            <h3>Your deck:</h3>
+            <p id="esid"></p>
+            <p id="esnum"></p>
+            <p id="estags"></p><br>
+            <p id="eslink"></p>
+            <button class="genbutton" onclick="window.location.href = 'index.html';">go again</button>
+            <br><br>
+            <p>Share deck on:<br>
+            <a id="fbbtn">facebook</a> | <a id="libtn">LinkedIn</a>
+            </p>
+        </div>
 
-    <div class="formwrapper" id="formwrapper">
-        <br />
-                <div class="category">
+        <div class="formwrapper" id="formwrapper"><br />
+            <div class="category">
                 <label for="category">Category (hold CTRL to select multiple):</label>
                     <br />
 
-                <select id="category" name="category" class="item" multiple>
-
-                </select>
+                <select id="category" name="category" class="item" multiple></select>
             </div>
-                    <br />
-                    <br />
-                    <div class="right">
-                <label for="amountOfSlides">Amount of slides (5-25):</label>
-                    <br />
-                <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
-                    <br />
-                    <br />
-                <label for="theme">Deck theme</label>
-                <br />
-                <select id="lang" name="lang" class="item">
-                    <option value="en">white</option>
-                </select>
-                    <br />
-                    <br />
+            <br /><br />
+
+            <div class="right">
+            <label for="amountOfSlides">Amount of slides (5-25):</label><br />
+            <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
+            <br /> <br />
+
+            <label for="theme">Deck theme</label> <br />
+            <select id="lang" name="lang" class="item">
+            <option value="en">white</option>
+            </select>
+            <br /> <br />
 
 
-                <label for="timerOrNot">Manual / timer based slide changes</label>
-                    <br />
-                <select name="timerOrNot" id="timerOrNot" class="item">
-                    <option value="change" selected="selected">Manual</option>
-                    <option value="timer">Timer</option>
-                </select>
-            </div>
-                    <br />
-                    <br />
-                    <div class="placeholder"></div>
-                <div id="slideTimer" class="item">
-                    <label for="time">Seconds per slide (30-240):</label>
-                    <br />
-                    <br />
-                    <input type="number" name="time" id="time" min="30" max="240" value="60">
-                </div>
-
-                    <br />
-                    <br />
-
-                <div id="specId">
-                    <label for="deckid">Got a deck ID from a friend?</label>
-                    <br />
-                    <br />
-                    <input class="item" type="text" pattern="[0-9]{1,}" name="deckid" id="deckid">
-                </div>
-                <button class="item genbutton" onclick="fetchSlides()">Generate!</button>
-        <!-- background photo by Alex Litvin on Unsplash -->
+            <label for="timerOrNot">Manual / timer based slide changes</label><br />
+            <select name="timerOrNot" id="timerOrNot" class="item">
+                <option value="change" selected="selected">Manual</option>
+                <option value="timer">Timer</option>
+            </select>
         </div>
 
-        <div id="output">
-            <a id="prev" onclick="changeSlide(-1)">&#10094;</a>
-            <a id="next" onclick="changeSlide(1)">&#10095;</a>
-            <div id="timeDisplay"></div>
+        <br /><br />
+        <div class="placeholder"></div>
+        <div id="slideTimer" class="item">
+            <label for="time">Seconds per slide (30-240):</label>
+            <br /> <br />
+
+            <input type="number" name="time" id="time" min="30" max="240" value="60">
         </div>
+
+            <br /><br />
+
+        <div id="specId">
+            <label for="deckid">Got a deck ID from a friend?</label>
+            <br /><br />
+            <input class="item" type="text" pattern="[0-9]{1,}" name="deckid" id="deckid">
+        </div>
+        <button class="item genbutton" onclick="fetchSlides()">Generate!</button>
     </div>
+
+    <!-- background photo by Alex Litvin on Unsplash -->
+
+    <div id="output">
+        <a id="prev" onclick="changeSlide(-1)">&#10094;</a>
+        <a id="next" onclick="changeSlide(1)">&#10095;</a>
+        <div id="timeDisplay"></div>
     </div>
 </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
