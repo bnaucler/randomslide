@@ -236,15 +236,15 @@ option:hover {
     display: none;
 }
 
-.prev {
+#prev {
     left: 0;
 }
 
-.next {
+#next {
     right: 0;
 }
 
-.prev, .next {
+#prev, #next {
     display: none;
     z-index: 10;
     position: fixed;
@@ -258,7 +258,7 @@ option:hover {
     transition: .3s;
 }
 
-.prev:hover, .next:hover {
+#prev:hover, #next:hover {
     color: #1e1e1e;
     transition: .3s;
 }
