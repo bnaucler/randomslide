@@ -41,6 +41,9 @@ Server log files can be accessed at `static/logs` or in the admin interface.
 
 For API reference, take a look at [APIREF.md](APIREF.md).
 
+## Themes
+Place your css theme files in `static/css/themes`. Filenames starting with `_` will not be indexed. To create new theme files based on an empty template, there's a fairly well-commented `_empty.css` to use as a base.
+
 ## CLI tools
 There are a few CLI helper tools bundled with randomslide:  
 `emailset` configures the SMTP settings (will be removed once better solution is deployed)  
