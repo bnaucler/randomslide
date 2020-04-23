@@ -45,33 +45,34 @@
 
     <div id="loginscr">
         <div class="cbtn" onclick="hideoverlays();">X</div>
-        <label for="username">Username:</label><br />
+        <label for="username">Username:</label>
         <input type="text" name="username" id="username">
-        <br />
-        <label for="password">Password:</label><br />
+        <label for="password">Password:</label>
         <input type="password" name="password" id="password">
-        <br />
         <button class="item genbutton" onclick="loginUser();">Login!</button>
         <p><a href="#" onclick="openregscr();">sign up</a> | <a href="#" onclick="pwreset();">password reset</a></p>
     </div>
 
     <div id="regscr">
         <div class="cbtn" onclick="hideoverlays();">X</div>
-        <label for="username">Username:</label><br />
+
+        <label for="username">Username:</label>
         <input type="text" name="regusername" id="regusername">
-        <br />
-        <label for="password">Password:</label><br />
+
+        <label for="password">Password:</label>
         <input type="password" name="regpassword" id="regpassword">
-        <br />
-        <label for="email">Email address:</label><br />
+
+        <label for="email">Email address:</label>
         <input type="text" name="email" id="email">
-        <br />
+
         <button class="item genbutton" onclick="registerUser();">Register</button>
+
         <p><a href="#" onclick="openloginscr();">log in</a> | <a href="#" onclick="pwreset();">password reset</a></p>
     </div>
 
     <div class="wrapper">
         <header>
+            <div class="biggap"></div>
             <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
         </header>
 
@@ -88,44 +89,40 @@
             </p>
         </div>
 
-        <div class="formwrapper" id="formwrapper"><br />
-            <div class="category">
-                <label for="category">Category (hold CTRL to select multiple):</label><br />
-                <select id="category" name="category" class="item" multiple></select>
+        <div id="formwrapper">
+            <div class="biggap"></div>
+
+            <div class="fsep">
+                <div class="category">
+                    <label for="category">Category (hold CTRL to select multiple):</label>
+                    <select id="category" name="category" class="item" multiple></select>
+                </div>
             </div>
-            <br /><br />
 
-            <div class="right">
-            <label for="amountOfSlides">Amount of slides (5-25):</label><br />
-            <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
-            <br /> <br />
+            <div class="fsep">
+                <label for="amountOfSlides">Amount of slides (5-25):</label>
+                <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
 
-            <label for="themesel">Deck theme</label> <br />
-            <select id="themesel" name="themesel" class="item"></select>
-            <br /><br />
+                <label for="themesel">Deck theme</label>
+                <select id="themesel" name="themesel" class="item"></select>
 
-            <label for="timerOrNot">Manual / timer based slide changes</label><br />
-            <select name="timerOrNot" id="timerOrNot" class="item">
-                <option value="change" selected="selected">Manual</option>
-                <option value="timer">Timer</option>
-            </select>
-        </div>
+                <label for="timerOrNot">Manual / timer based slide changes</label>
+                <select name="timerOrNot" id="timerOrNot" class="item">
+                    <option value="change" selected="selected">Manual</option>
+                    <option value="timer">Timer</option>
+                </select>
+            </div>
 
-        <br /><br />
-        <div id="slideTimer" class="item">
-            <label for="time">Seconds per slide (30-240):</label>
-            <br /> <br />
-            <input type="number" name="time" id="time" min="30" max="240" value="60">
-        </div>
+            <div id="slideTimer" class="item">
+                <label for="time">Seconds per slide (30-240):</label>
+                <input type="number" name="time" id="time" min="30" max="240" value="60">
+            </div>
 
-            <br /><br />
+            <div class="clear"></div>
+            <div class="biggap"></div>
+            <button class="genbutton" onclick="fetchSlides()">Generate!</button>
 
-        <div id="specId">
-            <label for="deckid">Got a deck ID from a friend?</label>
-            <br /><br />
-            <input class="item" type="text" pattern="[0-9]{1,}" name="deckid" id="deckid">
-        </div>
-        <button class="item genbutton" onclick="fetchSlides()">Generate!</button>
+        <a href="https://github.com/bnaucler/randomslide"><img src="logoimg/icon_github.png" class="icon" alt="randomslide on github"/></a>
     </div>
 
     <!-- background photo by Alex Litvin on Unsplash -->
@@ -135,6 +132,8 @@
         <a id="next" onclick="changeSlide(1)">&#10095;</a>
         <div id="timeDisplay"></div>
     </div>
+
+
 </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
     <script src="js/script.js"></script>

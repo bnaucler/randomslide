@@ -251,15 +251,11 @@ function fetchSlides() {
     }
 
     let amount = document.getElementById("amountOfSlides").value;
-    if(document.getElementById("deckid").value != null) {
-        var deckid = document.getElementById("deckid").value;
-    }
-
     let theme = document.getElementById("themesel").value;
     let thlink = document.getElementById("slidetheme");
     thlink.href = "css/themes/" + theme;
 
-    var req = "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid;
+    var req = "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount;
     mkxhr(req, createSlides);
 }
 

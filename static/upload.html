@@ -10,48 +10,44 @@
   <body>
     <div id="usericon" onclick="togglenav();"></div>
     <nav id="nav"></nav>
-
       <div class="wrapper">
         <header>
+            <div class="biggap"></div>
             <a href="index.html"><img src="logoimg/randomslide-08.png" class="logo" /></a>
         </header>
-<br />
-    <div>
+
         <fieldset>
             <h2>Leave feedback:</h2>
-            <textarea id="feedbackform">
-
-            </textarea>
-            <br/>
+            <textarea id="feedbackform"></textarea>
             <button onclick="sendFeedback()">Send!</button>
         </fieldset>
-        <fieldset>
-            <h2>Add text to db</h2>
-                <h3>Add title:</h3>
-                    <input type="text" id="titelinput" name="titelinput">
 
-                <h3>Add body text:</h3>
-                    <textarea id="textinput" name="textinput"></textarea>
-
-                <h3>Add tags (separated by space):</h3>
-                    <input type="text" id="taginput" name="taginput">
-        <br />
-        <br />
-                <button onclick="addText()">Send data</button>
-            </fieldset>
+        <div class="biggap"></div>
 
         <fieldset>
-            <h2>Add img to db</h2>
+            <h2>Add text to database</h2>
+            <h3>Title:</h3>
+            <input type="text" class="ulinput" id="titelinput" name="titelinput">
 
-            <input type="file" name="file" id="file"/>
-            <br />
-            <br />
-            <label for="imgTagInput"><h3>Add tags to image (separated by space):</h3></label>
-            <br />
-            <input type="text" name="imgTagInput" id="imgTagInput">
-            <button onclick="addImg()">Send img</button>
+            <h3>Body text:</h3>
+            <textarea id="textinput" name="textinput"></textarea>
 
+            <h3>Tags (separated by space):</h3>
+            <input type="text" class="ulinput" id="taginput" name="taginput">
+            <button onclick="addText()">Send data</button>
         </fieldset>
+
+        <div class="biggap"></div>
+
+        <fieldset>
+            <h2>Add image to database</h2>
+            <input type="file" name="file" id="file"/>
+            <label for="imgTagInput"><h3>Add tags to image (separated by space):</h3></label>
+            <input type="text" class="ulinput" name="imgTagInput" id="imgTagInput">
+            <button onclick="addImg()">Send img</button>
+        </fieldset>
+
+            <div class="biggap"></div>
     </div>
   </body>
     <script src="js/script.js"></script>
