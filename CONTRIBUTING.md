@@ -43,7 +43,6 @@ tools/          - Tools for maintenence etc.
 ## TODO (Frontend)
 * JS-removing unused tags from DOM after slideshow has started
 * Improved slide indexing and iteration
-* Github link on index.html
 * Background image credit on index.html
 * Remove unnecessary blankspace in bottom of index.html
 * Cleanup of style.css
