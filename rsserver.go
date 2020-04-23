@@ -816,6 +816,7 @@ func themereqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     flist, e := ioutil.ReadDir(rscore.THDIR)
 
     for _, fname := range flist {
+        if fname.Name()[0] == '_' { continue }
         resp.Themes = append(resp.Themes, fname.Name())
     }
 
