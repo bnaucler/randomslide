@@ -27,6 +27,10 @@ Endpoint:               Variables:              Comment:
                                                 in database
 
 
+/getthemes              <null>                  Retrieves list of all theme
+                                                files in static/css/themes/
+
+
 /getdeck                                        Request for slide deck
                         id          int         Retrieve saved deck with id#
                         amount      int         # of slides requested
