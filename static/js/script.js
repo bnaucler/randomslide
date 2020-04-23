@@ -117,6 +117,7 @@ function createnav() {
 
         let rst = createnavitem("restart server", "#");
         rst.setAttribute("class", "mitm mred");
+        rst.onclick = function() { restartServer(); };
         nav.appendChild(rst);
     }
 
