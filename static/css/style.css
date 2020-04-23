@@ -23,6 +23,7 @@
 
 #category {
     height: 250px;
+    overflow-y: auto;
 }
 
 body {
@@ -129,11 +130,6 @@ h2 {
 #slideTimer {
     display: none;
     grid-area: 3/2/4/3;
-}
-
-.placeholder {
-    grid-area: 3/1/4/2;
-    min-height: 120px;
 }
 
 #specId {
