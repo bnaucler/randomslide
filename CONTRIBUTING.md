@@ -38,7 +38,6 @@ tools/          - Tools for maintenence etc.
 * Add logging to rmhandler
 * Improved bullet point handling
 * Rebuild setslidetype()
-* Handler for theme lists
 
 
 ## TODO (Frontend)
@@ -47,7 +46,6 @@ tools/          - Tools for maintenence etc.
 * Github link on index.html
 * Background image credit on index.html
 * Remove unnecessary blankspace in bottom of index.html
-* Implement functional theme selector
 * Cleanup of style.css
 * Reorganization of js functions between script files
 * Buttons for reporting of inappropriate content
@@ -65,7 +63,7 @@ Index   Img sz    Type                        Description
 1       0         Full screen image
 2       NULL      Big number                  A slide just saying things like '+12%'
 3       3         Bullet point list
-4       ANY       Title, image & subtitle
+4       1/2/3     Title, image & subtitle
 5       NULL      'Inspirational quote'       Soo much potential here
 6       1/2/3     Picture with text           Theme can decide if text goes under, next to etc
 7       NULL      Graph                       No good slideshow is complete without a graph

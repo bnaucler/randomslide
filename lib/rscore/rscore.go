@@ -141,7 +141,7 @@ var ISZINDEX = [][]int {
     {0},                        // Full screen image
     {0},                        // Big number
     {3},                        // Bullet point list
-    {1},                        // Title, img & body
+    {1, 2, 3},                  // Title, img & body
     {},                         // Inspirational quote
     {1, 2, 3},                  // Image with text
     {},                         // Graph
