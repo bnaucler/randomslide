@@ -28,13 +28,14 @@ import (
     "golang.org/x/crypto/bcrypt"
 )
 
-const DEFAULTPORT = 6291        // Default port can also be supplied with -p flag
+const DEFAULTPORT = 6291        // Port can also be supplied with -p flag
 
 const DBNAME = "./data/rs.db"   // Database location (change at own peril)
 const LOGPATH = "./static/log/" // Logs should be accessible from frontend
 const IMGDIR = "./static/img/"  // Image directory
 const PIDFILEPATH = "./data/"   // Base directory for storage of PID file
 const FBFILE = "./data/fb.txt"  // Storage of feedback data
+const THDIR = "./static/css/themes/" // CSS theme file directory
 
 var Set Settings                // Global rsserver settings
 var Smut sync.Mutex             // Settings mutex
@@ -234,6 +235,10 @@ type Textreq struct {
     Btext string                // Body text object to add to db
     Bpoint string               // Bullet points for making lists
     Tags []string               // Tags for indexing
+}
+
+type Thindex struct {
+    Themes []string             // Theme filenames
 }
 
 type Iindex struct {

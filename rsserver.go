@@ -808,6 +808,25 @@ func rmhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
 
+// Sends list of existing theme files
+func themereqhandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
+
+    resp := rscore.Thindex{}
+
+    flist, e := ioutil.ReadDir(rscore.THDIR)
+
+    for _, fname := range flist {
+        resp.Themes = append(resp.Themes, fname.Name())
+    }
+
+    mresp, e := json.Marshal(resp)
+    rscore.Cherr(e)
+    rscore.Addlog(rscore.L_RESP, mresp, rscore.Set.Llev, rscore.User{}, r)
+
+    enc := json.NewEncoder(w)
+    enc.Encode(resp)
+}
+
 // Launches mapped handler functions
 func starthlr(url string, fn rscore.Hfn, db *bolt.DB) {
 
@@ -842,6 +861,7 @@ func main() {
         "/getdeck":     deckreqhandler,
         "/gettags":     tagreqhandler,
         "/getusers":    userreqhandler,
+        "/getthemes":   themereqhandler,
         "/addtext":     textreqhandler,
         "/addimg":      imgreqhandler,
         "/register":    reghandler,
