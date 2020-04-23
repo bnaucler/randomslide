@@ -261,6 +261,8 @@ function pwreset() {
 
 function cdown(sec) {
     let cd = document.getElementById("countdown");
+    let cdnum = document.getElementById("cdnum");
+
     cd.style.display = "block";
 
     var count = setInterval(function() {
@@ -270,7 +272,7 @@ function cdown(sec) {
             sec = timer;
 
         } else {
-            cd.innerHTML = sec;
+            cdnum.innerHTML = sec;
             sec -= 1;
         }
     }, 1000);
