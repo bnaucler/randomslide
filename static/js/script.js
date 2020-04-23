@@ -10,6 +10,7 @@ var navopen = false;
 function rsinit() {
     checkurifordeck();
     mkxhr("/gettags", displayTags);
+    mkxhr("/getthemes", displayThemes);
     initusermenu();
 
     document.getElementById('timerOrNot').addEventListener('change', function() {
@@ -204,7 +205,23 @@ function checkurifordeck() {
     mkxhr(req, createSlides)
 }
 
-// Publishes tag data for selection
+// Populates theme selector
+function displayThemes(resp) {
+
+    s = JSON.parse(resp.responseText);
+
+    var sel = document.getElementById("themesel");
+
+    for(let t of s.Themes) {
+        let opt = document.createElement("option");
+        opt.setAttribute("value", t);
+        let opttxt = document.createTextNode(t);
+        opt.appendChild(opttxt);
+        sel.appendChild(opt);
+    }
+}
+
+// Populates tag selector
 function displayTags(resp) {
 
     var categ = document.getElementById("category");
@@ -236,6 +253,10 @@ function fetchSlides() {
     if(document.getElementById("deckid").value != null) {
         var deckid = document.getElementById("deckid").value;
     }
+
+    let theme = document.getElementById("themesel").value;
+    let thlink = document.getElementById("slidetheme");
+    thlink.href = "css/themes/" + theme;
 
     var req = "/getdeck?tags=" + stringToSend + "&lang=en&amount=" + amount + "&id=" + deckid;
     mkxhr(req, createSlides);

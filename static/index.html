@@ -12,7 +12,7 @@
     <meta property="og:image"         content="https://www.randomslide.com/logoimg/randomslide-08.png" />
 
     <link type="text/css" rel="stylesheet" href="css/style.css" id="style">
-    <link type="text/css" rel="stylesheet" href="css/themes/white.css" id="slidetheme">
+    <link type="text/css" rel="stylesheet" id="slidetheme">
 
     <link rel="manifest" href="/manifest.json">
 
@@ -100,11 +100,9 @@
             <input type="number" name="amountOfSlides" id="amountOfSlides" class="item" min="5" max="25" value="5">
             <br /> <br />
 
-            <label for="theme">Deck theme</label> <br />
-            <select id="lang" name="lang" class="item">
-                <option value="en">white</option>
-            </select>
-            <br /> <br />
+            <label for="themesel">Deck theme</label> <br />
+            <select id="themesel" name="themesel" class="item"></select>
+            <br /><br />
 
             <label for="timerOrNot">Manual / timer based slide changes</label><br />
             <select name="timerOrNot" id="timerOrNot" class="item">
