@@ -27,6 +27,8 @@ function slide0(resp) {
     img.setAttribute("src", "img/" + resp.Img.Fname);
     img.classList.add("rss0img");
     sc.appendChild(img);
+
+    return sc;
 }
 
 // Full screen image
@@ -39,6 +41,8 @@ function slide1(resp){
 
     img.classList.add("rss1img");
     sc.appendChild(img);
+
+    return sc;
 }
 
 // Big number
@@ -51,6 +55,8 @@ function slide2(resp){
     bignum.classList.add("rss2bignum");
     bignum.appendChild(txt);
     sc.appendChild(bignum);
+
+    return sc;
 }
 
 // Bullet point list
@@ -69,6 +75,8 @@ function slide3(resp){
     }
 
     sc.appendChild(ul);
+
+    return sc;
 }
 
 // Title, image & body text
@@ -110,6 +118,8 @@ function slide4(resp){
     sc.appendChild(hdr);
     sc.appendChild(img);
     sc.appendChild(bt);
+
+    return sc;
 }
 
 // Inspirational quote
@@ -127,6 +137,8 @@ function slide5(resp){
     quote.classList.add("rss5q");
     quote.appendChild(txt);
     sc.appendChild(quote);
+
+    return sc;
 }
 
 // Image with text
@@ -160,6 +172,8 @@ function slide6(resp){
 
     sc.appendChild(img);
     sc.appendChild(bt);
+
+    return sc;
 }
 
 // Graph
@@ -240,4 +254,6 @@ function slide7(resp){
             }
         }
     });
+
+    return sc;
 }

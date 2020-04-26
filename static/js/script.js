@@ -3,6 +3,7 @@ var timer;
 var resp;
 var slideIndex = 1;
 var slideshow = true;
+var slides = [];
 var deckId;
 var navopen = false;
 
@@ -268,7 +269,7 @@ function createSlides(resp) {
     document.getElementById("formwrapper").innerHTML = ""; // cowboy
 
     var fns = [slide0, slide1, slide2, slide3, slide4, slide5, slide6, slide7];
-    for(i in s.Slides) { fns[s.Slides[i].Type](s.Slides[i]); }
+    for(i in s.Slides) { slides[i] = fns[s.Slides[i].Type](s.Slides[i]); }
     setTimeout(startSlide, 800);
 }
 
@@ -354,9 +355,8 @@ function startSlide() {
     }
 }
 
-// TODO: more ideomatic sorting
+// Cycles through the slides
 function slideShow(n) {
-    let slides = document.getElementsByClassName("rscontainer");
     let output = document.getElementById("output");
 
     output.style.display = "block";
