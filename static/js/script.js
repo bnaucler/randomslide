@@ -399,8 +399,6 @@ function represp(resp) {
 
     var s = JSON.parse(resp.responseText);
 
-    c;onsole.log(s);
-
     if(s.Code == 0) {
         sendalert("Your report has been registred");
 
