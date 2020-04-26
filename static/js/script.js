@@ -1,7 +1,7 @@
 var slideProg;
 var timer;
 var resp;
-var slideIndex = 1;
+var slideIndex = 0;
 var slideshow = true;
 var slides = [];
 var deckId;
@@ -361,38 +361,31 @@ function slideShow(n) {
 
     output.style.display = "block";
 
-    if(n > slides.length) {
+    if(n >= slides.length) {
         output.style.display = "none";
         showendscr();
         slideshow = false;
     }
 
-    if(n < 1) {
-        slideIndex = slides.length;
-    }
+    if(n < 0) slideIndex = slides.length;
 
-    for(let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-    }
+    for(s of slides) s.style.display = "none";
 
     if(slideshow === true) {
-        slides[slideIndex-1].style.display = "block";
+        slides[slideIndex].style.display = "block";
     }
 }
 
+// Catches keydowns to cycle through slides
 document.onkeydown = function(e) {
     switch (e.keyCode) {
         case 37:
-            changeSlide(-1);
+            slideShow(--slideIndex);
             break;
         case 39:
-            changeSlide(1);
+            slideShow(++slideIndex);
             break;
     }
-}
-
-function changeSlide(n) {
-        slideShow(slideIndex += n);
 }
 
 function displayTimer() {
@@ -409,7 +402,7 @@ function displayTimer() {
             timing -= 1;
 
         } else {
-            changeSlide(1);
+            slideShow(++slideIndex);
             timing = timer;
             if(slideshow === false) {
                 clearInterval(timebased);
