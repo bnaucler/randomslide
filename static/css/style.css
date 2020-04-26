@@ -269,6 +269,7 @@ option:hover {
     background-color: #eee;
     border: 4px #007588 solid;
     border-radius: 8px;
+    z-index: 500;
 }
 
 #regwrapper {
