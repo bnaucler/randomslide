@@ -47,7 +47,6 @@ tools/          - Tools for maintenence etc.
 * Remove unnecessary blankspace in bottom of index.html
 * Cleanup of style.css
 * Reorganization of js functions between script files
-* Buttons for reporting of inappropriate content
 * Visual layout of timer
 
 

@@ -207,7 +207,8 @@ option:hover {
     margin-bottom: 10px;
 }
 
-#username, #password, #email, #regusername, #regpassword {
+/* TODO: Make a class of this */
+#username, #password, #email, #regusername, #regpassword, #reptxt {
     font-size: 1.2em;
     font-weight: bold;
     border: 2px black solid;
@@ -394,7 +395,7 @@ fieldset {
     transition: .3s;
 }
 
-#loginscr, #regscr {
+#loginscr, #regscr, #repscr {
     display: none;
     position: fixed;
     padding: 40px;
@@ -405,6 +406,25 @@ fieldset {
     top: calc(50vh - 110px);
     background: #eee;
     border-radius: 8px;
+}
+
+#repscr {
+    height: 310px;
+}
+
+#reptxt {
+    width: 100%;
+    height: 5em;
+    margin-top: 10px;
+}
+
+#repbtn {
+    position: fixed;
+    left: 20px;
+    bottom: 10px;
+    font-size: .8em;
+    color: #333;
+    z-index: 30;
 }
 
 #tint {

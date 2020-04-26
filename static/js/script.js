@@ -1,6 +1,5 @@
 var slideProg;
 var timer;
-var resp;
 var slideIndex = 0;
 var slideshow = true;
 var slides = [];
@@ -53,8 +52,8 @@ function togglenav() {
 // Hides all overlay elements
 function hideoverlays() {
 
-    var overlays = [ "tint", "loginscr", "regscr", "endscr", "prev", "next", "nav" ]
-    for(s of overlays) { document.getElementById(s).style.display = "none"; }
+    var overlays = [ "tint", "loginscr", "regscr", "endscr", "repscr", "prev", "next", "nav" ];
+    for(s of overlays) document.getElementById(s).style.display = "none";
 }
 
 // Shows the login screen overlay
@@ -63,6 +62,14 @@ function openloginscr() {
 
     document.getElementById('tint').style.display = "block";
     document.getElementById('loginscr').style.display = "block";
+}
+
+// Shows the report screen overlay
+function openrepscr() {
+    hideoverlays();
+
+    document.getElementById('tint').style.display = "block";
+    document.getElementById('repscr').style.display = "block";
 }
 
 // Opens the user registration screen overlay
@@ -386,6 +393,28 @@ document.onkeydown = function(e) {
             slideShow(++slideIndex);
             break;
     }
+}
+
+function represp(resp) {
+
+    var s = JSON.parse(resp.responseText);
+
+    c;onsole.log(s);
+
+    if(s.Code == 0) {
+        sendalert("Your report has been registred");
+
+    } else {
+        sendalert(s.Text);
+    }
+}
+
+function report() {
+
+    var req = "/report?id=" + deckId + "&slide=" + slideIndex + "&" + getukstr();
+    mkxhr(req, represp);
+
+    hideoverlays();
 }
 
 function displayTimer() {

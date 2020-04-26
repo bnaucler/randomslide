@@ -70,6 +70,14 @@
         <p><a href="#" onclick="openloginscr();">log in</a> | <a href="#" onclick="pwreset();">password reset</a></p>
     </div>
 
+    <div id="repscr">
+        <div class="cbtn" onclick="hideoverlays();">X</div>
+        <label for="reptxt">Motivation for reporting slide:</label>
+        <textarea id="reptxt"></textarea>
+        <p>Reported material will not be automatically redacted. It is sent to an administrator for review.</p>
+        <button class="item genbutton" onclick="report();">Report</button>
+    </div>
+
     <div class="wrapper">
         <header>
             <div class="biggap"></div>
@@ -128,6 +136,7 @@
     <!-- background photo by Alex Litvin on Unsplash -->
 
     <div id="output">
+        <a id="repbtn" href="#" onclick="openrepscr();">Report content</a>
         <a id="prev" onclick="changeSlide(-1)">&#10094;</a>
         <a id="next" onclick="changeSlide(1)">&#10095;</a>
         <div id="timeDisplay"></div>
