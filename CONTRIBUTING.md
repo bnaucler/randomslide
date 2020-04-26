@@ -38,11 +38,11 @@ tools/          - Tools for maintenence etc.
 * Add logging to rmhandler
 * Improved bullet point handling
 * Rebuild setslidetype()
+* 501 5.1.3 Bad recipient address syntax (at report)
 
 
 ## TODO (Frontend)
 * JS-removing unused tags from DOM after slideshow has started
-* Improved slide indexing and iteration
 * Background image credit on index.html
 * Remove unnecessary blankspace in bottom of index.html
 * Cleanup of style.css
