@@ -142,19 +142,20 @@ button:hover {
     display: none;
 }
 
-.icon {
+#ghlink {
     position: relative;
     display: block;
-    margin: 0 auto;
-    margin-top: 5em;
-    margin-bottom: 20px;
+    background: url("../logoimg/icon_github.png") no-repeat center;
+    background-size: cover;
     width: 32px;
     height: 32px;
+    margin: 0 auto;
+    margin-top: 5em;
     opacity: .4;
     transition: .3s;
 }
 
-.icon:hover {
+#ghlink:hover {
     opacity: 1;
     transition: .3s;
 }
