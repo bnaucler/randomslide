@@ -233,7 +233,7 @@ function slide7(resp){
         data: {
             labels: resp.Dpts,
             datasets: [{
-                label: 'Siffrorna ljuger inte!',
+                label: 'Lies, damn lies & statistics',
                 data: resp.Dpts,
                 backgroundColor: colorsToUse,
                 borderColor: bordersToUse
