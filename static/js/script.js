@@ -409,7 +409,9 @@ function represp(resp) {
 
 function report() {
 
-    var req = "/report?id=" + deckId + "&slide=" + slideIndex + "&" + getukstr();
+    let msg = document.getElementById("reptxt").value;
+    var req = "/report?id=" + deckId + "&slide=" + slideIndex + "&msg=" + msg + "&" + getukstr();
+
     mkxhr(req, represp);
 
     hideoverlays();

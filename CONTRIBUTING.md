@@ -38,7 +38,6 @@ tools/          - Tools for maintenence etc.
 * Add logging to rmhandler
 * Improved bullet point handling
 * Rebuild setslidetype()
-* 501 5.1.3 Bad recipient address syntax (at report)
 
 
 ## TODO (Frontend)

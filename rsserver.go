@@ -742,11 +742,11 @@ func rephandler(w http.ResponseWriter, r *http.Request, db *bolt.DB) {
     if !ok { return }
 
     msg := fmt.Sprintf("Content report from %s:\n" +
-                       "Deck ID: %d\n" +
-                       "Slide #: %d\n" +
+                       "Deck ID: %s\n" +
+                       "Slide #: %s\n" +
                        "Message: %s", u.Name, c.Id, c.Slide, c.Msg)
 
-    go sendmail(rscore.Set.Smtp.Admin, "randomslide password reset", msg)
+    go sendmail(rscore.Set.Smtp.Admin, "randomslide content report", msg)
 
     rscore.Sendstatus(rscore.C_OK, "", w)
 }
