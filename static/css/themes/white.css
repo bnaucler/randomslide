@@ -76,10 +76,11 @@
 }
 
 .rss3ul {
-    font-size: 3em;
-    margin: 0 auto;
-    margin-top: 4em;
-    width: 50%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-size: 3.5em;
+    transform: translate(-50%, -50%);
 }
 
 .rss3li {
@@ -228,7 +229,7 @@
 
 .rss6txt-bs {
     position: fixed;
-    top: 85%;
+    top: 90%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 2em;
@@ -257,7 +258,6 @@
 
 /* slide type 7 - Graph */
 .rss7 {
-    padding: 2em;
 }
 
 .rss7con {
