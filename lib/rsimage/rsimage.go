@@ -11,6 +11,7 @@ import (
     "os"
     "fmt"
     "time"
+    "strings"
     "image"
     "image/png"
     "image/jpeg"
@@ -45,7 +46,8 @@ func Newimagepath(ofn string) (string, string) {
 func Wrimagefile(i image.Image, fnp string) error {
 
     var e error
-    ext := filepath.Ext(fnp)
+    uext := filepath.Ext(fnp)
+    ext := strings.ToLower(uext)
 
     f, e := os.Create(fnp)
     rscore.Cherr(e)
