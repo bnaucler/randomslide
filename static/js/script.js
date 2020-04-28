@@ -209,6 +209,7 @@ function checkurifordeck() {
     if(!isint(id)) return;
 
     slideProg = "change";
+    document.getElementById("slidetheme").href = "css/themes/white.css"; // TODO
 
     var req = "/getdeck?id=" + id;
     mkxhr(req, createSlides)
