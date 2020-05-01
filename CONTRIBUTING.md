@@ -16,6 +16,9 @@ Contributions are very welcome! At this early stage, this file will double as a 
 Deck themes are defined by css files located in `static/css/themes/`.  
 Look at the files `empty.css` and `white.css` to get an idea of what does what.
 
+## How can I help?
+At this point in time, what we need more than anything else is a nice set of themes, as well as a guide in how to make them. This should be a fairly easy way to get involved in the project as only basic CSS and documentation skills are needed.
+
 ## Folder structure
 ```
 bin/            - Script and compiled binaries
@@ -39,7 +42,6 @@ tools/          - Tools for maintenence etc.
 * Improved bullet point handling
 * Rebuild setslidetype()
 
-
 ## TODO (Frontend)
 * JS-removing unused tags from DOM after slideshow has started
 * Background image credit on index.html
@@ -47,7 +49,6 @@ tools/          - Tools for maintenence etc.
 * Cleanup of style.css
 * Reorganization of js functions between script files
 * Start timer on 60 at first slide
-
 
 ## Text types
 Title (ttext): 1-35 characters  

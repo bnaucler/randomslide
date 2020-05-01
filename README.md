@@ -2,8 +2,10 @@
 ![randomslide logo](visuals/randomslide-08.png)
 
 
-# randomslide v0.4A
+# randomslide v0.4B
 Generate random slides for slideshow karaokae or other pranks. Actual real world usefulness can be questioned.
+
+The service is currently in early beta stage and can be accessed [here](https://randomslide.com). For feedback - please use the builtin feedback function whenever possible.
 
 ## Created by
 Björn W Nauclér (bwn@randomslide.com)  
