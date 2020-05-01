@@ -215,6 +215,20 @@ option:hover {
     z-index: 30;
 }
 
+#snum {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    padding: 10px;
+    right: 50%;
+    transform: translateX(-50%);
+    border-radius: 4px;
+    color: #1e1e1e;
+    font-size: 1.2em;
+    background-color: rgba(255, 255, 255, .4);
+    z-index: 30;
+}
+
 #cssPre {
     display: none;
 }

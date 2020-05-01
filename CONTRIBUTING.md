@@ -46,7 +46,6 @@ tools/          - Tools for maintenence etc.
 * Remove unnecessary blankspace in bottom of index.html
 * Cleanup of style.css
 * Reorganization of js functions between script files
-* Display current / total slide #
 * Start timer on 60 at first slide
 
 

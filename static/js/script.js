@@ -374,6 +374,7 @@ function startSlide() {
 // Cycles through the slides
 function slideShow(n) {
     let output = document.getElementById("output");
+    let snum = document.getElementById("snum");
 
     output.style.display = "block";
 
@@ -382,6 +383,9 @@ function slideShow(n) {
         showendscr();
         slideshow = false;
     }
+
+    var snstr = (slideIndex + 1) + " / " + slides.length;
+    snum.innerHTML = snstr;
 
     if(n < 0) slideIndex = slides.length;
 
