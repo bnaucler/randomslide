@@ -16,7 +16,7 @@ function rsinit() {
 
     document.getElementById('timerOrNot').addEventListener('change', function() {
         if(this.value === "timer") {
-            document.getElementById("slideTimer").style.display = "inline";
+            document.getElementById("slideTimer").style.display = "block";
         } else{
             document.getElementById("slideTimer").style.display = "none";
         }
@@ -230,6 +230,11 @@ function displayThemes(resp) {
         opt.appendChild(opttxt);
         sel.appendChild(opt);
     }
+}
+
+function updatenumsec(v) {
+    var numsec = document.getElementById("numsec");
+    numsec.innerHTML = v;
 }
 
 // Populates tag selector

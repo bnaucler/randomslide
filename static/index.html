@@ -121,9 +121,12 @@
                 </select>
             </div>
 
+            <div class="smallgap"></div>
+            <div class="clear"></div>
+
             <div id="slideTimer" class="item">
-                <label for="tmax">Seconds per slide (30-240):</label>
-                <input type="number" name="tmax" id="tmax" min="30" max="240" value="60">
+                <p><span id="numsec">60</span> seconds between changes</p>
+                <input type="range" class="slider" name="tmax" id="tmax" min="10" max="240" value="60" oninput="updatenumsec(this.value);" onchange="updatenumsec(this.value);">
             </div>
 
             <div class="clear"></div>

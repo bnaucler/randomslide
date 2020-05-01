@@ -139,7 +139,18 @@ button:hover {
 }
 
 #slideTimer {
+    position: relative;
     display: none;
+    width: 40%;
+    margin: 0 auto;
+}
+
+.slider {
+    width: 100%;
+}
+
+#numsec {
+
 }
 
 #ghlink {
