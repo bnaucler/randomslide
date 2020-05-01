@@ -1,5 +1,6 @@
 var slideProg;
 var timer;
+var tmax;
 var slideIndex = 0;
 var slideshow = true;
 var slides = [];
@@ -251,6 +252,7 @@ function fetchSlides() {
     let stringToSend = "";
     let selectedTags = document.getElementById("category").selectedOptions;
 
+
     for (let i=0; i<selectedTags.length; i++) {
         stringToSend += selectedTags[i].label;
 
@@ -273,6 +275,7 @@ function createSlides(resp) {
     var s = JSON.parse(resp.responseText);
     deckId = s.Id;
     slideProg = document.getElementById("timerOrNot").value;
+    tmax = document.getElementById("tmax").value;
     createendscr(s);
     document.getElementById("formwrapper").innerHTML = ""; // cowboy
 
@@ -359,7 +362,7 @@ function startSlide() {
 
     } else {
         document.getElementById("timeDisplay").style.display = "block";
-        displayTimer(true);
+        displayTimer();
     }
 }
 
@@ -424,16 +427,16 @@ function displayTimer() {
     slidechangeprev.style.display = "none";
     slidechangenext.style.display = "none";
 
-    var timing = timer;
+    var t = tmax;
 
     var timebased = setInterval(function() {
-        if(timing != 0) {
-            document.getElementById("timeDisplay").innerHTML = timing;
-            timing -= 1;
+        if(t != 0) {
+            document.getElementById("timeDisplay").innerHTML = t;
+            t -= 1;
 
         } else {
             slideShow(++slideIndex);
-            timing = timer;
+            t = tmax;
             if(slideshow === false) {
                 clearInterval(timebased);
                 document.getElementById("timeDisplay").innerHTML = "";

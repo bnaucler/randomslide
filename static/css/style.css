@@ -193,6 +193,15 @@ option:hover {
 
 #timeDisplay {
     display: none;
+    position: fixed;
+    right: 15px;
+    bottom: 5px;
+    padding: 5px;
+    border-radius: 4px;
+    color: #1e1e1e;
+    font-size: 1.2em;
+    background-color: rgba(255, 255, 255, .4);
+    z-index: 30;
 }
 
 #cssPre {
@@ -423,11 +432,14 @@ fieldset {
 
 #repbtn {
     position: fixed;
-    left: 20px;
-    bottom: 10px;
+    left: 15px;
+    bottom: 5px;
     font-size: .8em;
+    padding: 5px;
+    border-radius: 4px;
     color: #333;
     z-index: 30;
+    background-color: rgba(255, 255, 255, .4);
 }
 
 #tint {
