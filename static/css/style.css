@@ -534,3 +534,17 @@ fieldset {
     width: 100vw;
     z-index: 1;
 }
+
+#imgcred  {
+    font-size: .8em;
+    color: #777;
+    text-align: right;
+}
+
+#imgcred a {
+    color: #777;
+}
+
+#imgcred a:hover {
+    color: #333;
+}

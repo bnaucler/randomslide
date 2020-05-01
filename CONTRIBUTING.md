@@ -32,7 +32,7 @@ tools/          - Tools for maintenence etc.
 
 ## TODO (Backend)
 * Refactor getimgtype()
-* Handler for text file batch processing
+* Handler for text batch processing (large text dump)
 * Enable goroutine for tag index mutex
 * Handler for SMTP setup
 * Proper automated tests
@@ -43,12 +43,12 @@ tools/          - Tools for maintenence etc.
 * Rebuild setslidetype()
 
 ## TODO (Frontend)
-* JS-removing unused tags from DOM after slideshow has started
-* Background image credit on index.html
-* Remove unnecessary blankspace in bottom of index.html
 * Cleanup of style.css
 * Reorganization of js functions between script files
 * Start timer on 60 at first slide
+* File drop area for uploads
+* Tag drag & drop to select
+* Tag search
 
 ## Text types
 Title (ttext): 1-35 characters  
