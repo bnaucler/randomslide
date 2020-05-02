@@ -294,6 +294,20 @@ function pwreset() {
     sendalert('Feature not implemented yet - please contact a site admin');
 }
 
+// Checks for time based slide progression
+function chktimer() {
+
+    if(slideProg === "change") {
+        document.getElementById("prev").style.display = "block";
+        document.getElementById("next").style.display = "block";
+
+    } else {
+        document.getElementById("timeDisplay").style.display = "block";
+        displayTimer();
+    }
+}
+
+// Counts down before launching slideshow
 function cdown(sec) {
     let cd = document.getElementById("countdown");
     let cdnum = document.getElementById("cdnum");
@@ -303,6 +317,7 @@ function cdown(sec) {
     var count = setInterval(function() {
         if(sec == 0) {
             cd.style.display = "none";
+            chktimer();
             slideShow();
             sec = timer;
 
@@ -360,15 +375,6 @@ function startSlide() {
 
     hideoverlays();
     cdown(3);
-
-    if(slideProg === "change") {
-        document.getElementById("prev").style.display = "block";
-        document.getElementById("next").style.display = "block";
-
-    } else {
-        document.getElementById("timeDisplay").style.display = "block";
-        displayTimer();
-    }
 }
 
 // Cycles through the slides
@@ -431,10 +437,8 @@ function report() {
 }
 
 function displayTimer() {
-    let slidechangeprev = document.getElementById("prev");
-    let slidechangenext = document.getElementById("next");
-    slidechangeprev.style.display = "none";
-    slidechangenext.style.display = "none";
+    document.getElementById("prev").style.display = "none";
+    document.getElementById("next").style.display = "none";
 
     var t = tmax;
 

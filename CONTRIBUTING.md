@@ -45,7 +45,6 @@ tools/          - Tools for maintenence etc.
 ## TODO (Frontend)
 * Cleanup of style.css
 * Reorganization of js functions between script files
-* Start timer on 60 at first slide
 * File drop area for uploads
 * Tag drag & drop to select
 * Tag search
